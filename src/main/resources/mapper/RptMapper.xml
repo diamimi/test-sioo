@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.RptMapper">
+
+
+    <select id="findOne" resultType="com.pojo.SendingVo">
+        SELECT rptcode rptStat,rpttime,hisId id from sms_rpt_backups where rpttime &gt;=20180508000000 and rpttime &lt; 20180518000000 and hisId=#{id}
+    </select>
+
+</mapper>
