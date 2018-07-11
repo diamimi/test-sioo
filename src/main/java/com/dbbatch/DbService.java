@@ -22,6 +22,12 @@ public class DbService extends BaseService {
 		dao.batchInsertHistoryContentFor5(list);
 	}
 
+
+	public void batchInser114History(List<SendingVo> list,String table){
+		DbDao dao = new DbDao(getConnection());
+		dao.batchInser114History(list,table);
+	}
+
 	public void updateRpt(List<SendingVo> list) {
 		DbDao dao = new DbDao(getConnection());
 		dao.updateRpt(list);

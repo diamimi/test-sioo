@@ -58,6 +58,42 @@ public abstract class DataAccess {
 			if(pstmtBefore != null) try{pstmtBefore.close();}catch (Exception e2) {}
 		}
 	}
+
+	protected void batchInser114History(List<SendingVo> list,String table){
+		PreparedStatement pstmtBefore = null;
+		try {
+			conn.setAutoCommit(false);
+			pstmtBefore = conn.prepareStatement("INSERT INTO smshy2.sms_user_history_"+table+" (hisid,senddate,mtype,uid,channel,mobile,content,contentNum,stat,rptcode,rpttime)VALUE(?,?,?,?,?,?,?,?,?,?,?)");
+			for(SendingVo v : list){
+				try {
+					pstmtBefore.setLong(1, v.getId());
+					pstmtBefore.setLong(2, v.getSenddate());
+					pstmtBefore.setInt(3,v.getMtype());
+					pstmtBefore.setInt(4,v.getUid());
+					pstmtBefore.setInt(5,v.getChannel());
+					pstmtBefore.setLong(6,v.getMobile());
+					pstmtBefore.setString(7,v.getContent());
+					pstmtBefore.setInt(8,v.getContentNum());
+					pstmtBefore.setInt(9,v.getStat());
+					pstmtBefore.setString(10,"DELIVRD");
+					pstmtBefore.setLong(11, v.getRpttime());
+					pstmtBefore.addBatch();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					for(SendingVo v1 : list){
+					}
+				}
+			}
+			int i = pstmtBefore.executeBatch().length;
+			conn.commit();
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage(), e);
+			throw new DataAccessException(e);
+		} finally {
+			if(pstmtBefore != null) try{pstmtBefore.close();}catch (Exception e2) {}
+		}
+	}
 	
 
 	private static boolean isNotEmojiCharacter(char codePoint){ 

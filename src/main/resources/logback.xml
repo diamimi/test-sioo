@@ -41,10 +41,7 @@
         <appender-ref ref="file" />
     </root>
 
-    <logger name="com.sxd.controller"/>
-    <logger name="com.sxd.util.LogTestController" level="WARN" additivity="false">
-        <appender-ref ref="console" />
-    </logger>
+
 
 
 
