@@ -7,5 +7,23 @@
       SELECT count(0) from sms_user_history_180715
     </select>
 
+    <select id="getHistory"  resultType="com.pojo.SendingVo">
+        SELECT hisid ,senddate,mtype,uid,channel,mobile,content,contentNum,stat,rptcode ,rpttime FROM sms_user_history_180715 where  hisid &gt;=#{minHisid} and hisid  &lt;#{maxHisid}
+    </select>
+
+    <select id="getRptcodeByRpt"  resultType="com.pojo.SendingVo">
+        SELECT hisid ,uid,mtype,mobile,rptcode,rpttime,pid FROM sms_user_rpt_180715 where  hisid=#{id}
+    </select>
+
+    <select id="getRptContent"  resultType="com.pojo.SendingVo">
+        SELECT content,contentNum FROM sms_user_batch_180715 where  pid=#{pid}
+    </select>
+
+
+    <select id="getRptcodeByHistory"  resultType="com.pojo.SendingVo">
+        SELECT contentNum,rptcode,rpttime,content,channel FROM sms_user_history_180715 where  hisid=#{id}
+    </select>
+
+
 
 </mapper>

@@ -2,21 +2,17 @@ package com.pojo;
 
 import java.io.Serializable;
 
-public class SendingVo implements Serializable {
+public class SendingBigVo implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 7天,30天校验
-	 */
-	private boolean longRepeatFlag=false;
 	private long id;
 	private int mtype; // 运营商
 	private long senddate; // 提交时间
 	private int uid; // 用户id
-	private Long mobile; // 接收号码
+	private String mobile; // 接收号码
 	private int channel; // 发送通道
 	private String content; // 发送内容
 	private int contentNum; // 内条数
@@ -32,16 +28,11 @@ public class SendingVo implements Serializable {
 	private int autoFlag; // 处理标记,-1自动处理
 	private int handStat; // 审核表使用字段，默认值-1，审核通过1，审核驳回0，审核清除2
 	private int hisids;
-	private long hisid;
 	private String source; // 来源
 	private int succ;
 	private int fail;
 	private int arrive_fail;
 	private String mdstr;
-
-	private String rptcode;
-
-
 
 	private Integer level;
 
@@ -52,92 +43,6 @@ public class SendingVo implements Serializable {
 	private Boolean repeatflag;
 
 	private boolean isApiRpt = false;
-
-	private String phone;
-
-	private String key;
-
-	private Boolean hc;
-
-	private Integer day;
-
-	private Integer arrive_succ;
-
-	public Integer getArrive_succ() {
-		return arrive_succ;
-	}
-
-	public void setArrive_succ(Integer arrive_succ) {
-		this.arrive_succ = arrive_succ;
-	}
-
-	public Integer getDay() {
-		return day;
-	}
-
-	public void setDay(Integer day) {
-		this.day = day;
-	}
-
-	/**
-	 * 审核队列号码数量
-	 */
-	private Integer mobileNum;
-
-	private Long rpttime;
-
-	public Long getRpttime() {
-		return rpttime;
-	}
-
-	public void setRpttime(Long rpttime) {
-		this.rpttime = rpttime;
-	}
-
-	public Integer getMobileNum() {
-		return mobileNum;
-	}
-
-	public void setMobileNum(Integer mobileNum) {
-		this.mobileNum = mobileNum;
-	}
-
-	public Boolean getHc() {
-		return hc;
-	}
-
-	public void setHc(Boolean hc) {
-		this.hc = hc;
-	}
-
-	public String getKey() {
-		return key;
-	}
-
-	public void setKey(String key) {
-		this.key = key;
-	}
-
-	/**
-	 * 是否发送,从35还原数据为false
-	 */
-	private Boolean send;
-
-	public Boolean getSend() {
-		return send;
-	}
-
-	public void setSend(Boolean send) {
-		this.send = send;
-	}
-
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 
 	public boolean isApiRpt() {
 		return isApiRpt;
@@ -241,11 +146,11 @@ public class SendingVo implements Serializable {
 		this.uid = uid;
 	}
 
-	public Long getMobile() {
+	public String getMobile() {
 		return mobile;
 	}
 
-	public void setMobile(Long mobile) {
+	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
 
@@ -377,7 +282,7 @@ public class SendingVo implements Serializable {
 		this.source = source;
 	}
 
-	public int  getFail() {
+	public int getFail() {
 		return fail;
 	}
 
@@ -415,34 +320,6 @@ public class SendingVo implements Serializable {
 
 	public void setScreenType(Integer screenType) {
 		this.screenType = screenType;
-	}
-
-	public boolean getLongRepeatFlag() {
-		return longRepeatFlag;
-	}
-
-	public void setLongRepeatFlag(boolean longRepeatFlag) {
-		this.longRepeatFlag = longRepeatFlag;
-	}
-
-	public boolean isLongRepeatFlag() {
-		return longRepeatFlag;
-	}
-
-	public String getRptcode() {
-		return rptcode;
-	}
-
-	public void setRptcode(String rptcode) {
-		this.rptcode = rptcode;
-	}
-
-	public long getHisid() {
-		return hisid;
-	}
-
-	public void setHisid(long hisid) {
-		this.hisid = hisid;
 	}
 }
 

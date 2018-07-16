@@ -17,4 +17,12 @@ public interface Mapper21 {
     List<SendingVo> findHistory();
 
     SendingVo findRptCode(long id);
+
+    void saveHistory(SendingVo vo);
+
+    void saveRpt(SendingVo vo);
+
+    void batchInsertHistory(@Param("list") List<SendingVo> list);
+
+    void batchInsertRpt(List<SendingVo> list);
 }

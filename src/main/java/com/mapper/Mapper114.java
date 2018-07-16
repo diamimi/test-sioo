@@ -19,4 +19,12 @@ public interface Mapper114 {
     SendingVo findRptCode(long id);
 
     int count();
+
+    List<SendingVo> getHistory(@Param("minHisid") int minHisid,@Param("maxHisid") int maxHisid);
+
+    SendingVo getRptcodeByRpt(long id);
+
+    SendingVo getRptcodeByHistory(long id);
+
+    SendingVo getRptContent(long pid);
 }

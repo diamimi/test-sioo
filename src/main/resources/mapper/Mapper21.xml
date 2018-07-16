@@ -16,4 +16,26 @@
         SELECT rptcode rptStat,rpttime from sms_rpt_backups where hisId=#{id} limit 1
     </select>
 
+
+    <insert id="batchInsertHistory" parameterType="java.util.List">
+        INSERT INTO sms_send_history_unknown (id,stype,mtype,senddate,uid,mobile,channel,content,contentNum,succ,fail,pid,expid,location,arrive_succ,arrive_fail,stat)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},'0',#{item.mtype},#{item.senddate},#{item.uid},#{item.mobile},#{item.channel},#{item.content},#{item.contentNum},#{item.succ},#{item.fail},#{item.pid},#{item.expid},'全国',#{item.arrive_succ},#{item.arrive_fail},'1'
+            )
+        </foreach>
+    </insert>
+
+
+    <insert id="batchInsertRpt" parameterType="java.util.List">
+        INSERT INTO sms_rpt_backups (uid,mobile,rptcode,hisId,pid,rpttime,channelId,userday,stat)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.uid},#{item.mobile},#{item.rptcode},#{item.id},#{item.pid},#{item.rpttime},#{item.channel},'20180715','0'
+            )
+        </foreach>
+    </insert>
+
 </mapper>
