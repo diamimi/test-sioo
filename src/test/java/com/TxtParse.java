@@ -1,10 +1,10 @@
 package com;
 
-import com.util.RabbitMQProducerUtil;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -15,8 +15,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 public class TxtParse {
 
+
     @Autowired
-    private RabbitMQProducerUtil rabbitMQProducerUtil;
+    @Qualifier("21jdbcTemplate")
+    protected JdbcTemplate jdbcTemplate21;
+    @Autowired
+    @Qualifier("114jdbcTemplate")
+    protected JdbcTemplate jdbcTemplate114;
 
 
    /* @Test
@@ -49,8 +54,4 @@ public class TxtParse {
 
     }*/
 
-    @Test
-    public void sa(){
-        System.out.println(rabbitMQProducerUtil);
-    }
 }

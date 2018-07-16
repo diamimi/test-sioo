@@ -1,6 +1,6 @@
 package com.service;
 
-import com.mapper.RptMapper;
+import com.mapper.Mapper21;
 import com.pojo.SendingVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +17,17 @@ public class RptService {
 
 
     @Autowired
-    private RptMapper rptMapper;
+    private Mapper21 mapper21;
 
     public SendingVo findOne(String hisid) {
-        return rptMapper.findOne(hisid);
+        return mapper21.findOne(hisid);
     }
 
     public List<SendingVo> findHistory() {
-       return rptMapper.findHistory();
+       return mapper21.findHistory();
     }
 
     public SendingVo findRptCode(long id) {
-        return rptMapper.findRptCode(id);
+        return mapper21.findRptCode(id);
     }
 }
