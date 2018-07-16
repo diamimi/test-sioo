@@ -17,4 +17,6 @@ public interface Mapper114 {
     List<SendingVo> findHistory();
 
     SendingVo findRptCode(long id);
+
+    int count();
 }

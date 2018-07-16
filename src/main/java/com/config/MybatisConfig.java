@@ -1,6 +1,5 @@
 package com.config;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
@@ -8,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceBuilder;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -31,70 +32,19 @@ public class MybatisConfig {
     @Autowired
     private Environment env;
 
-    @Autowired
-    private DatasourceProperties21 datasourceProperties21;
-
-    @Autowired
-    private DatasourceProperties114 datasourceProperties114;
-
-
-
-
 
     @Bean(name = "database21")
     @Qualifier("database21")
+    @ConfigurationProperties(prefix = "spring21.datasource")
     public DataSource dataSource21() {
-        DruidDataSource druidDataSource = new DruidDataSource();
-        try {
-            druidDataSource.setDriverClassName(datasourceProperties21.getDriverClassName());
-            druidDataSource.setUrl(datasourceProperties21.getUrl());
-            druidDataSource.setUsername(datasourceProperties21.getUsername());
-            druidDataSource.setPassword(datasourceProperties21.getPassword());
-            druidDataSource.setInitialSize(datasourceProperties21.getInitialSize());
-            druidDataSource.setMinIdle(datasourceProperties21.getMinIdle());
-            druidDataSource.setMaxActive(datasourceProperties21.getMaxActive());
-            druidDataSource.setTimeBetweenEvictionRunsMillis(datasourceProperties21.getTimeBetweenEvictionRunsMillis());
-            druidDataSource.setMinEvictableIdleTimeMillis(datasourceProperties21.getMinEvictableIdleTimeMillis());
-            druidDataSource.setValidationQuery(datasourceProperties21.getValidationQuery());
-            druidDataSource.setTestWhileIdle(datasourceProperties21.getTestWhileIdle());
-            druidDataSource.setTestOnBorrow(datasourceProperties21.getTestOnBorrow());
-            druidDataSource.setTestOnReturn(datasourceProperties21.getTestOnReturn());
-//            druidDataSource.setPoolPreparedStatements(datasourceProperties.getPoolPreparedStatements());
-//            druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(datasourceProperties.getMaxPoolPreparedStatementPerConnectionSize());
-            druidDataSource.setFilters(datasourceProperties21.getFilters());
-            druidDataSource.setConnectionProperties(datasourceProperties21.getConnectionProperties());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return druidDataSource;
+        return DataSourceBuilder.create().build();
     }
 
     @Bean(name = "database114")
     @Qualifier("database114")
+    @ConfigurationProperties(prefix = "spring114.datasource")
     public DataSource dataSource114() {
-        DruidDataSource druidDataSource = new DruidDataSource();
-        try {
-            druidDataSource.setDriverClassName(datasourceProperties114.getDriverClassName());
-            druidDataSource.setUrl(datasourceProperties114.getUrl());
-            druidDataSource.setUsername(datasourceProperties114.getUsername());
-            druidDataSource.setPassword(datasourceProperties114.getPassword());
-            druidDataSource.setInitialSize(datasourceProperties114.getInitialSize());
-            druidDataSource.setMinIdle(datasourceProperties114.getMinIdle());
-            druidDataSource.setMaxActive(datasourceProperties114.getMaxActive());
-            druidDataSource.setTimeBetweenEvictionRunsMillis(datasourceProperties114.getTimeBetweenEvictionRunsMillis());
-            druidDataSource.setMinEvictableIdleTimeMillis(datasourceProperties114.getMinEvictableIdleTimeMillis());
-            druidDataSource.setValidationQuery(datasourceProperties114.getValidationQuery());
-            druidDataSource.setTestWhileIdle(datasourceProperties114.getTestWhileIdle());
-            druidDataSource.setTestOnBorrow(datasourceProperties114.getTestOnBorrow());
-            druidDataSource.setTestOnReturn(datasourceProperties114.getTestOnReturn());
-//            druidDataSource.setPoolPreparedStatements(datasourceProperties.getPoolPreparedStatements());
-//            druidDataSource.setMaxPoolPreparedStatementPerConnectionSize(datasourceProperties.getMaxPoolPreparedStatementPerConnectionSize());
-            druidDataSource.setFilters(datasourceProperties114.getFilters());
-            druidDataSource.setConnectionProperties(datasourceProperties114.getConnectionProperties());
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-        return druidDataSource;
+        return DataSourceBuilder.create().build();
     }
 
 
@@ -140,7 +90,7 @@ public class MybatisConfig {
                                                @Qualifier("database114") DataSource myTestDb2DataSource) throws Exception{
         SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
         fb.setDataSource(this.dataSource(myTestDbDataSource, myTestDb2DataSource));
-        //fb.setTypeAliasesPackage(env.getProperty("mybatis.typeAliasesPackage"));
+        fb.setTypeAliasesPackage(env.getProperty("mybatis.typeAliasesPackage"));
         fb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(env.getProperty("mybatis.mapper-locations")));
         return fb.getObject();
     }

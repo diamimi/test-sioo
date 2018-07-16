@@ -26,4 +26,10 @@ public class HistoryTo114 {
        List<SendingVo> list= rptService.findHistory();
         System.out.println(list.size());
     }
+
+    @Test
+    public void s1s(){
+        int count= rptService.count();
+        System.out.println(count);
+    }
 }
