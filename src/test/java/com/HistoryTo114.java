@@ -54,15 +54,6 @@ public class HistoryTo114 {
         }
         List<Map.Entry<Integer,UserDayCount>> list1 = new ArrayList<>(map.entrySet());
         Collections.sort(list1, (o1,o2)->o2.getValue().getTotal().compareTo(o1.getValue().getTotal()));
-
-
-      /*  Collections.sort(list1, new Comparator<Map.Entry<Integer,UserDayCount>>() {
-            @Override
-            public int compare(Map.Entry<Integer,UserDayCount> o1, Map.Entry<Integer,UserDayCount> o2) {
-                return o2.getValue().getTotal().compareTo(o1.getValue().getTotal());
-            }
-        });*/
-
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet("对象报表");
         int i=0;
