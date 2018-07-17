@@ -7,8 +7,8 @@
         SELECT rptcode rptStat,rpttime,hisId id from sms_rpt_backups where rpttime &gt;=20180508000000 and rpttime &lt; 20180518000000 and hisId=#{id}
     </select>
 
-    <select id="findHistory" resultType="com.pojo.SendingVo">
-        SELECT id,mtype,senddate,uid,mobile,channel,content,contentNum,stat,pid from sms_send_history_unknown where  senddate &gt;= 20180715000000 and senddate &lt; 20180716000000 and id=#{id}
+    <select id="findHistory" resultType="java.lang.Integer">
+        SELECT count(0) from sms_send_history_unknown where  senddate &gt;= 20180715000000 and senddate &lt; 20180716000000 and id=#{id}
     </select>
 
 
@@ -16,6 +16,11 @@
         SELECT rptcode rptStat,rpttime from sms_rpt_backups where hisId=#{id} limit 1
     </select>
 
+
+    <select id="getGhUserDayCount"  resultType="com.pojo.UserDayCount">
+        SELECT c.uid uid,c.total total,c.fail fail,c.arrive_succ asucc,c.arrive_fail af,c.time time,u.username username,u.company company from
+        sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180701
+    </select>
 
     <insert id="batchInsertHistory" parameterType="java.util.List">
         INSERT INTO sms_send_history_unknown (id,stype,mtype,senddate,uid,mobile,channel,content,contentNum,succ,fail,pid,expid,location,arrive_succ,arrive_fail,stat)

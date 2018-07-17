@@ -1,6 +1,7 @@
 package com.mapper;
 
 import com.pojo.SendingVo;
+import com.pojo.UserDayCount;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -14,7 +15,7 @@ import java.util.List;
 public interface Mapper21 {
     SendingVo findOne(@Param("id") String hisid);
 
-    SendingVo findHistory(long id);
+    int findHistory(long id);
 
     SendingVo findRptCode(long id);
 
@@ -25,4 +26,6 @@ public interface Mapper21 {
     void batchInsertHistory(@Param("list") List<SendingVo> list);
 
     void batchInsertRpt(List<SendingVo> list);
+
+    List<UserDayCount> getGhUserDayCount();
 }

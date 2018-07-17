@@ -3,6 +3,7 @@ package com.service;
 import com.mapper.Mapper114;
 import com.mapper.Mapper21;
 import com.pojo.SendingVo;
+import com.pojo.UserDayCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class RptService {
         return mapper21.findOne(hisid);
     }
 
-    public SendingVo findHistory(long id) {
+    public int findHistory(long id) {
         return mapper21.findHistory(id);
     }
 
@@ -61,5 +62,9 @@ public class RptService {
 
     public void batchInsertRpt(List<SendingVo> list) {
         mapper21.batchInsertRpt(list);
+    }
+
+    public List<UserDayCount> getGhUserDayCount() {
+       return mapper21.getGhUserDayCount();
     }
 }

@@ -4,8 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.pojo.SendingBigVo;
 import com.pojo.SendingVo;
+import com.pojo.UserDayCount;
 import com.service.RptService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -14,12 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 /**
  * @Author: HeQi
@@ -34,11 +35,65 @@ public class HistoryTo114 {
     @Autowired
     private RptService rptService;
 
+
     @Test
-    public void ss() {
-        SendingVo vo=rptService.findHistory(581373763l);
-        System.out.println(vo.getMobile());
+    public void saa() throws Exception{
+       List<UserDayCount> list= rptService.getGhUserDayCount();
+       Map<Integer ,UserDayCount> map=new HashMap<>();
+        for (UserDayCount userDayCount : list) {
+            if(map.containsKey(userDayCount.getUid())){
+                UserDayCount dayCount = map.get(userDayCount.getUid());
+                dayCount.setTotal(userDayCount.getTotal()+dayCount.getTotal());
+                dayCount.setFail(userDayCount.getFail()+dayCount.getFail());
+                dayCount.setAsucc(userDayCount.getAsucc()+dayCount.getAsucc());
+                dayCount.setAf(userDayCount.getAf()+dayCount.getAf());
+                map.put(userDayCount.getUid(),dayCount);
+            }else {
+                map.put(userDayCount.getUid(),userDayCount);
+            }
+        }
+        List<Map.Entry<Integer,UserDayCount>> list1 = new ArrayList<>(map.entrySet());
+        Collections.sort(list1, (o1,o2)->o2.getValue().getTotal().compareTo(o1.getValue().getTotal()));
+
+
+      /*  Collections.sort(list1, new Comparator<Map.Entry<Integer,UserDayCount>>() {
+            @Override
+            public int compare(Map.Entry<Integer,UserDayCount> o1, Map.Entry<Integer,UserDayCount> o2) {
+                return o2.getValue().getTotal().compareTo(o1.getValue().getTotal());
+            }
+        });*/
+
+        HSSFWorkbook workbook = new HSSFWorkbook();
+        HSSFSheet sheet = workbook.createSheet("对象报表");
+        int i=0;
+        for(Map.Entry<Integer,UserDayCount> mapping:list1){
+            UserDayCount u= mapping.getValue();
+            u.setWz(u.getTotal()-u.getAf()-u.getAsucc()-u.getFail());
+            HSSFRow row = sheet.createRow(i);
+            HSSFCell uid=row.createCell(0);
+            uid.setCellValue(u.getUid());
+            HSSFCell username=row.createCell(1);
+            username.setCellValue(u.getUsername());
+            HSSFCell company=row.createCell(2);
+            company.setCellValue(u.getCompany());
+            HSSFCell total=row.createCell(4);
+            total.setCellValue(u.getTotal());
+            HSSFCell fail=row.createCell(5);
+            fail.setCellValue(u.getFail());
+            HSSFCell asucc=row.createCell(6);
+            asucc.setCellValue(u.getAsucc());
+            HSSFCell af=row.createCell(7);
+            af.setCellValue(u.getAf());
+            HSSFCell wz=row.createCell(8);
+            wz.setCellValue(u.getWz());
+            i++;
+        }
+        FileOutputStream output=new FileOutputStream("d:/广汇2季度.xls");
+        workbook.write(output);
+        output.flush();
+
     }
+
 
     @Test
     public void s1s() {

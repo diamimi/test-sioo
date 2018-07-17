@@ -9,7 +9,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -21,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootApplication
-public class OpenApplication implements CommandLineRunner {
+public class OpenApplication {
     private static Logger LOGGER = LoggerFactory.getLogger(OpenApplication.class);
 
     @Autowired
@@ -31,14 +30,13 @@ public class OpenApplication implements CommandLineRunner {
         SpringApplication.run(OpenApplication.class, args);
     }
 
-    @Override
+  /*  @Override
     public void run(String... args) throws Exception {
         List<SendingVo> list = new ArrayList<>();
         File file = new File("/home/sioowork/middle-service-logs/data.log.2018-07-15");
         InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");// 考虑到编码格式
         BufferedReader bufferedReader = new BufferedReader(read);
         String sms = null;
-        int k=1;
         while ((sms = bufferedReader.readLine()) != null) {
             sms=sms.trim();
             if(sms!=null&&!sms.equals("")){
@@ -87,19 +85,17 @@ public class OpenApplication implements CommandLineRunner {
                     list.add(v);
                 }
             }
-            LOGGER.info(k+"");
-            k++;
         }
         bufferedReader.close();
         LOGGER.info("===============start==============");
-        list.parallelStream().forEach(v->{
-            SendingVo vo=rptService.findHistory(v.getId());
-            if(vo==null){
+        list.stream().forEach(v->{
+            int count=rptService.findHistory(v.getId());
+            if(count==0){
                 LOGGER.info(JSON.toJSONString(v));
             }
         });
         LOGGER.info("=====================end=======================");
-    }
+    }*/
 
     public void sss() throws Exception {
 
