@@ -14,7 +14,7 @@ import java.util.List;
 public interface Mapper21 {
     SendingVo findOne(@Param("id") String hisid);
 
-    List<SendingVo> findHistory();
+    SendingVo findHistory(long id);
 
     SendingVo findRptCode(long id);
 

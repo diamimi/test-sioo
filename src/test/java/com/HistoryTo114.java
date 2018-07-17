@@ -36,8 +36,8 @@ public class HistoryTo114 {
 
     @Test
     public void ss() {
-        List<SendingVo> list = rptService.findHistory();
-        System.out.println(list.size());
+        SendingVo vo=rptService.findHistory(581373763l);
+        System.out.println(vo.getMobile());
     }
 
     @Test

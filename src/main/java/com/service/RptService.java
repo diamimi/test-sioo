@@ -27,8 +27,8 @@ public class RptService {
         return mapper21.findOne(hisid);
     }
 
-    public List<SendingVo> findHistory() {
-        return mapper21.findHistory();
+    public SendingVo findHistory(long id) {
+        return mapper21.findHistory(id);
     }
 
     public List<SendingVo> getHistory(int minHisid,int maxHisid){

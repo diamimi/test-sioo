@@ -34,8 +34,78 @@ public class OpenApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         List<SendingVo> list = new ArrayList<>();
-        List<SendingVo> rptList = new ArrayList<>();
         File file = new File("/home/sioowork/middle-service-logs/data.log.2018-07-15");
+        InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");// 考虑到编码格式
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String sms = null;
+        int k=1;
+        while ((sms = bufferedReader.readLine()) != null) {
+            sms=sms.trim();
+            if(sms!=null&&!sms.equals("")){
+                String content = sms.substring(21);
+                SendingBigVo vo = JSON.parseObject(content, new TypeReference<SendingBigVo>() {
+                });
+                if (vo.getMobile().contains("-")) {
+                    String[] strings = vo.getMobile().split(",");
+                    for (String t : strings) {
+                        SendingVo v = new SendingVo();
+                        String phone = StringUtils.substringAfter(t, "-");
+                        String hisid = StringUtils.substringBefore(t, "-");
+                        v.setMobile(Long.valueOf(phone));
+                        v.setContent(vo.getContent());
+                        v.setUid(vo.getUid());
+                        v.setPid(vo.getPid());
+                        v.setId(Integer.valueOf(hisid));
+                        v.setSenddate(vo.getSenddate());
+                        v.setChannel(vo.getChannel());
+                        if(vo.getExpid()==null||vo.getExpid().equals("0")){
+                            v.setExpid(vo.getUid()+"");
+                        }else {
+                            v.setExpid(vo.getExpid());
+                        }
+                        v.setSource(vo.getSource());
+                        v.setMtype(vo.getMtype());
+                        list.add(v);
+                    }
+                } else {
+                    SendingVo v = new SendingVo();
+                    String phone = vo.getMobile();
+                    v.setMobile(Long.valueOf(phone));
+                    v.setContent(vo.getContent());
+                    v.setUid(vo.getUid());
+                    v.setPid(vo.getPid());
+                    v.setId(vo.getId());
+                    v.setSenddate(vo.getSenddate());
+                    v.setChannel(vo.getChannel());
+                    if(vo.getExpid()==null||vo.getExpid().equals("0")){
+                        v.setExpid(vo.getUid()+"");
+                    }else {
+                        v.setExpid(vo.getExpid());
+                    }
+                    v.setSource(vo.getSource());
+                    v.setMtype(vo.getMtype());
+                    list.add(v);
+                }
+            }
+            LOGGER.info(k+"");
+            k++;
+        }
+        bufferedReader.close();
+        LOGGER.info("===============start==============");
+        list.parallelStream().forEach(v->{
+            SendingVo vo=rptService.findHistory(v.getId());
+            if(vo==null){
+                LOGGER.info(JSON.toJSONString(v));
+            }
+        });
+        LOGGER.info("=====================end=======================");
+    }
+
+    public void sss() throws Exception {
+
+        List<SendingVo> list = new ArrayList<>();
+        List<SendingVo> rptList = new ArrayList<>();
+        File file = new File("/home/sioowork/middle-service-logs/bbk.txt");
         InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");// 考虑到编码格式
         BufferedReader bufferedReader = new BufferedReader(read);
         String sms = null;
@@ -43,8 +113,10 @@ public class OpenApplication implements CommandLineRunner {
         while ((sms = bufferedReader.readLine()) != null) {
             sms = sms.trim();
             if (sms != null && !sms.equals("")) {
-                String content = sms.substring(21);
-                SendingBigVo vo = JSON.parseObject(content, new TypeReference<SendingBigVo>() {
+                sms = StringUtils.substringAfter(sms, " - {");
+                sms = "{" + sms;
+                // String content = sms.substring(21);
+                SendingBigVo vo = JSON.parseObject(sms, new TypeReference<SendingBigVo>() {
                 });
                 if (vo.getMobile().contains("-")) {
                     String[] strings = vo.getMobile().split(",");
@@ -89,7 +161,7 @@ public class OpenApplication implements CommandLineRunner {
                                 rptList.add(v);
                             }
                         } catch (Exception e) {
-                            LOGGER.info(v.getId() + "");
+                            LOGGER.info(v.getId() + ",error,mobile:" + v.getMobile());
                         }
 
                     }
@@ -130,7 +202,7 @@ public class OpenApplication implements CommandLineRunner {
                             rptList.add(v);
                         }
                     } catch (Exception e) {
-                        LOGGER.info(v.getId() + "");
+                        LOGGER.info(v.getId() + ",error,mobile:" + v.getMobile());
                     }
                 }
                 if (list.size() >= 200) {

@@ -8,7 +8,7 @@
     </select>
 
     <select id="findHistory" resultType="com.pojo.SendingVo">
-        SELECT id,mtype,senddate,uid,mobile,channel,content,contentNum,stat from sms_send_history_unknown where uid=601584 and senddate &gt; 20180710000000
+        SELECT id,mtype,senddate,uid,mobile,channel,content,contentNum,stat,pid from sms_send_history_unknown where  senddate &gt;= 20180715000000 and senddate &lt; 20180716000000 and id=#{id}
     </select>
 
 
