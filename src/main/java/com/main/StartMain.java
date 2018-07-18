@@ -37,7 +37,7 @@ public class StartMain implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments var1) throws Exception{
-        ssa();
+        ss();
     }
 
     public void ssa() throws Exception{
