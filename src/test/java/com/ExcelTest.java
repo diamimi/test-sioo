@@ -22,7 +22,7 @@ public class ExcelTest {
 
     @Test
     public void single() {
-        //    ChannelCache.INSTANCE.loadChannel();
+        System.out.println("aaaaa");
     }
 
     @Test

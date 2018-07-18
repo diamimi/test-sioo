@@ -85,6 +85,11 @@ public class HistoryTo114 {
 
     }
 
+    @Test
+    public void single() {
+        System.out.println("aaaaa");
+    }
+
 
     @Test
     public void s1s() {

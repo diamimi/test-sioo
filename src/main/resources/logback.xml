@@ -4,8 +4,8 @@
 
     <contextName>logback</contextName>
     <!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径-->
-    <property name="log.path" value="D:/test-sioo/src/main/resources/log/log.log" />
-    <!--<property name="log.path" value="log.log" />-->
+<!--    <property name="log.path" value="D:/test-sioo/src/main/resources/log/log.log" />-->
+    <property name="log.path" value="log.log" />
 
 
 

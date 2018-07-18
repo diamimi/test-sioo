@@ -1,10 +1,7 @@
 package com;
 
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -16,12 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class TxtParse {
 
 
-    @Autowired
-    @Qualifier("21jdbcTemplate")
-    protected JdbcTemplate jdbcTemplate21;
-    @Autowired
-    @Qualifier("114jdbcTemplate")
-    protected JdbcTemplate jdbcTemplate114;
 
 
    /* @Test

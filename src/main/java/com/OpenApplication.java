@@ -1,30 +1,14 @@
 package com;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.pojo.SendingBigVo;
-import com.pojo.SendingVo;
-import com.service.RptService;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
 @SpringBootApplication
-public class OpenApplication {
+public class OpenApplication  {
     private static Logger LOGGER = LoggerFactory.getLogger(OpenApplication.class);
 
-    @Autowired
-    private RptService rptService;
 
     public static void main(String[] args) {
         SpringApplication.run(OpenApplication.class, args);
@@ -97,7 +81,7 @@ public class OpenApplication {
         LOGGER.info("=====================end=======================");
     }*/
 
-    public void sss() throws Exception {
+/*    public void sss() throws Exception {
 
         List<SendingVo> list = new ArrayList<>();
         List<SendingVo> rptList = new ArrayList<>();
@@ -214,6 +198,6 @@ public class OpenApplication {
         rptService.batchInsertHistory(list);
         rptService.batchInsertRpt(rptList);
         LOGGER.info("=====================end=======================");
-    }
+    }*/
 
 }
