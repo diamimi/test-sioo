@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: HeQi
@@ -36,7 +37,23 @@ public class StartMain implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments var1) throws Exception{
-        ss();
+        ssa();
+    }
+
+    public void ssa() throws Exception{
+        List<Integer> list=new ArrayList<>();
+        for (int i = 0; i < 10000; i++) {
+            list.add(i);
+        }
+        ForkJoinPool myPool = new ForkJoinPool(8);
+        myPool.submit(()->   list.stream().parallel().forEach(i->{
+          LOGGER.info(i+"");
+        }));
+        myPool.shutdown();
+        while (myPool.awaitTermination(5, TimeUnit.SECONDS)){
+            LOGGER.info("============执行完毕====================");
+            break;
+        }
     }
 
     public void ss() throws Exception{
@@ -103,6 +120,11 @@ public class StartMain implements ApplicationRunner {
                 LOGGER.info(JSON.toJSONString(v));
             }
         }));
-        LOGGER.info("=====================end=======================");
+        myPool.shutdown();
+        while (myPool.awaitTermination(5, TimeUnit.SECONDS)){
+            LOGGER.info("============执行完毕====================");
+        }
+        LOGGER.info("===============end==============");
+
     }
 }
