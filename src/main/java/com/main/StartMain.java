@@ -103,7 +103,6 @@ public class StartMain implements ApplicationRunner {
                 LOGGER.info(JSON.toJSONString(v));
             }
         }));
-
         LOGGER.info("=====================end=======================");
     }
 }
