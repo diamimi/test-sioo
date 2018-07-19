@@ -35,32 +35,60 @@ public class StartMain implements ApplicationRunner {
 
 
     @Override
-    public void run(ApplicationArguments var1) throws Exception{
-        ss();
+    public void run(ApplicationArguments var1) throws Exception {
+       // ssa();
     }
 
-    public void ssa() throws Exception{
-        List<Integer> list=new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
+    /**
+     * 更新前台没有签名的记录
+     *
+     * @throws Exception
+     */
+    public void ssa() throws Exception {
+        List<Long> list = new ArrayList<>();
+        for (long i = 589785737; i <= 594284104; i++) {
             list.add(i);
         }
         LOGGER.info("============start====================");
+        final int[] k = {0};
         ForkJoinPool myPool = new ForkJoinPool(8);
-        myPool.submit(()->   list.stream().parallel().forEach(i->
-                LOGGER.info(i+"")
+        myPool.submit(() -> list.stream().parallel().forEach(i -> {
+                    List<SendingVo> sendingVos = rptService.findHistory114(i);
+                    if (sendingVos.size() > 0) {
+                        for (SendingVo sendingVo : sendingVos) {
+                            if (!hasStore(sendingVo.getContent())) {
+                                SendingVo vo = rptService.findSendHistory21(sendingVo.getHisid());
+                                if(vo!=null){
+                                    if (vo.getMobile().equals(sendingVo.getMobile())) {
+                                        LOGGER.info("mobile:{},hisid:{},content:{}" ,sendingVo.getMobile(),sendingVo.getHisid(),sendingVo.getContent());
+                                        sendingVo.setContent(vo.getContent());
+                                        sendingVo.setContentNum(vo.getContentNum());
+                                        rptService.updateHistory114(sendingVo);
+                                        k[0]++;
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
         )).get();
-        LOGGER.info("============end====================");
+        LOGGER.info("============end====================," + k[0]);
     }
 
-    public void ss() throws Exception{
+    private boolean hasStore(String content) {
+        return ((content.startsWith("【") && StringUtils.contains(content, "】")) || (content.endsWith("】") && StringUtils.contains(content, "【")));
+    }
+
+    public void ss() throws Exception {
         List<SendingVo> list = new ArrayList<>();
         File file = new File("/home/sioowork/middle-service-logs/data.log.2018-07-15");
         InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");// 考虑到编码格式
         BufferedReader bufferedReader = new BufferedReader(read);
         String sms = null;
         while ((sms = bufferedReader.readLine()) != null) {
-            sms=sms.trim();
-            if(sms!=null&&!sms.equals("")){
+            sms = sms.trim();
+            if (sms != null && !sms.equals("")) {
                 String content = sms.substring(21);
                 SendingBigVo vo = JSON.parseObject(content, new TypeReference<SendingBigVo>() {
                 });
@@ -77,9 +105,9 @@ public class StartMain implements ApplicationRunner {
                         v.setId(Integer.valueOf(hisid));
                         v.setSenddate(vo.getSenddate());
                         v.setChannel(vo.getChannel());
-                        if(vo.getExpid()==null||vo.getExpid().equals("0")){
-                            v.setExpid(vo.getUid()+"");
-                        }else {
+                        if (vo.getExpid() == null || vo.getExpid().equals("0")) {
+                            v.setExpid(vo.getUid() + "");
+                        } else {
                             v.setExpid(vo.getExpid());
                         }
                         v.setSource(vo.getSource());
@@ -96,9 +124,9 @@ public class StartMain implements ApplicationRunner {
                     v.setId(vo.getId());
                     v.setSenddate(vo.getSenddate());
                     v.setChannel(vo.getChannel());
-                    if(vo.getExpid()==null||vo.getExpid().equals("0")){
-                        v.setExpid(vo.getUid()+"");
-                    }else {
+                    if (vo.getExpid() == null || vo.getExpid().equals("0")) {
+                        v.setExpid(vo.getUid() + "");
+                    } else {
                         v.setExpid(vo.getExpid());
                     }
                     v.setSource(vo.getSource());
@@ -110,9 +138,9 @@ public class StartMain implements ApplicationRunner {
         bufferedReader.close();
         LOGGER.info("===============start==============");
         ForkJoinPool myPool = new ForkJoinPool(8);
-        myPool.submit(()->   list.stream().parallel().forEach(v->{
-            int count=rptService.findHistory(v.getId());
-            if(count==0){
+        myPool.submit(() -> list.stream().parallel().forEach(v -> {
+            int count = rptService.findHistory(v.getId());
+            if (count == 0) {
                 LOGGER.info(JSON.toJSONString(v));
             }
         })).get();

@@ -17,6 +17,8 @@ public interface Mapper21 {
 
     int findHistory(long id);
 
+
+
     SendingVo findRptCode(long id);
 
     void saveHistory(SendingVo vo);
@@ -28,4 +30,8 @@ public interface Mapper21 {
     void batchInsertRpt(List<SendingVo> list);
 
     List<UserDayCount> getGhUserDayCount();
+
+    SendingVo findSendHistory21(long hisid);
+
+    SendingVo findWz21(SendingVo vo);
 }

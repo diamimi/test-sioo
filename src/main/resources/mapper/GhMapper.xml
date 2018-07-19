@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.gh.GhMapper">
+
+
+
+    <select id="findWz" resultType="com.pojo.SendingVo">
+        SELECT mobile,senddate from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and arrive_succ=0 and arrive_fail=0
+    </select>
+
+
+</mapper>

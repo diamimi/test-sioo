@@ -22,6 +22,12 @@
         sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180701
     </select>
 
+
+    <select id="findSendHistory21"  resultType="com.pojo.SendingVo">
+        SELECT content,id,mobile,uid,contentNum from sms_send_history_unknown where senddate&gt;=20180717000000 and senddate &lt;20180718000000 and id=#{hisid} limit 1
+    </select>
+
+
     <insert id="batchInsertHistory" parameterType="java.util.List">
         INSERT INTO sms_send_history_unknown (id,stype,mtype,senddate,uid,mobile,channel,content,contentNum,succ,fail,pid,expid,location,arrive_succ,arrive_fail,stat)
         VALUES
@@ -43,4 +49,9 @@
         </foreach>
     </insert>
 
+
+    <select id="findWz21" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT mobile,senddate,arrive_succ,arrive_fail from sms_send_history_unknown where senddate&gt;=#{senddate} and senddate &lt;(${senddate}+5) and mobile=#{mobile} and
+         arrive_fail=0 and arrive_succ>0  and uid=40058  limit 1
+    </select>
 </mapper>

@@ -24,7 +24,7 @@ import java.util.Map;
  * @Date:Create in 10:24 2018/7/16
  */
 @Configuration
-@MapperScan(basePackages = "com.mapper")
+@MapperScan(basePackages = "com.mapper**")
 public class MybatisConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(MybatisConfig.class);

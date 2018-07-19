@@ -5,9 +5,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +36,7 @@ public class ExcelTest {
 
     @Test
     public void excelToArea() throws Exception {
-        File xlsFile = new File("D:\\tuiguangti\\doc\\03_设计开发\\第三方网站对接\\云合景从\\地区+行业/地区信息_商虎.xlsx");
+        File xlsFile = new File("D:\\tuiguangti\\doc\\03_设计开发\\第三方网站对接\\天助网行业和地域信息匹配\\zone");
         InputStream is = new FileInputStream(xlsFile);
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
@@ -339,4 +337,21 @@ public class ExcelTest {
     }
 
 
+    /**
+     * tgj3级地域
+     * @throws Exception
+     */
+    @Test
+    public void ssa() throws Exception {
+        File file = new File("D:\\tuiguangti\\doc\\03_设计开发\\第三方网站对接\\天助网行业和地域信息匹配\\zone/金泉网_地域.txt");
+        InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");// 考虑到编码格式
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String sms = null;
+        while ((sms = bufferedReader.readLine()) != null) {
+            if (sms != null && !sms.equals("")) {
+
+            }
+            bufferedReader.close();
+        }
+    }
 }

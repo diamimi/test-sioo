@@ -7,23 +7,59 @@
       SELECT count(0) from sms_user_history_180715
     </select>
 
-    <select id="getHistory"  resultType="com.pojo.SendingVo">
+    <select id="getHistory" resultType="com.pojo.SendingVo">
         SELECT hisid ,senddate,mtype,uid,channel,mobile,content,contentNum,stat,rptcode ,rpttime FROM sms_user_history_180715 where  hisid &gt;=#{minHisid} and hisid  &lt;#{maxHisid}
     </select>
 
-    <select id="getRptcodeByRpt"  resultType="com.pojo.SendingVo">
+    <select id="getRptcodeByRpt" resultType="com.pojo.SendingVo">
         SELECT hisid ,uid,mtype,mobile,rptcode,rpttime,pid FROM sms_user_rpt_180715 where  hisid=#{id}
     </select>
 
-    <select id="getRptContent"  resultType="com.pojo.SendingVo">
+    <select id="getRptContent" resultType="com.pojo.SendingVo">
         SELECT content,contentNum FROM sms_user_batch_180715 where  pid=#{pid}
     </select>
 
 
-    <select id="getRptcodeByHistory"  resultType="com.pojo.SendingVo">
+    <select id="getRptcodeByHistory" resultType="com.pojo.SendingVo">
         SELECT contentNum,rptcode,rpttime,content,channel FROM sms_user_history_180715 where  hisid=#{id}
     </select>
 
 
+    <select id="findHistory114" resultType="com.pojo.SendingVo">
+       SELECT content,hisid,mobile,uid from sms_user_history_180717 where hisid=#{id}
+    </select>
+
+    <update id="updateHistory114" parameterType="com.pojo.SendingVo">
+    UPDATE sms_user_history_180717 set content=#{content},contentNum=#{contentNum} where hisid=#{hisid}
+</update>
+
+    <select id="findWz" resultType="com.pojo.SendingVo">
+        SELECT id,mobile,senddate from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and arrive_succ=0 and arrive_fail=0
+    </select>
+
+    <update id="updateGhHistory" parameterType="com.pojo.SendingVo">
+        UPDATE sms_send_history_backups set arrive_succ=#{arrive_succ},arrive_fail=#{arrive_fail} where  id=#{id}
+    </update>
+
+
+    <select id="findGhSucc" resultType="java.lang.Integer">
+        SELECT sum(contentNum) from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and uid=#{uid} and arrive_succ>0 and arrive_fail=0
+    </select>
+
+    <select id="findGhFail" resultType="java.lang.Integer">
+        SELECT sum(contentNum) from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and uid=#{uid} and arrive_fail>0 and arrive_succ=0
+    </select>
+
+    <select id="findGhTotal" resultType="java.lang.Integer">
+        SELECT sum(contentNum) from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and uid=#{uid}
+    </select>
+
+    <select id="findGhSubFail" resultType="java.lang.Integer">
+        SELECT sum(contentNum) from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and uid=#{uid} and fail>0
+    </select>
+
+    <select id="findFail" resultType="com.pojo.SendingVo">
+        SELECT id,mobile,senddate from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000  and arrive_fail>0 and arrive_succ=0
+    </select>
 
 </mapper>

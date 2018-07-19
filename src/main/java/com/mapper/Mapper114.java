@@ -27,4 +27,22 @@ public interface Mapper114 {
     SendingVo getRptcodeByHistory(long id);
 
     SendingVo getRptContent(long pid);
+
+    List<SendingVo> findHistory114(Long i);
+
+    void updateHistory114(SendingVo vo);
+
+    List<SendingVo> findWz();
+
+    void updateGhHistory(SendingVo vo);
+
+    Integer findGhSucc(String uid);
+
+    Integer findGhFail(String uid);
+
+    Integer findGhTotal(String uid);
+
+    Integer findGhSubFail(String uid);
+
+    List<SendingVo> findFail();
 }
