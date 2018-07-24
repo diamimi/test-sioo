@@ -2,6 +2,7 @@ package com;
 
 import com.pojo.SendingVo;
 import com.pojo.UserDayCount;
+import com.service.GhService;
 import com.service.RptService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -33,9 +34,18 @@ public class GhTest {
 
     private final static Logger log = LoggerFactory.getLogger(ExcelTest.class);
 
+    @Autowired
+    private GhService ghService;
+
 
     @Autowired
     private RptService rptService;
+
+    @Test
+    public void ss(){
+        List<SendingVo> wz = ghService.findWz();
+        System.out.println(wz.size());
+    }
 
 
     @Test
@@ -51,14 +61,6 @@ public class GhTest {
             }
         }
         )).get();
-     /*   for (SendingVo vo : list) {
-            SendingVo v = rptService.findWz21(vo);
-            if (v != null) {
-                if (v.getArrive_succ() > 0&&v.getArrive_fail()==0) {
-                    log.info("mobile:{},id:{},senddate:{}",vo.getMobile(),vo.getId(),vo.getSenddate());
-                }
-            }
-        }*/
     }
 
 
@@ -117,7 +119,6 @@ public class GhTest {
                     failNum = 0;
                 }
                 int wz = total - fail - succNum - failNum;
-
                 HSSFRow rowExport = exportsheet.createRow(i);
                 HSSFCell uidCell = rowExport.createCell(0);
                 uidCell.setCellValue(uid);
@@ -138,7 +139,6 @@ public class GhTest {
                 i++;
             }
         }
-
         FileOutputStream output = new FileOutputStream("d:/广汇2季度.xls");
         exportworkbook.write(output);
         output.flush();

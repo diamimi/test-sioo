@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.mapper21.UserDayCountMapper">
+
+    <select id="getUserDayCount"  resultType="com.pojo.UserDayCount">
+        SELECT c.uid uid,c.total total,c.fail fail,c.arrive_succ asucc,c.arrive_fail af,c.time time,u.username username,u.company company from
+        sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180001 and c.time &lt;20180701
+    </select>
+
+</mapper>

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class DataSourceAspect {
-    @Before("execution(* com.mapper.*.*(..))")
+    @Before("execution(* com.mapper..*.*(..))")
     public void setDataSourceKey(JoinPoint point){
         //连接点所属的类实例是ShopDao
         if(point.getTarget() instanceof Mapper21){

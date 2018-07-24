@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.mapper21.HistoryContentFor5Mapper">
+
+    <select id="findHistory" parameterType="com.pojo.HistoryContentFor5" resultType="com.pojo.HistoryContentFor5">
+        SELECT uid,content,pid from sms_history_content_for5
+        <where>
+            <if test="pid!=null and pid>0">
+                AND  pid=#{pid}
+            </if>
+            <if test="uid!=null and uid>0">
+                AND  uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                AND  senddate &gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                AND  senddate &lt;#{endtime}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateByCondition" parameterType="com.pojo.HistoryContentFor5">
+        UPDATE sms_history_content_for5
+        <set>
+          <if test="content!=null ">
+              content=#{content}
+          </if>
+        </set>
+        <where>
+            <if test="pid!=null and pid>0">
+                AND  pid=#{pid}
+            </if>
+            <if test="uid!=null and uid>0">
+                AND  uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                AND  senddate &gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                AND  senddate &lt;=#{endtime}
+            </if>
+        </where>
+    </update>
+
+
+</mapper>

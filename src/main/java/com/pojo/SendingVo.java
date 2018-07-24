@@ -8,6 +8,8 @@ public class SendingVo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+
+
 	/**
 	 * 7天,30天校验
 	 */
@@ -15,6 +17,12 @@ public class SendingVo implements Serializable {
 	private long id;
 	private int mtype; // 运营商
 	private long senddate; // 提交时间
+
+	private long starttime;
+
+	private long endtime;
+
+
 	private int uid; // 用户id
 	private Long mobile; // 接收号码
 	private int channel; // 发送通道
@@ -443,6 +451,22 @@ public class SendingVo implements Serializable {
 
 	public void setHisid(long hisid) {
 		this.hisid = hisid;
+	}
+
+	public long getStarttime() {
+		return starttime;
+	}
+
+	public void setStarttime(long starttime) {
+		this.starttime = starttime;
+	}
+
+	public long getEndtime() {
+		return endtime;
+	}
+
+	public void setEndtime(long endtime) {
+		this.endtime = endtime;
 	}
 }
 
