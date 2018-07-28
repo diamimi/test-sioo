@@ -41,7 +41,7 @@ public class UserDayCount  {
     }
 
     public Integer getFail() {
-        return fail;
+        return fail==null?0:fail;
     }
 
     public void setFail(Integer fail) {

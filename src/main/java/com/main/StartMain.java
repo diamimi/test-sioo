@@ -1,11 +1,13 @@
 package com.main;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.pojo.SendingBigVo;
 import com.pojo.SendingVo;
-import com.service.RptService;
+import com.service.SendHistory35Service;
+import com.service.SendHistoryService;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +15,9 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
@@ -30,13 +30,18 @@ public class StartMain implements ApplicationRunner {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StartMain.class);
 
+
     @Autowired
-    private RptService rptService;
+    private SendHistoryService sendHistoryService;
+
+    @Autowired
+    private SendHistory35Service sendHistory35Service;
+
 
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-       // ssa();
+       ssa();
     }
 
     /**
@@ -45,106 +50,82 @@ public class StartMain implements ApplicationRunner {
      * @throws Exception
      */
     public void ssa() throws Exception {
-        List<Long> list = new ArrayList<>();
-        for (long i = 589785737; i <= 594284104; i++) {
-            list.add(i);
+        //File file = new File("/home/sioowork/114/xiao.txt");
+        File file = new File("D:\\hq/xiao.txt");
+        InputStreamReader read = null;// 考虑到编码格式
+        try {
+            read = new InputStreamReader(new FileInputStream(file), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        LOGGER.info("============start====================");
-        final int[] k = {0};
+        BufferedReader bufferedReader = new BufferedReader(read);
+        String mobile = null;
+        List<String> mobiles = new ArrayList<>();
+        try {
+            while ((mobile = bufferedReader.readLine()) != null) {
+                if (mobile != null && mobile != "") {
+                    mobiles.add(mobile);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         ForkJoinPool myPool = new ForkJoinPool(8);
-        myPool.submit(() -> list.stream().parallel().forEach(i -> {
-                    List<SendingVo> sendingVos = rptService.findHistory114(i);
-                    if (sendingVos.size() > 0) {
-                        for (SendingVo sendingVo : sendingVos) {
-                            if (!hasStore(sendingVo.getContent())) {
-                                SendingVo vo = rptService.findSendHistory21(sendingVo.getHisid());
-                                if(vo!=null){
-                                    if (vo.getMobile().equals(sendingVo.getMobile())) {
-                                        LOGGER.info("mobile:{},hisid:{},content:{}" ,sendingVo.getMobile(),sendingVo.getHisid(),sendingVo.getContent());
-                                        sendingVo.setContent(vo.getContent());
-                                        sendingVo.setContentNum(vo.getContentNum());
-                                        rptService.updateHistory114(sendingVo);
-                                        k[0]++;
-
-                                    }
-                                }
-                            }
-                        }
+        myPool.submit(() -> mobiles.stream().parallel().forEach(i -> {
+                    SendingVo vo = new SendingVo();
+                    vo.setMobile(Long.parseLong(i));
+                    List<SendingVo> list = new ArrayList<>();
+                    List<SendingVo> historyAndRptcode21 = sendHistoryService.findHistoryAndRptcode(vo);
+                    for (SendingVo sendingVo : historyAndRptcode21) {
+                        list.add(sendingVo);
+                    }
+                    List<SendingVo> historyAndRptcode35 = sendHistory35Service.findHistoryAndRptcode(vo);
+                    for (SendingVo sendingVo : historyAndRptcode35) {
+                        list.add(sendingVo);
+                    }
+                    HSSFWorkbook workbook = new HSSFWorkbook();
+                    HSSFSheet sheet = workbook.createSheet("统计");
+                    HSSFRow r = sheet.createRow(0);
+                    HSSFCell uid0 = r.createCell(0);
+                    uid0.setCellValue("手机号");
+                    HSSFCell username0 = r.createCell(1);
+                    username0.setCellValue("内容");
+                    HSSFCell company0 = r.createCell(2);
+                    company0.setCellValue("发送时间");
+                    HSSFCell total0 = r.createCell(3);
+                    total0.setCellValue("回执状态");
+                    int k = 1;
+                    Collections.sort(list, (v1, v2) -> v1.getSenddate().compareTo(v2.getSenddate()));
+                    for (SendingVo sendingVo : list) {
+                        HSSFRow row = sheet.createRow(k);
+                        HSSFCell phone = row.createCell(0);
+                        phone.setCellValue(sendingVo.getMobile());
+                        HSSFCell content = row.createCell(1);
+                        content.setCellValue(sendingVo.getContent());
+                        HSSFCell senddate = row.createCell(2);
+                        senddate.setCellValue(sendingVo.getSenddate());
+                        HSSFCell rptcode = row.createCell(3);
+                        rptcode.setCellValue(sendingVo.getRptcode());
+                        k++;
+                    }
+                    try {
+                        FileOutputStream output = new FileOutputStream("D:\\hq/mobile/" + i + ".xls");
+                        workbook.write(output);
+                        output.flush();
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
         )).get();
-        LOGGER.info("============end====================," + k[0]);
+        LOGGER.info("===============END====================");
     }
 
     private boolean hasStore(String content) {
         return ((content.startsWith("【") && StringUtils.contains(content, "】")) || (content.endsWith("】") && StringUtils.contains(content, "【")));
     }
 
-    public void ss() throws Exception {
-        List<SendingVo> list = new ArrayList<>();
-        File file = new File("/home/sioowork/middle-service-logs/data.log.2018-07-15");
-        InputStreamReader read = new InputStreamReader(new FileInputStream(file), "utf-8");// 考虑到编码格式
-        BufferedReader bufferedReader = new BufferedReader(read);
-        String sms = null;
-        while ((sms = bufferedReader.readLine()) != null) {
-            sms = sms.trim();
-            if (sms != null && !sms.equals("")) {
-                String content = sms.substring(21);
-                SendingBigVo vo = JSON.parseObject(content, new TypeReference<SendingBigVo>() {
-                });
-                if (vo.getMobile().contains("-")) {
-                    String[] strings = vo.getMobile().split(",");
-                    for (String t : strings) {
-                        SendingVo v = new SendingVo();
-                        String phone = StringUtils.substringAfter(t, "-");
-                        String hisid = StringUtils.substringBefore(t, "-");
-                        v.setMobile(Long.valueOf(phone));
-                        v.setContent(vo.getContent());
-                        v.setUid(vo.getUid());
-                        v.setPid(vo.getPid());
-                        v.setId(Integer.valueOf(hisid));
-                        v.setSenddate(vo.getSenddate());
-                        v.setChannel(vo.getChannel());
-                        if (vo.getExpid() == null || vo.getExpid().equals("0")) {
-                            v.setExpid(vo.getUid() + "");
-                        } else {
-                            v.setExpid(vo.getExpid());
-                        }
-                        v.setSource(vo.getSource());
-                        v.setMtype(vo.getMtype());
-                        list.add(v);
-                    }
-                } else {
-                    SendingVo v = new SendingVo();
-                    String phone = vo.getMobile();
-                    v.setMobile(Long.valueOf(phone));
-                    v.setContent(vo.getContent());
-                    v.setUid(vo.getUid());
-                    v.setPid(vo.getPid());
-                    v.setId(vo.getId());
-                    v.setSenddate(vo.getSenddate());
-                    v.setChannel(vo.getChannel());
-                    if (vo.getExpid() == null || vo.getExpid().equals("0")) {
-                        v.setExpid(vo.getUid() + "");
-                    } else {
-                        v.setExpid(vo.getExpid());
-                    }
-                    v.setSource(vo.getSource());
-                    v.setMtype(vo.getMtype());
-                    list.add(v);
-                }
-            }
-        }
-        bufferedReader.close();
-        LOGGER.info("===============start==============");
-        ForkJoinPool myPool = new ForkJoinPool(8);
-        myPool.submit(() -> list.stream().parallel().forEach(v -> {
-            int count = rptService.findHistory(v.getId());
-            if (count == 0) {
-                LOGGER.info(JSON.toJSONString(v));
-            }
-        })).get();
-        LOGGER.info("===============end==============");
 
-    }
 }

@@ -27,8 +27,8 @@
     </settings>
 
     <typeAliases>
-      <!--  <package name="com.tuiguangti.manager.common.model"/>
-        <package name="com.tuiguangti.manager.security.model"/>
-        <package name="com.tuiguangti.manager.cust.model"/>-->
+        <package name="com.pojo"/>
     </typeAliases>
+
+
 </configuration>

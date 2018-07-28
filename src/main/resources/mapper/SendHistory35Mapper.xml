@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.mapper.mapper21.SendHistoryMapper">
+<mapper namespace="com.mapper.mapper35.SendHistory35Mapper">
 
     <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
         SELECT id,mtype,senddate,uid,mobile,channel,content,contentNum,pid,location from sms_send_history_unknown
@@ -30,7 +30,7 @@
 
     <select id="findHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
         SELECT DISTINCT h.content content,r.mobile mobile,h.senddate senddate,r.rptcode rptcode
-        from sms_rpt_backups r INNER JOIN sms_send_history_unknown h on r.hisid=h.id where h.mobile=#{mobile} and r.mobile=#{mobile}
+        from sms_rpt_backups r INNER JOIN sms_send_history_backups h on r.hisid=h.id where senddate&gt;=20170701000000 and h.mobile=#{mobile} and r.mobile=#{mobile}
     </select>
 
     <update id="updateByCondition" parameterType="com.pojo.SendingVo">

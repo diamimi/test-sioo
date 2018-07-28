@@ -1,6 +1,7 @@
 package com;
 
 import com.pojo.SendingVo;
+import com.pojo.SmsUser;
 import com.pojo.UserDayCount;
 import com.service.GhService;
 import com.service.RptService;
@@ -8,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,10 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 
@@ -82,8 +81,38 @@ public class GhTest {
 
 
     @Test
+    public void address() {
+        File xlsFile = new File("D:\\hq/机构配置.xlsx");
+        Workbook workbook = null;
+        try {
+            InputStream is = new FileInputStream(xlsFile);
+            workbook = WorkbookFactory.create(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+        }
+        Sheet sheet = workbook.getSheetAt(1);  //示意访问sheet
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            if (row != null) {
+                String username = row.getCell(0).getStringCellValue().trim();
+                SmsUser smsUser=new SmsUser();
+                smsUser.setUsername(username);
+                SmsUser u= ghService.findUser(smsUser);
+                if(u!=null){
+                    String address = row.getCell(1).getStringCellValue().trim();
+                    u.setAddress(address);
+                    u.setCity(row.getCell(7).getStringCellValue().trim());
+                    ghService.updateByCondition(u);
+                }
+            }
+        }
+    }
+
+    @Test
     public void readExcel() throws Exception {
-        File xlsFile = new File("d:/广汇2季度-7-19.xls");
+        File xlsFile = new File("D:\\hq/机构配置.xlsx");
         InputStream is = new FileInputStream(xlsFile);
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet

@@ -16,7 +16,7 @@ public class SendingVo implements Serializable {
 	private boolean longRepeatFlag=false;
 	private long id;
 	private int mtype; // 运营商
-	private long senddate; // 提交时间
+	private Long senddate; // 提交时间
 
 	private long starttime;
 
@@ -233,11 +233,11 @@ public class SendingVo implements Serializable {
 		this.mtype = mtype;
 	}
 
-	public long getSenddate() {
+	public Long getSenddate() {
 		return senddate;
 	}
 
-	public void setSenddate(long senddate) {
+	public void setSenddate(Long senddate) {
 		this.senddate = senddate;
 	}
 

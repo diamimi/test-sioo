@@ -1,6 +1,6 @@
 package com.service;
 
-import com.mapper.mapper21.SendHistoryMapper;
+import com.mapper.mapper35.SendHistory35Mapper;
 import com.pojo.SendingVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,20 +12,20 @@ import java.util.List;
  * @Date:Create in 10:32 2018/7/23
  */
 @Service
-public class SendHistoryService {
+public class SendHistory35Service {
 
     @Autowired
-    private SendHistoryMapper sendHistoryMapper;
+    private SendHistory35Mapper sendHistory35Mapper;
 
     public List<SendingVo> findByConditon(SendingVo vo){
-        return sendHistoryMapper.findHistory(vo);
+        return sendHistory35Mapper.findHistory(vo);
     }
 
     public void updateByCondition(SendingVo vo) {
-        sendHistoryMapper.updateByCondition(vo);
+        sendHistory35Mapper.updateByCondition(vo);
     }
 
     public List<SendingVo> findHistoryAndRptcode(SendingVo vo) {
-       return sendHistoryMapper.findHistoryAndRptcode(vo);
+        return sendHistory35Mapper.findHistoryAndRptcode(vo);
     }
 }

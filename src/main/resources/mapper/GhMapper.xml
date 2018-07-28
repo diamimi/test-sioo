@@ -8,5 +8,33 @@
         SELECT mobile,senddate from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and arrive_succ=0 and arrive_fail=0
     </select>
 
+    <select id="findUser" parameterType="user" resultType="user">
+        SELECT id,username from sms_user
+        <where>
+            <if test="username!=null ">
+                AND username=#{username}
+            </if>
+            <if test="id!=null and id>0">
+                AND  id=#{id}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateByCondition" parameterType="com.pojo.SmsUser">
+        UPDATE sms_user
+        <set>
+            <if test="address!=null ">
+                address=#{address},
+            </if>
+            <if test="city!=null ">
+                city=#{city},
+            </if>
+        </set>
+        <where>
+            <if test="id!=null and id>0">
+                AND  id=#{id}
+            </if>
+        </where>
+    </update>
 
 </mapper>
