@@ -4,7 +4,6 @@ import com.pojo.SendingVo;
 import com.service.SendHistory35Service;
 import com.service.SendHistoryService;
 import com.util.DateUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,10 +93,6 @@ public class StartMain implements ApplicationRunner {
                 }
         )).get();
         LOGGER.info("===============END====================");
-    }
-
-    private boolean hasStore(String content) {
-        return ((content.startsWith("【") && StringUtils.contains(content, "】")) || (content.endsWith("】") && StringUtils.contains(content, "【")));
     }
 
 
