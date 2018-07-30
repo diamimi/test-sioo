@@ -94,6 +94,4 @@ public class StartMain implements ApplicationRunner {
         )).get();
         LOGGER.info("===============END====================");
     }
-
-
 }
