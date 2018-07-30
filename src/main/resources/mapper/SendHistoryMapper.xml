@@ -29,8 +29,7 @@
 
 
     <select id="findHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT DISTINCT h.content content,r.mobile mobile,h.senddate senddate,r.rptcode rptcode
-        from sms_rpt_backups r INNER JOIN sms_send_history_unknown h on r.hisid=h.id where h.mobile=#{mobile} and r.mobile=#{mobile}
+         SELECT DISTINCT  content,mobile,senddate from smshy.sms_send_history_unknown  where  arrive_fail=0 and arrive_succ=0 and mobile=#{mobile}
     </select>
 
     <update id="updateByCondition" parameterType="com.pojo.SendingVo">

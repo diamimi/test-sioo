@@ -3,11 +3,8 @@ package com.main;
 import com.pojo.SendingVo;
 import com.service.SendHistory35Service;
 import com.service.SendHistoryService;
+import com.util.DateUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
@@ -38,10 +36,9 @@ public class StartMain implements ApplicationRunner {
     private SendHistory35Service sendHistory35Service;
 
 
-
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-       ssa();
+        ssa();
     }
 
     /**
@@ -78,46 +75,22 @@ public class StartMain implements ApplicationRunner {
                     vo.setMobile(Long.parseLong(i));
                     List<SendingVo> list = new ArrayList<>();
                     List<SendingVo> historyAndRptcode21 = sendHistoryService.findHistoryAndRptcode(vo);
-                    for (SendingVo sendingVo : historyAndRptcode21) {
-                        list.add(sendingVo);
-                    }
                     List<SendingVo> historyAndRptcode35 = sendHistory35Service.findHistoryAndRptcode(vo);
-                    for (SendingVo sendingVo : historyAndRptcode35) {
-                        list.add(sendingVo);
-                    }
-                    HSSFWorkbook workbook = new HSSFWorkbook();
-                    HSSFSheet sheet = workbook.createSheet("统计");
-                    HSSFRow r = sheet.createRow(0);
-                    HSSFCell uid0 = r.createCell(0);
-                    uid0.setCellValue("手机号");
-                    HSSFCell username0 = r.createCell(1);
-                    username0.setCellValue("内容");
-                    HSSFCell company0 = r.createCell(2);
-                    company0.setCellValue("发送时间");
-                    HSSFCell total0 = r.createCell(3);
-                    total0.setCellValue("回执状态");
-                    int k = 1;
-                    Collections.sort(list, (v1, v2) -> v1.getSenddate().compareTo(v2.getSenddate()));
-                    for (SendingVo sendingVo : list) {
-                        HSSFRow row = sheet.createRow(k);
-                        HSSFCell phone = row.createCell(0);
-                        phone.setCellValue(sendingVo.getMobile());
-                        HSSFCell content = row.createCell(1);
-                        content.setCellValue(sendingVo.getContent());
-                        HSSFCell senddate = row.createCell(2);
-                        senddate.setCellValue(sendingVo.getSenddate());
-                        HSSFCell rptcode = row.createCell(3);
-                        rptcode.setCellValue(sendingVo.getRptcode());
-                        k++;
-                    }
+                    list.addAll(historyAndRptcode21);
+                    list.addAll(historyAndRptcode35);
+                    Collections.sort(list, Comparator.comparing(SendingVo::getSenddate));
+                    PrintWriter out = null;
                     try {
-                        FileOutputStream output = new FileOutputStream("D:\\hq/mobile/" + i + ".xls");
-                        workbook.write(output);
-                        output.flush();
-                        output.close();
-                    } catch (IOException e) {
+                        out = new PrintWriter("D:\\hq/mobile/wz/" + i + ".txt");
+                    } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
+                    for (SendingVo sendingVo : list) {
+                        String s = sendingVo.getMobile() + "|" + sendingVo.getContent() + "|" + "-1" + "|" + DateUtils.getDay(sendingVo.getSenddate()) + "\r";
+                        out.write(s);
+                    }
+                    out.flush();
+                    out.close();
                 }
         )).get();
         LOGGER.info("===============END====================");

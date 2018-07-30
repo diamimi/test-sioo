@@ -1,8 +1,10 @@
 package com.config;
 
+import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
+import org.mybatis.spring.boot.autoconfigure.SpringBootVFS;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,7 @@ public class MybatisConfig {
 
     @Autowired
     private Environment env;
+
 
 
     @Bean(name = "database21")
@@ -70,6 +73,8 @@ public class MybatisConfig {
     @Bean
     public SqlSessionFactory sqlSessionFactory(@Qualifier("database21") DataSource myTestDbDataSource,
                                                @Qualifier("database114") DataSource myTestDb2DataSource) throws Exception{
+
+        VFS.addImplClass(SpringBootVFS.class);
         SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
         fb.setDataSource(this.dataSource(myTestDbDataSource, myTestDb2DataSource));
         fb.setTypeAliasesPackage(env.getProperty("mybatis.typeAliasesPackage"));
