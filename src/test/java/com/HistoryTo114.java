@@ -6,6 +6,7 @@ import com.pojo.SendingBigVo;
 import com.pojo.SendingVo;
 import com.pojo.UserDayCount;
 import com.service.RptService;
+import com.service.SendHistoryService114;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -34,6 +35,51 @@ public class HistoryTo114 {
 
     @Autowired
     private RptService rptService;
+
+    @Autowired
+    private SendHistoryService114 sendHistoryService114;
+
+    @Test
+    public void sss() throws Exception{
+        for (int i = 20180723; i <= 20180730; i++) {
+            String tableName=String.valueOf(i).substring(4);
+            SendingVo vo=new SendingVo();
+            vo.setUid(80171);
+            vo.setTableName(tableName);
+            List<SendingVo> list=sendHistoryService114.findHistory(vo);
+            HSSFWorkbook workbook = new HSSFWorkbook();
+            HSSFSheet sheet = workbook.createSheet("报表");
+            HSSFRow r = sheet.createRow(0);
+            HSSFCell mobile1=r.createCell(0);
+            mobile1.setCellValue("手机号");
+            HSSFCell content1=r.createCell(1);
+            content1.setCellValue("内容");
+            HSSFCell senddate1=r.createCell(2);
+            senddate1.setCellValue("发送时间");
+            HSSFCell rptcode1=r.createCell(3);
+            rptcode1.setCellValue("回执状态");
+            int k=1;
+            for(SendingVo v:list){
+                HSSFRow row = sheet.createRow(k);
+                HSSFCell mobile=row.createCell(0);
+                mobile.setCellValue(v.getMobile());
+                HSSFCell content=row.createCell(1);
+                content.setCellValue(v.getContent());
+                HSSFCell senddate=row.createCell(2);
+                senddate.setCellValue(v.getSenddate());
+                HSSFCell rptcode=row.createCell(3);
+                rptcode.setCellValue(v.getRptcode());
+                k++;
+            }
+            FileOutputStream output=new FileOutputStream("D:\\hq\\114/"+vo.getUid()+"_2018"+tableName+".xls");
+            workbook.write(output);
+            output.flush();
+            output.close();
+
+            
+        }
+
+    }
 
 
     @Test

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.mapper114.SendHistoryMapper114">
+
+
+    <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+       SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode
+        FROM sms_user_batch_18${tableName} b INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        WHERE b.uid = ${uid}
+    </select>
+
+</mapper>

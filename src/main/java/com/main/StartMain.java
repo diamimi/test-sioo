@@ -3,7 +3,6 @@ package com.main;
 import com.pojo.SendingVo;
 import com.service.SendHistory35Service;
 import com.service.SendHistoryService;
-import com.util.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ForkJoinPool;
 
@@ -37,7 +34,7 @@ public class StartMain implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-        ssa();
+        //  ssa();
     }
 
     /**
@@ -57,7 +54,7 @@ public class StartMain implements ApplicationRunner {
             e.printStackTrace();
         }
         BufferedReader bufferedReader = new BufferedReader(read);
-        String mobile = null;
+        String mobile;
         List<String> mobiles = new ArrayList<>();
         try {
             while ((mobile = bufferedReader.readLine()) != null) {
@@ -68,30 +65,21 @@ public class StartMain implements ApplicationRunner {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        PrintWriter out =new PrintWriter("D:\\hq/mobile/没记录.txt");
         ForkJoinPool myPool = new ForkJoinPool(8);
         myPool.submit(() -> mobiles.stream().parallel().forEach(i -> {
                     SendingVo vo = new SendingVo();
                     vo.setMobile(Long.parseLong(i));
-                    List<SendingVo> list = new ArrayList<>();
-                    List<SendingVo> historyAndRptcode21 = sendHistoryService.findHistoryAndRptcode(vo);
-                    List<SendingVo> historyAndRptcode35 = sendHistory35Service.findHistoryAndRptcode(vo);
-                    list.addAll(historyAndRptcode21);
-                    list.addAll(historyAndRptcode35);
-                    Collections.sort(list, Comparator.comparing(SendingVo::getSenddate));
-                    PrintWriter out = null;
-                    try {
-                        out = new PrintWriter("D:\\hq/mobile/wz/" + i + ".txt");
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
+                    int count21 = sendHistoryService.countHistoryAndRptcode(vo);
+                    int count35 = sendHistory35Service.countHistoryAndRptcode(vo);
+                    if (count21 == 0 && count35 == 0) {
+                        out.write(i + "\r\n");
                     }
-                    for (SendingVo sendingVo : list) {
-                        String s = sendingVo.getMobile() + "|" + sendingVo.getContent() + "|" + "-1" + "|" + DateUtils.getDay(sendingVo.getSenddate()) + "\r";
-                        out.write(s);
-                    }
-                    out.flush();
-                    out.close();
+
                 }
         )).get();
+        out.flush();
+        out.close();
         LOGGER.info("===============END====================");
     }
 }

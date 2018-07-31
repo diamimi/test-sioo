@@ -8,6 +8,7 @@ public class SendingVo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private String tableName;
 
 
 	/**
@@ -467,6 +468,14 @@ public class SendingVo implements Serializable {
 
 	public void setEndtime(long endtime) {
 		this.endtime = endtime;
+	}
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
 	}
 }
 

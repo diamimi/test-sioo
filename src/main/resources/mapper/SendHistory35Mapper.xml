@@ -33,6 +33,12 @@
          and arrive_fail=0 and arrive_succ=0 and mobile=#{mobile}
     </select>
 
+
+    <select id="countHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="java.lang.Integer">
+        SELECT count(0)   from sms_send_history_backups  where senddate&gt;=20170701000000 and mobile=#{mobile}
+    </select>
+
+
     <update id="updateByCondition" parameterType="com.pojo.SendingVo">
         UPDATE sms_send_history_unknown
         <set>

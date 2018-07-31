@@ -28,4 +28,8 @@ public class SendHistory35Service {
     public List<SendingVo> findHistoryAndRptcode(SendingVo vo) {
         return sendHistory35Mapper.findHistoryAndRptcode(vo);
     }
+
+    public int countHistoryAndRptcode(SendingVo vo) {
+      return   sendHistory35Mapper.countHistoryAndRptcode(vo);
+    }
 }

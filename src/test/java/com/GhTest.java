@@ -5,6 +5,8 @@ import com.pojo.SmsUser;
 import com.pojo.UserDayCount;
 import com.service.GhService;
 import com.service.RptService;
+import com.service.Store21Service;
+import com.service.StoreGhService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -40,10 +42,27 @@ public class GhTest {
     @Autowired
     private RptService rptService;
 
+    @Autowired
+    private StoreGhService storeGhService;
+
+    @Autowired
+    private Store21Service store21Service;
+
+
     @Test
     public void ss(){
-        List<SendingVo> wz = ghService.findWz();
-        System.out.println(wz.size());
+      List<String> ghList=  storeGhService.findList();
+
+      List<String> List21=  store21Service.findList();
+      int expend=4006921;
+        for (String s : ghList) {
+         if(!List21.contains(s)){
+             System.out.println("INSERT INTO `smshy`.`sms_user_signstore` ( `uid`, `store`, `expend`, `status`, `userstat`, " +
+                     "`signtime`, `addtime`, `type`, `channel`, `expendqd`, `expend2`, `userexpend`) VALUES" +
+                     " ( '40058', '"+s+"', '"+expend+"', '0', '1', NULL, '2018-06-30 17:08:48', '2', '0', NULL, '"+expend+"', '40058"+expend+"');");
+             expend++;
+         }
+        }
     }
 
 
@@ -222,5 +241,6 @@ public class GhTest {
         output.flush();
 
     }
+
 
 }

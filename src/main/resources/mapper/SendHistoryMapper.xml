@@ -6,54 +6,58 @@
         SELECT id,mtype,senddate,uid,mobile,channel,content,contentNum,pid,location from sms_send_history_unknown
         <where>
             <if test="content!=null ">
-                AND  content  LIKE "%"#{content}"%"
+                AND content LIKE "%"#{content}"%"
             </if>
             <if test="starttime!=null and starttime>0">
-                AND  senddate &gt;=#{starttime}
+                AND senddate &gt;=#{starttime}
             </if>
             <if test="endtime!=null and endtime>0">
-                AND  senddate &lt;#{endtime}
+                AND senddate &lt;#{endtime}
             </if>
             <if test="uid!=null and uid>0">
-                AND  uid=#{uid}
+                AND uid=#{uid}
             </if>
             <if test="mobile!=null and mobile>0">
-                AND  mobile=#{mobile}
+                AND mobile=#{mobile}
             </if>
             <if test="id!=null and id>0">
-                AND  id=#{id}
+                AND id=#{id}
             </if>
         </where>
     </select>
-
 
 
     <select id="findHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
          SELECT DISTINCT  content,mobile,senddate from smshy.sms_send_history_unknown  where  arrive_fail=0 and arrive_succ=0 and mobile=#{mobile}
     </select>
 
+
+    <select id="countHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="java.lang.Integer">
+        SELECT count(0)   from sms_send_history_unknown  where  mobile=#{mobile}
+    </select>
+
     <update id="updateByCondition" parameterType="com.pojo.SendingVo">
         UPDATE sms_send_history_unknown
         <set>
-          <if test="content!=null ">
-              content=#{content}
-          </if>
+            <if test="content!=null ">
+                content=#{content}
+            </if>
         </set>
         <where>
             <if test="id!=null and id>0">
-                AND  id=#{id}
+                AND id=#{id}
             </if>
             <if test="uid!=null and uid>0">
-                AND  uid=#{uid}
+                AND uid=#{uid}
             </if>
             <if test="mobile!=null and mobile>0">
-                AND  mobile=#{mobile}
+                AND mobile=#{mobile}
             </if>
             <if test="starttime!=null and starttime>0">
-                AND  senddate &gt;=#{starttime}
+                AND senddate &gt;=#{starttime}
             </if>
             <if test="endtime!=null and endtime>0">
-                AND  senddate &lt;#{endtime}
+                AND senddate &lt;#{endtime}
             </if>
         </where>
     </update>

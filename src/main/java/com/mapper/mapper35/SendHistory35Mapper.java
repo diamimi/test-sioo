@@ -17,4 +17,6 @@ public interface SendHistory35Mapper extends Mapper114 {
     void updateByCondition(SendingVo vo);
 
     List<SendingVo> findHistoryAndRptcode(SendingVo vo);
+
+    int countHistoryAndRptcode(SendingVo vo);
 }
