@@ -18,8 +18,8 @@
 
 
     <select id="getGhUserDayCount"  resultType="com.pojo.UserDayCount">
-        SELECT c.uid uid,c.total total,c.fail fail,c.arrive_succ asucc,c.arrive_fail af,c.time time,u.username username,u.company company from
-        sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180701
+        SELECT c.uid uid,c.total total,c.fail fail,c.arrive_succ asucc,c.arrive_fail af,c.time time,u.username username,u.company company,u.city city from
+       sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180701
     </select>
 
 

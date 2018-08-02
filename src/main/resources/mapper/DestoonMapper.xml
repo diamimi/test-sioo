@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.destoon.DestoonMapper">
+
+    <select id="findIndustryInfoList" resultType="industryInfo">
+        SELECT catid id,catname name,level,parentid parentId,arrchildid childId  from destoon_category order by catid
+    </select>
+
+    <select id="findIndustry" parameterType="Integer" resultType="industryInfo">
+        SELECT catid id,catname name,level,parentid parentId ,arrchildid childId  from destoon_category where catid=#{id}
+    </select>
+
+    <select id="findAreaList" resultType="area">
+        SELECT areaid,areaname,parentid from destoon_area ORDER BY areaid
+    </select>
+
+    <select id="findArea" parameterType="Integer" resultType="area">
+        SELECT areaid,areaname,parentid from destoon_area where areaid=#{areaid}
+    </select>
+
+
+
+
+</mapper>

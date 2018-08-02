@@ -195,7 +195,7 @@ public class GhTest {
 
     @Test
     public void exportExcel() throws Exception {
-        List<UserDayCount> list = rptService.getGhUserDayCount();
+        List<UserDayCount> list = ghService.getGhUserDayCount();
         Map<Integer, UserDayCount> map = new HashMap<>();
         for (UserDayCount userDayCount : list) {
             if (map.containsKey(userDayCount.getUid())) {
@@ -224,16 +224,18 @@ public class GhTest {
             username.setCellValue(u.getUsername());
             HSSFCell company = row.createCell(2);
             company.setCellValue(u.getCompany());
-            HSSFCell total = row.createCell(4);
+            HSSFCell total = row.createCell(3);
             total.setCellValue(u.getTotal());
-            HSSFCell fail = row.createCell(5);
+            HSSFCell fail = row.createCell(4);
             fail.setCellValue(u.getFail());
-            HSSFCell asucc = row.createCell(6);
+            HSSFCell asucc = row.createCell(5);
             asucc.setCellValue(u.getAsucc());
-            HSSFCell af = row.createCell(7);
+            HSSFCell af = row.createCell(6);
             af.setCellValue(u.getAf());
-            HSSFCell wz = row.createCell(8);
+            HSSFCell wz = row.createCell(7);
             wz.setCellValue(u.getWz());
+            HSSFCell city = row.createCell(8);
+            city.setCellValue(u.getCity());
             i++;
         }
         FileOutputStream output = new FileOutputStream("d:/广汇2季度.xls");

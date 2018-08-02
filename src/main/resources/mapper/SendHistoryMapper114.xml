@@ -4,9 +4,19 @@
 
 
     <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-       SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode
+       SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum
         FROM sms_user_batch_18${tableName} b INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
-        WHERE b.uid = ${uid}
+        <where>
+            <if test="uid!=null ">
+                AND b.uid=#{uid}
+            </if>
+            <if test="mobile!=null ">
+                AND r.mobile=#{mobile}
+            </if>
+            <if test="rptcode!=null ">
+                AND r.rptcode=#{rptcode}
+            </if>
+        </where>
     </select>
 
 </mapper>

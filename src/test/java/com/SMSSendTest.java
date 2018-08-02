@@ -1,11 +1,15 @@
 package com;
 
+import com.util.HttpClientUtil;
 import com.util.SmsUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @Author: HeQi
@@ -20,7 +24,16 @@ public class SMSSendTest {
 
     @Test
     public void send(){
-       String result= smsUtil.sendSms("【你我贷】尊敬的会员：凭身份证申请借款额度高至八千%,打开链接","18621367763");
+       String result= smsUtil.sendSms("【集借号】您的验证码为：123456，请妥善保管","18621367763");
+        System.out.println(result);
+    }
+
+    @Test
+    public void get(){
+        Map<String, String> param = new HashMap<>();
+        param.put("uid", "90006");
+        param.put("auth", "92800d2fadc2c229a8d87a6cd4f2644c");
+        String result = HttpClientUtil.doPost("http://47.96.75.8:9011/hy/rpt", param);
         System.out.println(result);
     }
 }

@@ -3,6 +3,7 @@ package com.service;
 import com.mapper.gh.GhMapper;
 import com.pojo.SendingVo;
 import com.pojo.SmsUser;
+import com.pojo.UserDayCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,5 +29,9 @@ public class GhService {
 
     public void updateByCondition(SmsUser u) {
           ghMapper.updateByCondition(u);
+    }
+
+    public List<UserDayCount> getGhUserDayCount() {
+        return ghMapper.getGhUserDayCount();
     }
 }

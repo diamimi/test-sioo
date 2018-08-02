@@ -24,6 +24,16 @@ public class UserDayCount  {
 
     private Integer time;
 
+    private String city;
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     public Integer getUid() {
         return uid;
     }

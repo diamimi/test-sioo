@@ -53,4 +53,20 @@ public class SmsUtil {
 
     }
 
+    public String get(String content, String mobile) {
+        Map<String, String> param = new HashMap<>();
+        param.put("uid", uid);
+        param.put("auth", auth);
+        param.put("expid", expid);
+        param.put("mobile", mobile);
+        try {
+            param.put("msg", java.net.URLEncoder.encode(content, "gbk"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String result = HttpClientUtil.doPost(url, param);
+        return result;
+
+    }
+
 }
