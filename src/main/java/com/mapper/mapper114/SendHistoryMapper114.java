@@ -13,4 +13,16 @@ import java.util.List;
 @Mapper
 public interface SendHistoryMapper114 extends Mapper114{
     List<SendingVo> findHistory(SendingVo vo);
+
+    List<SendingVo> findSingleHistory(SendingVo vo);
+
+    List<String> getContentList(SendingVo vo);
+
+    Integer getTotal(SendingVo vo);
+
+    Integer getSucc(SendingVo vo);
+
+    Integer getFail(SendingVo vo);
+
+    Integer getWz(SendingVo vo);
 }

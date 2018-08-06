@@ -26,6 +26,34 @@
         </where>
     </select>
 
+    <select id="export" resultType="com.pojo.SendingVo">
+        SELECT mobile,senddate from sms_send_history_unknown where senddate&gt;20180619000000 and senddate&lt;20180620000000 and uid=51110
+    </select>
+
+
+
+    <insert id="batchInsert" parameterType="java.util.List">
+        INSERT INTO sms_send_history_unknown (id,stype,mtype,senddate,uid,mobile,channel,content,contentNum,succ,fail,mtstat,pid,grade,
+        expid,location,arrive_succ,arrive_fail,stat)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.id},0,#{item.mtype},#{item.senddate},#{item.uid},#{item.mobile},#{item.channel},#{item.content},#{item.contentNum},
+            #{item.contentNum},0,'0',#{item.pid},0, #{item.expid},#{item.location},#{item.contentNum},0,1
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertHistory" parameterType="java.util.List">
+        INSERT INTO sms_send_history_unknown (id,stype,mtype,senddate,uid,mobile,channel,content,contentNum,succ,fail,mtstat,pid,grade,
+        expid,location,arrive_succ,arrive_fail,stat)
+        VALUES
+            (
+            #{id},0,#{mtype},#{senddate},#{uid},#{mobile},#{channel},#{content},#{contentNum},
+            #{contentNum},0,'0',#{pid},0, #{expid},#{location},#{contentNum},0,1
+            )
+    </insert>
+
 
     <select id="findHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
          SELECT DISTINCT  content,mobile,senddate from smshy.sms_send_history_unknown  where  arrive_fail=0 and arrive_succ=0 and mobile=#{mobile}
@@ -40,7 +68,7 @@
         UPDATE sms_send_history_unknown
         <set>
             <if test="content!=null ">
-                content=#{content}
+                content=#{content},
             </if>
         </set>
         <where>

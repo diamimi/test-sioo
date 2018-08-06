@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.mapper21.SmsUserSendingMapper">
+
+    <select id="findSmsUserSending" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT id,content,uid from smshy.sms_user_sending where uid=#{uid}
+    </select>
+
+
+    <select id="findList" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT 	h.id id,
+        h.content content,
+        h.contentNum contentNum,
+        h.mtype mtype, h.senddate senddate,
+        h.uid uid,
+        h.mobile mobile,
+        h.channel channel,
+        h.pid pid,
+        h.expid expid,h.stat stat,h.location location,h.grade grade from sms_send_history_unknown h INNER JOIN
+        sms_rpt_backups r on h.id=r.hisId where h.senddate&gt;#{starttime} and h.senddate&lt;#{endtime}
+        and r.rptcode=#{rptcode} and h.uid=#{uid}
+
+    </select>
+
+
+    <update id="updateSmsUserSending" parameterType="com.pojo.SendingVo">
+    UPDATE sms_user_sending set content=#{content},expid=#{expid} where id=#{id}
+</update>
+
+    <insert id="insertSmsUserSending" parameterType="com.pojo.SendingVo">
+        insert into smshy.sms_user_sending (mtype,senddate,uid,mobile,channel,content,content_num,stat,pid,grade,expid,remark,hisids,location,hand_stat)
+        VALUES (#{mtype},#{senddate},#{uid},#{mobile},#{channel},#{content},#{contentNum},0,#{pid},'0',#{expid},'',#{id},#{location},0)
+    </insert>
+
+</mapper>

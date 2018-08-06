@@ -31,7 +31,7 @@ public class DestoonTest {
 
     @Test
     public void industry() {
-        long baseid = 9000000001l-4l;
+        long baseid = 1025600000l-4l;
         int site_id = 10000;
         List<IndustryInfo> sort = new ArrayList<>();
         List<IndustryInfo> list = destoonService.findIndustryInfoList();
@@ -79,13 +79,13 @@ public class DestoonTest {
             contents.add(content);
         });
 
-        FilePrintUtil.getInstance().write("D:\\hq/yhby.txt", contents);
+        FilePrintUtil.getInstance().write("D:\\tuiguangti\\source\\tuiguangti\\db\\drag\\inc\\1.1.2/一呼万应行业.sql", contents,"utf-8");
     }
 
     @Test
     public void area(){
         int site_id = 10000;
-        long baseid=9000000001l-1l;
+        long baseid=1938100000l-1l;
         List<Area> sort = new ArrayList<>();
         List<Area> list = destoonService.findAreaList();
         for (Area area1 : list) {
@@ -134,6 +134,6 @@ public class DestoonTest {
             contents.add(content);
         });
 
-        FilePrintUtil.getInstance().write("D:\\hq/yhby_zone.txt", contents);
+        FilePrintUtil.getInstance().write("D:\\tuiguangti\\source\\tuiguangti\\db\\drag\\inc\\1.1.2/一呼万应地区.sql", contents,"utf-8");
     }
 }

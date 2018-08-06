@@ -1,6 +1,12 @@
 package com;
 
+import com.util.FilePrintUtil;
+import com.util.FileRead;
+import com.util.SequoiaDBUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.bson.BSONObject;
+import org.bson.BasicBSONObject;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +31,16 @@ public class ExcelTest {
 
     @Test
     public void aa() {
-        int start = 20180800;
-        for (int i = 0; i <= 30; i++) {
-            start = start + 1;
-            String sql = "alter table sms_send_history_backups add partition (partition phisotry_" + start + " values less than (" + start + "000000));";
-            log.info(sql);
-        }
+        List<String> contents = FileRead.getInstance().read("D:\\hq\\files/4.txt");
+        List<String> write = new ArrayList<>();
+        write.add("号码,内容,时间,状态");
+        contents.stream().forEach(
+                c -> {
+                    c = StringUtils.replace(c, "\t", ",");
+                    write.add(c);
+                }
+        );
+        FilePrintUtil.getInstance().write("D:\\hq\\files/4.csv", write, "GBK");
     }
 
 
@@ -339,6 +349,7 @@ public class ExcelTest {
 
     /**
      * tgj3级地域
+     *
      * @throws Exception
      */
     @Test
@@ -353,5 +364,16 @@ public class ExcelTest {
             }
             bufferedReader.close();
         }
+    }
+
+
+    @Test
+    public void sss() {
+        BSONObject where = new BasicBSONObject();
+        where.put("uid", 90253);
+        where.put("senddate", new BasicBSONObject("$gt", 20180805190000l));
+        where.put("senddate", new BasicBSONObject("$lt", 20180805200000l));
+        long count = SequoiaDBUtil.getInstance().count("sms_send_history_detail", where);
+        System.out.println(count);
     }
 }

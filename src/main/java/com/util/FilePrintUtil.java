@@ -1,7 +1,6 @@
 package com.util;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -18,11 +17,17 @@ public class FilePrintUtil {
         return FilePrintUtilHolder.filePrintUtil;
     }
 
-    public void write(String filename, List<String> list) {
+    public void write(String filename, List<String> list,String code) {
         try {
-            PrintWriter out =new PrintWriter(filename);
+            PrintWriter out = null;
+            OutputStream os = new FileOutputStream(filename);
+            try {
+                out = new PrintWriter(new OutputStreamWriter(os, code));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
             for (String t : list) {
-                out.write(t.toString()+"\r\n");
+                out.write(t.toString() + "\r\n");
             }
             out.flush();
             out.close();

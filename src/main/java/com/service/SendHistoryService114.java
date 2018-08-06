@@ -19,4 +19,28 @@ public class SendHistoryService114 {
     public List<SendingVo> findHistory( SendingVo vo) {
         return sendHistoryMapper114.findHistory(vo);
     }
+
+    public List<SendingVo> findSingleHistory(SendingVo vo) {
+        return sendHistoryMapper114.findSingleHistory(vo);
+    }
+
+    public List<String> getContentList(SendingVo vo) {
+       return sendHistoryMapper114.getContentList(vo);
+    }
+
+    public Integer getTotal(SendingVo vo) {
+        return sendHistoryMapper114.getTotal(vo);
+    }
+
+    public Integer getSucc(SendingVo vo) {
+        return sendHistoryMapper114.getSucc(vo);
+    }
+
+    public Integer getFail(SendingVo vo) {
+        return sendHistoryMapper114.getFail(vo);
+    }
+
+    public Integer getWz(SendingVo vo) {
+        return sendHistoryMapper114.getWz(vo);
+    }
 }

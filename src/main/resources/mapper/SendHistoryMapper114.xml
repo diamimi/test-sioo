@@ -4,7 +4,7 @@
 
 
     <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-       SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum
+        SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum
         FROM sms_user_batch_18${tableName} b INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
         <where>
             <if test="uid!=null ">
@@ -17,6 +17,105 @@
                 AND r.rptcode=#{rptcode}
             </if>
         </where>
+    </select>
+
+
+    <select id="findSingleHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+
+        SELECT mobile,content,senddate from sms_user_history_18${tableName}
+        <where>
+            <if test="uid!=null ">
+                AND uid=#{uid}
+            </if>
+            <if test="mobile!=null ">
+                AND mobile=#{mobile}
+            </if>
+            <if test="rptcode!=null ">
+                AND rptcode=#{rptcode}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getContentList" parameterType="com.pojo.SendingVo" resultType="String">
+
+        SELECT content from sms_user_batch_18${tableName} where uid=#{uid} GROUP BY content
+
+    </select>
+
+    <select id="getTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
+        SELECT
+        SUM(b.contentNum)
+        FROM
+        sms_user_batch_18${tableName} b
+        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        <where>
+            <if test="content!=null ">
+                AND b.content=#{content}
+            </if>
+            <if test="uid!=null ">
+                AND b.uid=#{uid}
+            </if>
+        </where>
+
+
+    </select>
+
+    <select id="getSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
+        SELECT
+        SUM(b.contentNum)
+        FROM
+        sms_user_batch_18${tableName} b
+        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        <where>
+            r.rptcode='DELIVRD'
+            <if test="content!=null ">
+                AND b.content=#{content}
+            </if>
+            <if test="uid!=null ">
+                AND b.uid=#{uid}
+            </if>
+        </where>
+
+
+    </select>
+
+    <select id="getFail" parameterType="com.pojo.SendingVo" resultType="Integer">
+        SELECT
+        SUM(b.contentNum)
+        FROM
+        sms_user_batch_18${tableName} b
+        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        <where>
+            r.rptcode!='-1' and r.rptcode!='DELIVRD'
+            <if test="content!=null ">
+                AND b.content=#{content}
+            </if>
+            <if test="uid!=null ">
+                AND b.uid=#{uid}
+            </if>
+        </where>
+
+
+    </select>
+
+    <select id="getWz" parameterType="com.pojo.SendingVo" resultType="Integer">
+        SELECT
+        SUM(b.contentNum)
+        FROM
+        sms_user_batch_18${tableName} b
+        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        <where>
+            r.rptcode='-1'
+            <if test="content!=null ">
+                AND b.content=#{content}
+            </if>
+            <if test="uid!=null ">
+                AND b.uid=#{uid}
+            </if>
+        </where>
+
+
     </select>
 
 </mapper>

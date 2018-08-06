@@ -1,13 +1,12 @@
 package com;
 
-import com.pojo.HistoryContentFor5;
+import com.csvreader.CsvWriter;
+import com.pojo.MobileArea;
 import com.pojo.SendingVo;
 import com.pojo.UserDayCount;
-import com.service.HistoryContentFor5Service;
-import com.service.SendHistory35Service;
-import com.service.SendHistoryService;
-import com.service.UserDayCountService;
-import org.apache.commons.lang.StringUtils;
+import com.service.*;
+import com.util.FileRead;
+import com.util.MyUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -21,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 
@@ -44,6 +44,9 @@ public class Test21 {
 
     @Autowired
     private HistoryContentFor5Service historyContentFor5Service;
+
+    @Autowired
+    private MobileAreaService21 mobileAreaService21;
 
     @Test
     public void sss() throws Exception {
@@ -117,8 +120,8 @@ public class Test21 {
     public void sla() {
         SendingVo sendingVo = new SendingVo();
         sendingVo.setUid(51089);
-        sendingVo.setStarttime(20180614000000L);
-        sendingVo.setEndtime(20180724000000L);
+        sendingVo.setStarttime(20180725000000L);
+        sendingVo.setEndtime(20180803000000L);
         List<SendingVo> list = sendHistoryService.findByConditon(sendingVo);
         int bwContentNum = 0;
         int smContentNum = 0;
@@ -134,22 +137,112 @@ public class Test21 {
     }
 
     @Test
-    public void sla1() {
-        HistoryContentFor5 sendingVo = new HistoryContentFor5();
-        sendingVo.setUid(90246);
-        sendingVo.setStarttime(20180720);
-        sendingVo.setEndtime(20180723);
-        List<HistoryContentFor5> list = historyContentFor5Service.findByConditon(sendingVo);
-        for (HistoryContentFor5 vo : list) {
-            HistoryContentFor5 v = new HistoryContentFor5();
-            String content = vo.getContent();
-            content = StringUtils.replace(content, "【淘达人】", "【秒白条】");
-            v.setContent(content);
-            v.setPid(vo.getPid());
-            v.setStarttime(20180720);
-            v.setEndtime(20180723);
-            historyContentFor5Service.updateByCondition(v);
+    public void charuhaoma() {
+        List<String> list = FileRead.getInstance().read("D:\\hq\\1/111.txt");
+        List<MobileArea> mobileAreaList = mobileAreaService21.findList();
+        Map<String, MobileArea> moMap = new HashMap<>();
+        mobileAreaList.stream().parallel().forEach((mo -> {
+            moMap.put(mo.getNumber(), mo);
+        }));
+        List<SendingVo> insertList = new ArrayList<>();
+        long id = 99;
+        for (String s : list) {
+            SendingVo vo = new SendingVo();
+            long mobile = Long.parseLong(s);
+            vo.setMobile(mobile);
+            vo.setUid(51110);
+            int mtype = MyUtils.checkMobileType(s);
+            String number = s.substring(0, 7);
+            String location = "全国";
+            if (moMap.get(number) != null) {
+                location = moMap.get(number).getProvince();
+            }
+            vo.setMtype(mtype);
+            vo.setLocation(location);
+            String date = this.senddate();
+            vo.setSenddate(Long.valueOf(date));
+            vo.setContent("【钱宝袋】恭喜您，钱宝袋为您授信10000信用额 度，微信关注：钱宝袋，即可申请取现。回T退订");
+            vo.setContentNum(1);
+            vo.setExpid("51110");
+            vo.setPid(1000);
+            int channel = 0;
+            if (mtype == 1) {
+                channel = 8;
+            } else if (mtype == 2) {
+                channel = 29;
+            } else if (mtype == 4) {
+                channel = 48;
+            }
+            vo.setChannel(channel);
+            vo.setId(id);
+            insertList.add(vo);
+            id++;
         }
+        if (insertList.size() > 300) {
+            int limitSize = 300;
+            int part = insertList.size() / limitSize;
+            for (int i = 0; i < part; i++) {
+                List<SendingVo> subList = insertList.subList(0, limitSize);
+                sendHistoryService.batchInsert(subList);
+                insertList.subList(0, limitSize).clear();
+            }
+            if (!insertList.isEmpty()) {
+                sendHistoryService.batchInsert(insertList);
+            }
+        } else {
+            sendHistoryService.batchInsert(insertList);
+        }
+
+    }
+
+    @Test
+    public void ss() throws Exception {
+
+        try {
+            log.info("===========start=================");
+            List<SendingVo> sendingVos = sendHistoryService.export();
+            log.info("===========开始插入数据=================");
+            CsvWriter csvWriter = new CsvWriter("D:\\hq\\files/0619.csv", ',', Charset.forName("GBK"));
+            String[] titel = new String[3];
+            titel[0] = "号码";
+            titel[1] = "内容";
+            titel[2] = "时间";
+            csvWriter.writeRecord(titel);
+            for (SendingVo sendingVo : sendingVos) {
+                sendingVo.setContent("【钱宝袋】恭喜您，钱宝袋为您授信10000信用额 度，微信关注：钱宝袋，即可申请取现。回T退订");
+                String[] contents = new String[3];
+                contents[0] = String.valueOf(sendingVo.getMobile());
+                contents[1] = sendingVo.getContent();
+                contents[2] = String.valueOf(sendingVo.getSenddate());
+                csvWriter.writeRecord(contents);
+            }
+            csvWriter.close();
+            log.info("============END=================");
+        } catch (IOException e) {
+            e.printStackTrace();
+            log.error(e.getMessage());
+        }
+    }
+
+    public String senddate() {
+        Random random = new Random();
+        int min = random.nextInt(60);
+        String minstr = "";
+        if (min < 10) {
+            minstr = "0" + min;
+        } else {
+            minstr = min + "";
+        }
+
+        int sec = random.nextInt(60);
+        String secstr = "";
+        if (sec < 10) {
+            secstr = "0" + sec;
+        } else {
+            secstr = sec + "";
+        }
+        String date = "2018061909" + minstr + secstr;
+        return date;
     }
 
     @Test
@@ -289,6 +382,6 @@ public class Test21 {
                     }
                 }
         )).get();
-    log.info("===============END====================");
+        log.info("===============END====================");
     }
 }

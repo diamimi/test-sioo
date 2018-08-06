@@ -32,4 +32,16 @@ public class SendHistoryService {
     public int countHistoryAndRptcode(SendingVo vo) {
       return   sendHistoryMapper.countHistoryAndRptcode(vo);
     }
+
+    public void batchInsert(List<SendingVo> subList) {
+        sendHistoryMapper.batchInsert(subList);
+    }
+
+    public void insertHistory(SendingVo vo) {
+        sendHistoryMapper.insertHistory(vo);
+    }
+
+    public List<SendingVo> export() {
+      return   sendHistoryMapper.export();
+    }
 }
