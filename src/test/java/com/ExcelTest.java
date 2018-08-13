@@ -2,6 +2,7 @@ package com;
 
 import com.util.FilePrintUtil;
 import com.util.FileRead;
+import com.util.RangeRandom;
 import com.util.SequoiaDBUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -12,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by morrigan on 2017/6/7.
@@ -25,8 +23,59 @@ public class ExcelTest {
     private static Logger log = LoggerFactory.getLogger(ExcelTest.class);
 
     @Test
+    public void ss() {
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            int l = random.nextInt(3);
+            System.out.println(l);
+        }
+
+    }
+
+    @Test
     public void single() {
-        System.out.println("aaaaa");
+        int num = 0;
+        List<Integer> mobiles1 = new ArrayList<>(10000000);
+        List<Integer> mobiles2 = new ArrayList<>(10000000);
+        List<Integer> mobiles3 = new ArrayList<>(10000000);
+        Random random = new Random();
+        PrintWriter out = null;
+        try {
+            OutputStream os = new FileOutputStream("D:\\hq\\files/mobiles.txt");
+            out = new PrintWriter(new OutputStreamWriter(os, "utf-8"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        while (num <= 10000000) {
+            int i = random.nextInt(3);
+            int l = 0;
+            if (i == 0) {
+                l = RangeRandom.getInstance().getRangeRandom(300000000, 400000000 - 1);
+                if (mobiles1.contains(l)) {
+                    continue;
+                }
+                mobiles1.add(l);
+            } else if (i == 1) {
+                l = RangeRandom.getInstance().getRangeRandom(500000000, 600000000 - 1);
+                if (mobiles2.contains(l)) {
+                    continue;
+                }
+                mobiles2.add(l);
+            } else if (i == 2) {
+                l = RangeRandom.getInstance().getRangeRandom(800000000, 900000000 - 1);
+                if (mobiles3.contains(l)) {
+                    continue;
+                }
+                mobiles3.add(l);
+            }
+
+            String s = "1" + String.valueOf(l) + random.nextInt(10);
+            FilePrintUtil.getInstance().writeLine(out, s);
+            num++;
+        }
+        out.flush();
+        out.close();
+
     }
 
     @Test
@@ -375,5 +424,11 @@ public class ExcelTest {
         where.put("senddate", new BasicBSONObject("$lt", 20180805200000l));
         long count = SequoiaDBUtil.getInstance().count("sms_send_history_detail", where);
         System.out.println(count);
+    }
+
+    @Test
+    public void sa() {
+        String con = "【互贷网】五周年狂欢，百万京东卡8月送不停，8/10-8/12连享三天会员日，感恩回馈全场最高加息3%+京东卡返利1%，错过再等一年！回T退订";
+        System.out.println(con.length());
     }
 }

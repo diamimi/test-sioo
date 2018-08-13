@@ -19,6 +19,8 @@ public class FilePrintUtil {
 
     public void write(String filename, List<String> list,String code) {
         try {
+            File f=new File(filename);
+            f.delete();
             PrintWriter out = null;
             OutputStream os = new FileOutputStream(filename);
             try {
@@ -32,6 +34,14 @@ public class FilePrintUtil {
             out.flush();
             out.close();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void writeLine(PrintWriter out, String line) {
+        try {
+                out.write(line + "\r\n");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
