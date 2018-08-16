@@ -43,5 +43,9 @@
         </where>
     </update>
 
+    <insert id="add" parameterType="com.pojo.SendingVo">
+        INSERT INTO sms_history_content_for5 (pid,senddate,content,uid) VALUES (#{pid},#{senddate},#{content},#{uid})
+    </insert>
+
 
 </mapper>

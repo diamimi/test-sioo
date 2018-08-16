@@ -51,7 +51,7 @@ public class ChannelDaifa {
     @Test
     public void daifa() throws Exception {
         Map<Long, DeliverVo> daifa = new HashMap<>();
-        List<String> daifaList = FileRead.getInstance().read("D:\\hq/1111.txt");
+        List<String> daifaList = FileRead.getInstance().read("D:\\hq/1111.txt","");
         for (String s : daifaList) {
             s = "{" + StringUtils.substringAfter(s, "{");
             JSONObject parse = JSONObject.parseObject(s);
@@ -76,7 +76,7 @@ public class ChannelDaifa {
             daifa.put(deliver.getMsgId(), deliver);
         }
         Map<Long, String> resMap = new HashMap<>();
-        List<String> resp = FileRead.getInstance().read("D:\\hq/222.txt");
+        List<String> resp = FileRead.getInstance().read("D:\\hq/222.txt","");
         for (String content : resp) {
             content = StringUtils.substringAfter(content, "[rpt ok]");
             String[] split = content.split(",");
@@ -122,7 +122,7 @@ public class ChannelDaifa {
         where.put("senddate", new BasicBSONObject("$lt", 20180803070000l));
         where.put("arrsucc", 0);
         List<BSONObject> list = SequoiaDBUtil.getInstance().find("sms_send_history_detail", where);
-        List<String> rptList = FileRead.getInstance().read("D:\\hq\\files/gd.txt");
+        List<String> rptList = FileRead.getInstance().read("D:\\hq\\files/gd.txt","");
         Map<String, List<DeliverVo>> rptcodeMap = new HashMap<>();
         rptList.stream().forEach(r -> {
             r = "{" + StringUtils.substringAfter(r, " - {");

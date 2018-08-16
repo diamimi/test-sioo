@@ -1,12 +1,12 @@
 package com;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.csvreader.CsvWriter;
-import com.pojo.MobileArea;
-import com.pojo.SendingVo;
-import com.pojo.UserDayCount;
+import com.pojo.*;
 import com.service.*;
-import com.util.FileRead;
-import com.util.MyUtils;
+import com.util.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -42,11 +42,44 @@ public class Test21 {
     @Autowired
     private UserDayCountService userDayCountService;
 
+
+    @Autowired
+    private MobileAreaService21 mobileAreaService21;
+
     @Autowired
     private HistoryContentFor5Service historyContentFor5Service;
 
     @Autowired
-    private MobileAreaService21 mobileAreaService21;
+    private StoreUtil storeUtil;
+
+    @Autowired
+    private SmsUserUtil smsUserUtil;
+
+
+    /**
+     * 根据日志回复记录
+     */
+    @Test
+    public void logToContentFor5(){
+        storeUtil.loadUserSign(null,null);
+        smsUserUtil.loadUser();
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/data.log","utf-8");
+        read.stream().forEach(s->{
+            s="{"+ StringUtils.substringAfter(s," - {");
+            SendingBigVo vo = JSON.parseObject(s, new TypeReference<SendingBigVo>() {});
+            SmsUser smsUser = SmsCache.USER.get(vo.getUid());
+            String content=vo.getContent();
+            if(!StoreUtil.hasStore(vo.getContent())){
+                 content=storeUtil.addSign(vo.getContent(),vo.getUid(),smsUser.getSignPosition(),smsUser.getUsertype());
+            }
+            SendingVo v=new SendingVo();
+            v.setContent(content);
+            v.setUid(vo.getUid());
+            v.setSenddate(20180816l);
+            v.setPid(vo.getPid());
+            historyContentFor5Service.add(v);
+        });
+    }
 
     @Test
     public void sss() throws Exception {
@@ -138,7 +171,7 @@ public class Test21 {
 
     @Test
     public void charuhaoma() {
-        List<String> list = FileRead.getInstance().read("D:\\hq\\1/111.txt");
+        List<String> list = FileRead.getInstance().read("D:\\hq\\1/111.txt","");
         List<MobileArea> mobileAreaList = mobileAreaService21.findList();
         Map<String, MobileArea> moMap = new HashMap<>();
         mobileAreaList.stream().parallel().forEach((mo -> {

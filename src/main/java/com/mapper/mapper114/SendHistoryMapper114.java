@@ -25,4 +25,6 @@ public interface SendHistoryMapper114 extends Mapper114{
     Integer getFail(SendingVo vo);
 
     Integer getWz(SendingVo vo);
+
+    Integer getSingleTotal(SendingVo vo);
 }

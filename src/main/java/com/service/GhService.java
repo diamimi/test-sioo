@@ -34,4 +34,28 @@ public class GhService {
     public List<UserDayCount> getGhUserDayCount() {
         return ghMapper.getGhUserDayCount();
     }
+
+    public Integer getTotal(SendingVo vo) {
+        return ghMapper.getTotal(vo);
+    }
+
+    public Integer getSucc(SendingVo vo) {
+        return ghMapper.getSucc(vo);
+    }
+
+    public Integer getFail(SendingVo vo) {
+        return ghMapper.getFail(vo);
+    }
+
+    public Integer getWz(SendingVo vo) {
+        return ghMapper.getWz(vo);
+    }
+
+    public List<SendingVo> getHistorySucc(SendingVo vo) {
+        return ghMapper.getHistorySucc(vo);
+    }
+
+    public List<SmsUser> findUserList(SmsUser smsUser) {
+        return ghMapper.findUserList(smsUser);
+    }
 }

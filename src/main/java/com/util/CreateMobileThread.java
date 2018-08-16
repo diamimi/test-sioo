@@ -3,10 +3,7 @@ package com.util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * @Author: HeQi
@@ -15,45 +12,39 @@ import java.util.concurrent.TimeUnit;
 public class CreateMobileThread implements Runnable {
 
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateMobileThread.class);
 
 
-    private static byte[] lock = new byte[0];
-
-
     public static void main(String[] args) throws Exception {
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
-        for (int i = 0; i < 10; i++) {
-            fixedThreadPool.execute(new CreateMobileThread());
-        }
-        fixedThreadPool.shutdown();
         LOGGER.info("======================start==================");
-        while (!fixedThreadPool.awaitTermination(2, TimeUnit.SECONDS)) {
+        ExecutorService fixedThreadPool = new ThreadPoolExecutor(5, 10, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+        for (int i = 0; i < 10; i++) {
+            fixedThreadPool.submit(new CreateMobileThread()).get();
         }
+
+        FilePrintUtil.getInstance().write("D:\\hq\\files/mobile.txt", Cache.mobiles, "utf-8");
+        fixedThreadPool.shutdown();
         LOGGER.info("=================end================");
-        FilePrintUtil.getInstance().write("D:\\hq\\files/mobile.txt", Cache.outs, "utf-8");
     }
 
 
     @Override
     public void run() {
-        Random random = new Random();
         while (true) {
-            //synchronized (lock) {
-                if (Cache.count >= 300000) {
-                    break;
-                }
-                int l = RangeRandom.getInstance().getRangeRandom(300000000, 400000000 - 1);
-                if (!Cache.mobiles.contains(l)) {
-                    Cache.mobiles.add(l);
-                } else {
-                    continue;
-                }
-                String s = "1" + String.valueOf(l) + random.nextInt(10);
-                Cache.outs.add(s);
-                Cache.count++;
-       //     }
+            if (Cache.mobiles.size() >= 10000000) {
+                break;
+            }
+            int i = ThreadLocalRandom.current().nextInt(3);
+            int l = 0;
+            if (i == 0) {
+                l = RangeRandom.getInstance().getRangeRandom(300000000, 400000000 - 1);
+            } else if (i == 1) {
+                l = RangeRandom.getInstance().getRangeRandom(500000000, 600000000 - 1);
+            } else if (i == 2) {
+                l = RangeRandom.getInstance().getRangeRandom(800000000, 900000000 - 1);
+            }
+            String s = "1" + String.valueOf(l) + RangeRandom.getInstance().getRangeRandom(0, 9);
+            Cache.mobiles.add(s);
         }
 
     }

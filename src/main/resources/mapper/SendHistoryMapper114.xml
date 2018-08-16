@@ -4,7 +4,7 @@
 
 
     <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum
+        SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum,r.rpttime rpttime,r.pid pid
         FROM sms_user_batch_18${tableName} b INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
         <where>
             <if test="uid!=null ">
@@ -56,6 +56,9 @@
             </if>
             <if test="uid!=null ">
                 AND b.uid=#{uid}
+            </if>
+            <if test="rptcode!=null ">
+                AND r.rptcode=#{rptcode}
             </if>
         </where>
 
@@ -115,8 +118,24 @@
                 AND b.uid=#{uid}
             </if>
         </where>
-
-
     </select>
 
+
+    <select id="getSingleTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
+        SELECT
+        sum(contentNum)
+        FROM
+        sms_user_history_18${tableName}
+        <where>
+            <if test="content!=null ">
+                AND content like "%"#{content}"%"
+            </if>
+            <if test="uid!=null ">
+                AND uid=#{uid}
+            </if>
+            <if test="rptcode!=null ">
+                AND rptcode=#{rptcode}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -43,4 +43,8 @@ public class SendHistoryService114 {
     public Integer getWz(SendingVo vo) {
         return sendHistoryMapper114.getWz(vo);
     }
+
+    public Integer getSingleTotal(SendingVo vo) {
+        return sendHistoryMapper114.getSingleTotal(vo);
+    }
 }

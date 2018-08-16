@@ -21,4 +21,16 @@ public interface GhMapper extends Mapper114 {
     void updateByCondition(SmsUser u);
 
     List<UserDayCount> getGhUserDayCount();
+
+    Integer getTotal(SendingVo vo);
+
+    Integer getSucc(SendingVo vo);
+
+    Integer getFail(SendingVo vo);
+
+    Integer getWz(SendingVo vo);
+
+    List<SendingVo> getHistorySucc(SendingVo vo);
+
+    List<SmsUser> findUserList(SmsUser smsUser);
 }

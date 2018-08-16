@@ -1,8 +1,8 @@
 package com.util;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @Author: HeQi
@@ -10,9 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Cache {
 
-   public static List<Integer> mobiles = new CopyOnWriteArrayList<>();
-   public static List<String> outs = new CopyOnWriteArrayList<>();
-   public static  AtomicInteger  num = new AtomicInteger(0);
+   public static Set<String> mobiles =  Collections.synchronizedSet(new HashSet<>(300000));
 
-    public static int count = 0;
 }

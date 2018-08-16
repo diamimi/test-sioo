@@ -21,10 +21,10 @@ public class FileRead {
         return FilePrintUtilHolder.filePrintUtil;
     }
 
-    public List<String> read(String filename) {
+    public List<String> read(String filename,String code) {
         List<String> list = new ArrayList<>();
         try {
-            InputStreamReader read = new InputStreamReader(new FileInputStream(filename), "GBK");// 考虑到编码格式
+            InputStreamReader read = new InputStreamReader(new FileInputStream(filename), code);// 考虑到编码格式
             BufferedReader bufferedReader = new BufferedReader(read);
             String sms = null;
             while ((sms = bufferedReader.readLine()) != null) {

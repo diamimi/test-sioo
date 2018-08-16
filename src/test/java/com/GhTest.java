@@ -1,17 +1,16 @@
 package com;
 
 import com.pojo.SendingVo;
-import com.pojo.SmsUser;
 import com.pojo.UserDayCount;
 import com.service.GhService;
 import com.service.RptService;
 import com.service.Store21Service;
 import com.service.StoreGhService;
+import com.util.FilePrintUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 
@@ -50,37 +52,36 @@ public class GhTest {
 
 
     @Test
-    public void ss(){
-      List<String> ghList=  storeGhService.findList();
+    public void ss() {
+        List<String> ghList = storeGhService.findList();
 
-      List<String> List21=  store21Service.findList();
-      int expend=4006921;
+        List<String> List21 = store21Service.findList();
+        int expend = 4006921;
         for (String s : ghList) {
-         if(!List21.contains(s)){
-             System.out.println("INSERT INTO `smshy`.`sms_user_signstore` ( `uid`, `store`, `expend`, `status`, `userstat`, " +
-                     "`signtime`, `addtime`, `type`, `channel`, `expendqd`, `expend2`, `userexpend`) VALUES" +
-                     " ( '40058', '"+s+"', '"+expend+"', '0', '1', NULL, '2018-06-30 17:08:48', '2', '0', NULL, '"+expend+"', '40058"+expend+"');");
-             expend++;
-         }
+            if (!List21.contains(s)) {
+                System.out.println("INSERT INTO `smshy`.`sms_user_signstore` ( `uid`, `store`, `expend`, `status`, `userstat`, " +
+                        "`signtime`, `addtime`, `type`, `channel`, `expendqd`, `expend2`, `userexpend`) VALUES" +
+                        " ( '40058', '" + s + "', '" + expend + "', '0', '1', NULL, '2018-06-30 17:08:48', '2', '0', NULL, '" + expend + "', '40058" + expend + "');");
+                expend++;
+            }
         }
     }
 
 
     @Test
-    public void sss1() throws Exception{
+    public void sss1() throws Exception {
         List<SendingVo> list = rptService.findFail();
         ForkJoinPool myPool = new ForkJoinPool(8);
         myPool.submit(() -> list.stream().parallel().forEach(vo -> {
-            SendingVo v = rptService.findWz21(vo);
-            if (v != null) {
-                if (v.getArrive_succ() > 0&&v.getArrive_fail()==0) {
-                    log.info("mobile:{},id:{},senddate:{}",vo.getMobile(),vo.getId(),vo.getSenddate());
+                    SendingVo v = rptService.findWz21(vo);
+                    if (v != null) {
+                        if (v.getArrive_succ() > 0 && v.getArrive_fail() == 0) {
+                            log.info("mobile:{},id:{},senddate:{}", vo.getMobile(), vo.getId(), vo.getSenddate());
+                        }
+                    }
                 }
-            }
-        }
         )).get();
     }
-
 
 
     @Test
@@ -98,36 +99,6 @@ public class GhTest {
         }
     }
 
-
-    @Test
-    public void address() {
-        File xlsFile = new File("D:\\hq/机构配置.xlsx");
-        Workbook workbook = null;
-        try {
-            InputStream is = new FileInputStream(xlsFile);
-            workbook = WorkbookFactory.create(is);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InvalidFormatException e) {
-            e.printStackTrace();
-        }
-        Sheet sheet = workbook.getSheetAt(1);  //示意访问sheet
-        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
-            Row row = sheet.getRow(rowNum);
-            if (row != null) {
-                String username = row.getCell(0).getStringCellValue().trim();
-                SmsUser smsUser=new SmsUser();
-                smsUser.setUsername(username);
-                SmsUser u= ghService.findUser(smsUser);
-                if(u!=null){
-                    String address = row.getCell(1).getStringCellValue().trim();
-                    u.setAddress(address);
-                    u.setCity(row.getCell(7).getStringCellValue().trim());
-                    ghService.updateByCondition(u);
-                }
-            }
-        }
-    }
 
     @Test
     public void readExcel() throws Exception {
@@ -157,7 +128,7 @@ public class GhTest {
                 if (fail == null) {
                     fail = 0;
                 }
-                Integer total=rptService.findGhTotal(uid);
+                Integer total = rptService.findGhTotal(uid);
                 Integer succNum = rptService.findGhSucc(uid);
                 Integer failNum = rptService.findGhFail(uid);
                 if (succNum == null) {
@@ -242,6 +213,31 @@ public class GhTest {
         workbook.write(output);
         output.flush();
 
+    }
+
+    @Test
+    public void countByDay() {
+        String title = "号码,批次,时间,条数";
+        List<String> outs = new ArrayList<>();
+        outs.add(title);
+        SendingVo vo = new SendingVo();
+        int uid = 10173;
+        String filename = "GH090";
+        vo.setUid(uid);
+        long start = 20180615;
+        long end = start + 1;
+        vo.setStarttime(start * 1000000l);
+        vo.setEndtime(end * 1000000l);
+        List<SendingVo> list = ghService.getHistorySucc(vo);
+        list.stream().forEach(v -> {
+        /*    String c = StringUtils.remove(v.getContent(), "\r");
+            c = StringUtils.remove(c, "\n");
+            c = StringUtils.remove(c, "\t");
+            c = StringUtils.replace(c, ",", ".");*/
+            String content = v.getMobile() + "," + v.getPid() + "," + v.getSenddate() + "," + v.getContentNum();
+            outs.add(content);
+        });
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
     }
 
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.mapper21.SmsUserMapper">
+    <select id="loadUser" resultType="com.pojo.SmsUser">
+        SELECT
+        id,username,pwd,dpwd,phone,unicom,telecom,mobile,sms,stat,isRelease,proxyip,replyn,repeatfilter,
+        expidSign,signPosition,userkind,usertype,repeatFilter,repeatNum,repeatFilter2,repeatNum2,childFun,
+        releaseNum,blackAll,repeatSign,repeatSignNum,apiRpt
+        FROM
+        smshy.sms_user
+        LEFT JOIN smshy.sms_user_control ON smshy.sms_user.id = smshy.sms_user_control.uid
+    </select>
+
+
+
+</mapper>

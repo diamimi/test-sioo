@@ -25,4 +25,8 @@ public class HistoryContentFor5Service {
     public void updateByCondition(HistoryContentFor5 vo) {
         historyContentFor5Mapper.updateByCondition(vo);
     }
+
+    public void add(SendingVo v) {
+        historyContentFor5Mapper.add(v);
+    }
 }

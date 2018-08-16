@@ -1,7 +1,7 @@
 package com.util;
 
 import java.io.*;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @Author: HeQi
@@ -17,7 +17,7 @@ public class FilePrintUtil {
         return FilePrintUtilHolder.filePrintUtil;
     }
 
-    public void write(String filename, List<String> list,String code) {
+    public void write(String filename, Collection<String> list, String code) {
         try {
             File f=new File(filename);
             f.delete();

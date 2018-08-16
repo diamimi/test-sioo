@@ -3,19 +3,30 @@
 <mapper namespace="com.mapper.gh.GhMapper">
 
 
-
     <select id="findWz" resultType="com.pojo.SendingVo">
         SELECT mobile,senddate from sms_send_history_backups where senddate&gt;=20180401000000 and senddate&lt;20180701000000 and arrive_succ=0 and arrive_fail=0
     </select>
 
-    <select id="findUser" parameterType="user" resultType="user">
+    <select id="findUser" parameterType="com.pojo.SmsUser" resultType="com.pojo.SmsUser">
         SELECT id,username from sms_user
         <where>
             <if test="username!=null ">
                 AND username=#{username}
             </if>
             <if test="id!=null and id>0">
-                AND  id=#{id}
+                AND id=#{id}
+            </if>
+        </where>
+    </select>
+
+    <select id="findUserList" parameterType="com.pojo.SmsUser" resultType="com.pojo.SmsUser">
+        SELECT id,username from sms_user
+        <where>
+            <if test="username!=null ">
+                AND username=#{username}
+            </if>
+            <if test="id!=null and id>0">
+                AND id=#{id}
             </if>
         </where>
     </select>
@@ -32,14 +43,44 @@
         </set>
         <where>
             <if test="id!=null and id>0">
-                AND  id=#{id}
+                AND id=#{id}
             </if>
         </where>
     </update>
 
 
-    <select id="getGhUserDayCount"  resultType="com.pojo.UserDayCount">
+    <select id="getGhUserDayCount" resultType="com.pojo.UserDayCount">
         SELECT c.uid uid,c.total total,c.fail fail,c.arrive_succ asucc,c.arrive_fail af,c.time time,u.username username,u.company company,u.city city from
         sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180701
+    </select>
+
+
+    <select id="getTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
+         SELECT sum(contentNum)  from sms_send_history_backups where
+        senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+
+    </select>
+
+    <select id="getSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
+      SELECT sum(contentNum)  from sms_send_history_backups where
+         arrive_succ=contentNum and arrive_fail=0  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+
+    </select>
+
+    <select id="getFail" parameterType="com.pojo.SendingVo" resultType="Integer">
+       SELECT sum(contentNum)  from sms_send_history_backups where
+         arrive_succ=0 and arrive_fail=contentNum  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+
+    </select>
+
+    <select id="getWz" parameterType="com.pojo.SendingVo" resultType="Integer">
+       SELECT sum(contentNum)  from sms_send_history_backups where
+         arrive_succ=contentNum and arrive_fail=0  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+    </select>
+
+
+    <select id="getHistorySucc" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT mobile,pid,content,senddate,contentNum  from sms_send_history_backups where
+         arrive_succ=contentNum and arrive_fail=0  and senddate&gt;=#{starttime} and senddate&lt;#{endtime}  and uid=#{uid} ORDER BY senddate
     </select>
 </mapper>
