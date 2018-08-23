@@ -1,10 +1,8 @@
 package com;
 
 import com.util.FilePrintUtil;
-import com.util.FileRead;
 import com.util.RangeRandom;
 import com.util.SequoiaDBUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
@@ -13,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -24,7 +24,7 @@ public class ExcelTest {
 
     @Test
     public void ss() {
-       String content="【广汇东本泓宇】亲爱的车主：敲黑板，划重点。轮胎打折销售了！！！6.19-6.30日前凭短信进店更换轮胎1条可赠精美指甲套装一份及免费赠送价值80元四轮加氮气一次；更换两条轮胎享9.5折优惠、更换3条及以上立享9折优惠，并赠价值280元四轮定位一次及价值80元四轮加氮气一次.活动仅限15名客户。由于名额有限，先到先得，错过再等一年！详询：028-68613999！申蓉泓宇地址：成都市武侯区武青南路43号！！！回T退订";
+        String content = "【广汇东本泓宇】亲爱的车主：敲黑板，划重点。轮胎打折销售了！！！6.19-6.30日前凭短信进店更换轮胎1条可赠精美指甲套装一份及免费赠送价值80元四轮加氮气一次；更换两条轮胎享9.5折优惠、更换3条及以上立享9折优惠，并赠价值280元四轮定位一次及价值80元四轮加氮气一次.活动仅限15名客户。由于名额有限，先到先得，错过再等一年！详询：028-68613999！申蓉泓宇地址：成都市武侯区武青南路43号！！！回T退订";
         System.out.println(content.length());
     }
 
@@ -75,17 +75,9 @@ public class ExcelTest {
     }
 
     @Test
-    public void aa() {
-        List<String> contents = FileRead.getInstance().read("D:\\hq\\files/4.txt","");
-        List<String> write = new ArrayList<>();
-        write.add("号码,内容,时间,状态");
-        contents.stream().forEach(
-                c -> {
-                    c = StringUtils.replace(c, "\t", ",");
-                    write.add(c);
-                }
-        );
-        FilePrintUtil.getInstance().write("D:\\hq\\files/4.csv", write, "GBK");
+    public void aa() throws Exception {
+        String encode = URLEncoder.encode("感谢您 L’Étape nced", "utf-8");
+        System.out.println(URLDecoder.decode(encode, "utf-8"));
     }
 
 

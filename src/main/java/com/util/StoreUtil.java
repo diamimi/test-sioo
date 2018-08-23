@@ -143,5 +143,9 @@ public class StoreUtil {
         }
     }
 
+    public String getSign(String content){
+        return "【"+StringUtils.substringBetween(content,"【","】")+'】';
+    }
+
 
 }

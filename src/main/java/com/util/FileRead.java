@@ -1,5 +1,7 @@
 package com.util;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -28,7 +30,11 @@ public class FileRead {
             BufferedReader bufferedReader = new BufferedReader(read);
             String sms = null;
             while ((sms = bufferedReader.readLine()) != null) {
-                list.add(sms);
+                if(!sms.equals("")){
+                    sms= StringUtils.remove(sms,"\r");
+                    sms= StringUtils.remove(sms,"\n");
+                    list.add(sms);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();

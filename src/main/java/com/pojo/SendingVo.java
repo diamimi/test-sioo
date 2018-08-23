@@ -234,8 +234,15 @@ public class SendingVo implements Serializable {
 		this.mtype = mtype;
 	}
 
-	public Long getSenddate() {
-		return senddate;
+	public String getSenddate() {
+		String date=String.valueOf(senddate);
+		String year=date.substring(0,4);
+		String mon=date.substring(4,6);
+		String day=date.substring(6,8);
+		String hour=date.substring(8,10);
+		String min=date.substring(10,12);
+		String sec=date.substring(12,14);
+		return year+"-"+mon+"-"+day+" "+hour+":"+min+":"+sec;
 	}
 
 	public void setSenddate(Long senddate) {

@@ -7,6 +7,7 @@ import com.service.RptService;
 import com.service.Store21Service;
 import com.service.StoreGhService;
 import com.util.FilePrintUtil;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -212,32 +213,34 @@ public class GhTest {
         FileOutputStream output = new FileOutputStream("d:/广汇2季度.xls");
         workbook.write(output);
         output.flush();
-
     }
 
     @Test
     public void countByDay() {
-        String title = "号码,批次,时间,条数";
-        List<String> outs = new ArrayList<>();
-        outs.add(title);
+        String title = "号码,批次,时间,内容,条数";
         SendingVo vo = new SendingVo();
-        int uid = 10173;
-        String filename = "GH090";
+        int uid = 10359;
+        String filename = "GZ215";
         vo.setUid(uid);
-        long start = 20180615;
-        long end = start + 1;
-        vo.setStarttime(start * 1000000l);
-        vo.setEndtime(end * 1000000l);
-        List<SendingVo> list = ghService.getHistorySucc(vo);
-        list.stream().forEach(v -> {
-        /*    String c = StringUtils.remove(v.getContent(), "\r");
-            c = StringUtils.remove(c, "\n");
-            c = StringUtils.remove(c, "\t");
-            c = StringUtils.replace(c, ",", ".");*/
-            String content = v.getMobile() + "," + v.getPid() + "," + v.getSenddate() + "," + v.getContentNum();
-            outs.add(content);
-        });
-        FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
+        for (int i = 20180411; i <= 20180414; i++) {
+            List<String> outs = new ArrayList<>();
+            outs.add(title);
+            long start = i;
+            long end = start + 1;
+            vo.setStarttime(start * 1000000l);
+            vo.setEndtime(end * 1000000l);
+            List<SendingVo> list = ghService.getHistorySucc(vo);
+            list.stream().forEach(v -> {
+                String c = StringUtils.remove(v.getContent(), "\r");
+                c = StringUtils.remove(c, "\n");
+                c = StringUtils.remove(c, "\t");
+                c = StringUtils.replace(c, ",", ".");
+                String content = v.getMobile() + "," + v.getPid() + "," + v.getSenddate() + "," + c + "," + v.getContentNum();
+                outs.add(content);
+            });
+            FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
+        }
+
     }
 
 

@@ -4,6 +4,7 @@ import com.pojo.SendingVo;
 import com.service.RptService;
 import com.service.SendHistoryService114;
 import com.util.FilePrintUtil;
+import com.util.StoreUtil;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +15,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @Author: HeQi
@@ -31,6 +34,9 @@ public class HistoryTo114 {
 
     @Autowired
     private SendHistoryService114 sendHistoryService114;
+
+    @Autowired
+    private StoreUtil storeUtil;
 
     /**
      * 按天导数据
@@ -114,15 +120,15 @@ public class HistoryTo114 {
      * @throws Exception
      */
     @Test
-    public void sss1() throws Exception {
+    public void singHistory() throws Exception {
         List<String> contents = new ArrayList<>();
         String title = "号码,内容,时间,状态";
         contents.add(title);
-        for (int i = 20180802; i <= 20180802; i++) {
+        int uid=70;
+        for (int i = 20180601; i <= 20180630; i++) {
             String tableName = String.valueOf(i).substring(4);
             SendingVo vo = new SendingVo();
-            vo.setUid(80714170);
-            vo.setRptcode("ID:1241");
+            vo.setUid(uid);
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
 
@@ -132,10 +138,33 @@ public class HistoryTo114 {
 
             });
         }
+        for (int i = 20180701; i <= 20180731; i++) {
+            String tableName = String.valueOf(i).substring(4);
+            SendingVo vo = new SendingVo();
+            vo.setUid(uid);
+            vo.setTableName(tableName);
+            List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
 
+            list.stream().forEach(v -> {
+                String content = v.getMobile() + "," + v.getContent() + "," + v.getSenddate() + "," + v.getRptcode();
+                contents.add(content);
 
-        FilePrintUtil.getInstance().write("D:\\hq\\files/80714170.csv", contents, "GBK");
+            });
+        }
+        for (int i = 20180801; i <= 20180801; i++) {
+            String tableName = String.valueOf(i).substring(4);
+            SendingVo vo = new SendingVo();
+            vo.setUid(uid);
+            vo.setTableName(tableName);
+            List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
 
+            list.stream().forEach(v -> {
+                String content = v.getMobile() + "," + v.getContent() + "," + v.getSenddate() + "," + v.getRptcode();
+                contents.add(content);
+
+            });
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\files/"+uid+".csv", contents, "GBK");
 
     }
 
@@ -222,6 +251,38 @@ public class HistoryTo114 {
         }
     }
 
+
+    /**
+     * 按照内容统计
+     */
+    @Test
+    public void countByDayContentGroup() {
+        for (int i = 20180816; i <= 20180816; i++) {
+            String tableName = String.valueOf(i).substring(4);
+            SendingVo vo = new SendingVo();
+            vo.setTableName(tableName);
+            vo.setUid(90568);
+            List<String> contentList = sendHistoryService114.getContentList(vo);
+            String title = "内容,总数,成功,失败,未知";
+            List<String> outs = new ArrayList<>();
+            outs.add(title);
+            for (String content : contentList) {
+                vo.setContent(content);
+                Integer total = sendHistoryService114.getTotal(vo) == null ? 0 : sendHistoryService114.getTotal(vo);
+                if (total == 0) {
+                    continue;
+                }
+                Integer succ = sendHistoryService114.getSucc(vo) == null ? 0 : sendHistoryService114.getSucc(vo);
+                Integer fail = sendHistoryService114.getFail(vo) == null ? 0 : sendHistoryService114.getFail(vo);
+                Integer wz = sendHistoryService114.getWz(vo) == null ? 0 : sendHistoryService114.getWz(vo);
+                 outs.add(StringUtils.replace(content,",",".") + "," + total + "," + succ + "," + fail + "," + wz);
+            }
+            if (outs.size() > 1) {
+                FilePrintUtil.getInstance().write("D:\\hq\\files/" + vo.getUid() + "_2018" + tableName + ".csv", outs, "GBK");
+            }
+        }
+    }
+
     @Test
     public void countByDay() {
         int uid = 90617;
@@ -266,4 +327,25 @@ public class HistoryTo114 {
     }
 
 
+    @Test
+    public void getSign(){
+        Set<String> contents = new HashSet<>();
+        int uid=51013;
+        for (int i = 20180822; i <= 20180822; i++) {
+            String tableName = String.valueOf(i).substring(4);
+            SendingVo vo = new SendingVo();
+            vo.setUid(uid);
+            vo.setTableName(tableName);
+            vo.setRptcode("XA:0003");
+            List<SendingVo> list = sendHistoryService114.findHistory(vo);
+            list.stream().forEach(v -> {
+                String sign = storeUtil.getSign(v.getContent());
+                contents.add(sign);
+
+            });
+        }
+        contents.stream().forEach(System.out::println);
+    }
+
 }
+
