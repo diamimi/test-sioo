@@ -83,4 +83,11 @@
         SELECT mobile,pid,content,senddate,contentNum  from sms_send_history_backups where
          arrive_succ=contentNum and arrive_fail=0  and senddate&gt;=#{starttime} and senddate&lt;#{endtime}  and uid=#{uid} ORDER BY senddate
     </select>
+
+
+
+    <select id="findUserDayCount" parameterType="com.pojo.UserDayCount" resultType="com.pojo.UserDayCount">
+        SELECT  sum(c.total) total,sum(c.arrive_succ) asucc,sum(c.arrive_fail) af,c.uid uid,u.username username from sms_user_day_count c
+        INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=#{starttime} and c.time&lt;=#{endtime} and u.username=#{username}
+    </select>
 </mapper>

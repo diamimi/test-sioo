@@ -21,7 +21,6 @@
 
 
     <select id="findSingleHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-
         SELECT mobile,content,senddate,rptcode from sms_user_history_18${tableName}
         <where>
             <if test="uid!=null ">
@@ -38,9 +37,7 @@
 
 
     <select id="getContentList" parameterType="com.pojo.SendingVo" resultType="String">
-
         SELECT content from sms_user_batch_18${tableName} where uid=#{uid} GROUP BY content
-
     </select>
 
     <select id="getTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
@@ -61,8 +58,6 @@
                 AND r.rptcode=#{rptcode}
             </if>
         </where>
-
-
     </select>
 
     <select id="getSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
@@ -80,8 +75,6 @@
                 AND b.uid=#{uid}
             </if>
         </where>
-
-
     </select>
 
     <select id="getFail" parameterType="com.pojo.SendingVo" resultType="Integer">
@@ -99,8 +92,6 @@
                 AND b.uid=#{uid}
             </if>
         </where>
-
-
     </select>
 
     <select id="getWz" parameterType="com.pojo.SendingVo" resultType="Integer">

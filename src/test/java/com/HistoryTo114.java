@@ -124,8 +124,8 @@ public class HistoryTo114 {
         List<String> contents = new ArrayList<>();
         String title = "号码,内容,时间,状态";
         contents.add(title);
-        int uid=70;
-        for (int i = 20180601; i <= 20180630; i++) {
+        int uid=90141;
+        for (int i = 20180823; i <= 20180823; i++) {
             String tableName = String.valueOf(i).substring(4);
             SendingVo vo = new SendingVo();
             vo.setUid(uid);
@@ -177,43 +177,23 @@ public class HistoryTo114 {
     @Test
     public void exportBatch() throws Exception {
         List<String> contents = new ArrayList<>();
-        String title = "msgid,号码,内容,发送时间,回执时间,状态";
+        String title = "号码,内容,发送时间,回执时间,状态";
         contents.add(title);
-        int uid=50872;
-        for (int i = 20180711; i <= 20180711; i++) {
+        int uid=90141;
+        for (int i = 20180823; i <= 20180823; i++) {
             String tableName = String.valueOf(i).substring(4);
             SendingVo vo = new SendingVo();
             vo.setUid(uid);
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findHistory(vo);
-
             list.stream().forEach(v -> {
                 String c= StringUtils.replace(v.getContent(),",",".");
-                String content =v.getPid()+","+ v.getMobile() + "," + c + "," + v.getSenddate() + ","+v.getRpttime()+"," + v.getRptcode();
+                String content = v.getMobile() + "," + c + "," + v.getSenddate() + ","+v.getRpttime()+"," + v.getRptcode();
                 contents.add(content);
 
             });
         }
-
-        for (int i = 20180713; i <= 20180713; i++) {
-            String tableName = String.valueOf(i).substring(4);
-            SendingVo vo = new SendingVo();
-            vo.setUid(uid);
-            vo.setTableName(tableName);
-            List<SendingVo> list = sendHistoryService114.findHistory(vo);
-
-            list.stream().forEach(v -> {
-                String c= StringUtils.replace(v.getContent(),",",".");
-                String content =v.getPid()+","+ v.getMobile() + "," + c + "," + v.getSenddate() + ","+v.getRpttime()+"," + v.getRptcode();
-                contents.add(content);
-
-            });
-        }
-
-
         FilePrintUtil.getInstance().write("D:\\hq\\files/"+uid+".csv", contents, "GBK");
-
-
     }
 
 

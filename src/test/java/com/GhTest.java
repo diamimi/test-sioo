@@ -6,6 +6,7 @@ import com.service.GhService;
 import com.service.RptService;
 import com.service.Store21Service;
 import com.service.StoreGhService;
+import com.util.ExcelReadUtil;
 import com.util.FilePrintUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -241,6 +242,40 @@ public class GhTest {
             FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
         }
 
+    }
+
+
+    @Test
+    public void excel() throws Exception {
+        File xlsFile = new File("D:/hq/files/1.xlsx");
+        InputStream is = new FileInputStream(xlsFile);
+        Workbook workbook = WorkbookFactory.create(is);
+        Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+        List<String> outs=new ArrayList<>();
+        String title="username,gh_total,gh_succ,gh_fail,sioo_total,sioo_succ,sioo_fail";
+        outs.add(title);
+        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            if (row != null) {
+                String username = ExcelReadUtil.getInstance().getCellValue(row, 0);
+                String gh_total = ExcelReadUtil.getInstance().getCellValue(row, 2);
+                String gh_success = ExcelReadUtil.getInstance().getCellValue(row, 3);
+                String gh_fail = ExcelReadUtil.getInstance().getCellValue(row, 4);
+                UserDayCount userDayCount=new UserDayCount();
+                userDayCount.setUsername(username);
+                userDayCount.setStarttime(20180401);
+                userDayCount.setEndtime(20180630);
+                UserDayCount dayCount=ghService.findUserDayCount(userDayCount);
+                if(dayCount!=null){
+                    String out=username+","+gh_total+","+gh_success+","+gh_fail+","+dayCount.getTotal()+","+dayCount.getAsucc()+","+dayCount.getAf();
+                    outs.add(out);
+                }else {
+                    System.out.println(username);
+                }
+
+            }
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\files/广汇.csv", outs, "GBK");
     }
 
 

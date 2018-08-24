@@ -58,4 +58,8 @@ public class GhService {
     public List<SmsUser> findUserList(SmsUser smsUser) {
         return ghMapper.findUserList(smsUser);
     }
+
+    public UserDayCount findUserDayCount(UserDayCount userDayCount) {
+        return ghMapper.findUserDayCount(userDayCount);
+    }
 }

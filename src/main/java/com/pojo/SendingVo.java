@@ -95,8 +95,20 @@ public class SendingVo implements Serializable {
 
 	private Long rpttime;
 
-	public Long getRpttime() {
-		return rpttime;
+	public String getRpttime() {
+		String date=String.valueOf(rpttime);
+		if(date.length()==14){
+			String year=date.substring(0,4);
+			String mon=date.substring(4,6);
+			String day=date.substring(6,8);
+			String hour=date.substring(8,10);
+			String min=date.substring(10,12);
+			String sec=date.substring(12,14);
+			return year+"-"+mon+"-"+day+" "+hour+":"+min+":"+sec;
+		}else {
+			return "";
+		}
+
 	}
 
 	public void setRpttime(Long rpttime) {

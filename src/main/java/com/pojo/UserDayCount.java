@@ -26,6 +26,26 @@ public class UserDayCount  {
 
     private String city;
 
+    private Integer starttime;
+
+    private Integer endtime;
+
+    public Integer getStarttime() {
+        return starttime;
+    }
+
+    public void setStarttime(Integer starttime) {
+        this.starttime = starttime;
+    }
+
+    public Integer getEndtime() {
+        return endtime;
+    }
+
+    public void setEndtime(Integer endtime) {
+        this.endtime = endtime;
+    }
+
     public String getCity() {
         return city;
     }

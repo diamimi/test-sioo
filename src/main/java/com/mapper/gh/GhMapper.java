@@ -33,4 +33,6 @@ public interface GhMapper extends Mapper114 {
     List<SendingVo> getHistorySucc(SendingVo vo);
 
     List<SmsUser> findUserList(SmsUser smsUser);
+
+    UserDayCount findUserDayCount(UserDayCount userDayCount);
 }
