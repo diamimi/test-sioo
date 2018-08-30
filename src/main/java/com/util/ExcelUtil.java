@@ -40,7 +40,7 @@ public class ExcelUtil {
         int i = 0;
         for (String line : c) {
             HSSFRow row = sheet.createRow(i);
-            String[] split = line.split("#@#");
+            String[] split = line.split("#庚柴喻@");
             int k = 0;
             for (String s : split) {
                 HSSFCell cell = row.createCell(k);
