@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.mapper21.BlackMobileMapper">
+    <select id="getBlackMobile" resultType="String">
+    SELECT  md from  user_black_mobile where id&gt;=#{minid} and id&lt;#{maxid}
+</select>
+
+</mapper>
