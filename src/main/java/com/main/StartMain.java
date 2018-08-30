@@ -1,6 +1,7 @@
 package com.main;
 
 import com.pojo.SendingVo;
+import com.service.BlackMobileService;
 import com.service.SendHistoryService114;
 import com.util.FilePrintUtil;
 import org.apache.commons.lang.StringUtils;
@@ -26,12 +27,36 @@ public class StartMain implements ApplicationRunner {
     @Autowired
     private SendHistoryService114 sendHistoryService114;
 
+    @Autowired
+    private BlackMobileService blackMobileService;
+
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-       // LOGGER.info("===============start===================");
-       // exportBatch();
-        //LOGGER.info("===============end===================");
+      /*  int maxid = 7819495;
+        int minid = 11522;
+        List<Integer> beginIndex = new ArrayList<>();
+        while (minid <= maxid) {
+            beginIndex.add(minid);
+            minid = minid + 1000;
+        }
+        System.out.println("=========start=========");
+        ForkJoinPool myPool = new ForkJoinPool(8);
+       // OutputStream os = new FileOutputStream("d:/hq/files/mobile_35.txt");
+        OutputStream os = new FileOutputStream("/home/sioowork/114/userblack.txt");
+        final PrintWriter out = new PrintWriter(new OutputStreamWriter(os, "utf-8"));
+        myPool.submit(() -> beginIndex.stream().parallel().forEach(i -> {
+                    List<String> mobiles = blackMobileService.getBlackMobile(i, i + 1000);
+                    if(mobiles!=null&&mobiles.size()>0){
+                        for (String t : mobiles) {
+                            out.write(t.toString() + "\r\n");
+                        }
+                    }
+                }
+        )).get();
+        out.flush();
+        out.close();
+        System.out.println("=========end=========");*/
     }
 
     public void exportBatch() throws Exception {
@@ -51,8 +76,13 @@ public class StartMain implements ApplicationRunner {
                 contents.add(content);
             });
         }
+
         FilePrintUtil.getInstance().write("d:/hq/files/" + uid + ".csv", contents, "GBK");
 
+
+    }
+
+    public void bigBlackMobile() throws Exception {
 
     }
 

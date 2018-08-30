@@ -62,9 +62,22 @@
     </select>
 
     <select id="getSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
-      SELECT sum(contentNum)  from sms_send_history_backups where
-         arrive_succ=contentNum and arrive_fail=0  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
-
+        SELECT sum(contentNum) from sms_send_history_backups
+        <where>
+            arrive_succ=contentNum and arrive_fail=0
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;=#{endtime}
+            </if>
+            <if test="content!=null">
+                and content not like "%"#{content}"%"
+            </if>
+        </where>
     </select>
 
     <select id="getFail" parameterType="com.pojo.SendingVo" resultType="Integer">
@@ -80,10 +93,19 @@
 
 
     <select id="getHistorySucc" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT mobile,pid,content,senddate,contentNum  from sms_send_history_backups where
-         arrive_succ=contentNum and arrive_fail=0  and senddate&gt;=#{starttime} and senddate&lt;#{endtime}  and uid=#{uid} ORDER BY senddate
+        SELECT h.mobile mobile,h.pid pid,h.content content,h.senddate senddate,h. contentNum contentNum from
+        sms_send_history_backups h INNER join sms_user u on h.uid=u.id
+        <where>
+            h.arrive_succ=h.contentNum and h.arrive_fail=0 and h.senddate&gt;=#{starttime} and h.senddate&lt;#{endtime}
+            <if test="username!=null">
+                and u.username=#{username}
+            </if>
+            <if test="content!=null">
+                and content not like "%"#{content}"%"
+            </if>
+        </where>
+        ORDER BY senddate
     </select>
-
 
 
     <select id="findUserDayCount" parameterType="com.pojo.UserDayCount" resultType="com.pojo.UserDayCount">

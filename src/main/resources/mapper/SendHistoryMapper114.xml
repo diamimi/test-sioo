@@ -16,6 +16,9 @@
             <if test="rptcode!=null ">
                 AND r.rptcode=#{rptcode}
             </if>
+            <if test="level!=null ">
+                AND r.rptcode!='DELIVRD' AND r.rptcode!='-1' and r.rptcode!='XA:2006'
+            </if>
         </where>
     </select>
 
@@ -31,6 +34,9 @@
             </if>
             <if test="rptcode!=null ">
                 AND rptcode=#{rptcode}
+            </if>
+            <if test="level!=null ">
+                AND rptcode!='DELIVRD' AND rptcode!='-1' and rptcode!='XA:2006'
             </if>
         </where>
     </select>

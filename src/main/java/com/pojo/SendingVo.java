@@ -10,6 +10,8 @@ public class SendingVo implements Serializable {
 
 	private String tableName;
 
+	private String username;
+
 
 	/**
 	 * 7天,30天校验
@@ -246,7 +248,7 @@ public class SendingVo implements Serializable {
 		this.mtype = mtype;
 	}
 
-	public String getSenddate() {
+	public String getSenddate1() {
 		String date=String.valueOf(senddate);
 		String year=date.substring(0,4);
 		String mon=date.substring(4,6);
@@ -255,6 +257,10 @@ public class SendingVo implements Serializable {
 		String min=date.substring(10,12);
 		String sec=date.substring(12,14);
 		return year+"-"+mon+"-"+day+" "+hour+":"+min+":"+sec;
+	}
+
+	public Long getSenddate() {
+		return senddate;
 	}
 
 	public void setSenddate(Long senddate) {
@@ -495,6 +501,18 @@ public class SendingVo implements Serializable {
 
 	public void setTableName(String tableName) {
 		this.tableName = tableName;
+	}
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }
 

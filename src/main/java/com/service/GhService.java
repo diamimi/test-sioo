@@ -40,7 +40,7 @@ public class GhService {
     }
 
     public Integer getSucc(SendingVo vo) {
-        return ghMapper.getSucc(vo);
+        return ghMapper.getSucc(vo)==null?0:ghMapper.getSucc(vo);
     }
 
     public Integer getFail(SendingVo vo) {
