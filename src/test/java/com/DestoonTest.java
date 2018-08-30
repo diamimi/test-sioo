@@ -9,18 +9,17 @@ import com.pojo.Area;
 import com.pojo.IndustryInfo;
 import com.service.DestoonService;
 import com.util.FilePrintUtil;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@RunWith(SpringRunner.class)
-@SpringBootTest
 public class DestoonTest {
 
     @Autowired
@@ -31,7 +30,7 @@ public class DestoonTest {
 
     @Test
     public void industry() {
-        long baseid = 1025600000l-4l;
+        long baseid = 1025600000l - 4l;
         int site_id = 10000;
         List<IndustryInfo> sort = new ArrayList<>();
         List<IndustryInfo> list = destoonService.findIndustryInfoList();
@@ -79,13 +78,13 @@ public class DestoonTest {
             contents.add(content);
         });
 
-        FilePrintUtil.getInstance().write("D:\\tuiguangti\\source\\tuiguangti\\db\\drag\\inc\\1.1.2/一呼万应行业.sql", contents,"utf-8");
+        FilePrintUtil.getInstance().write("D:\\tuiguangti\\source\\tuiguangti\\db\\drag\\inc\\1.1.2/一呼万应行业.sql", contents, "utf-8");
     }
 
     @Test
-    public void area(){
+    public void area() {
         int site_id = 10000;
-        long baseid=1938100000l-1l;
+        long baseid = 1938100000l - 1l;
         List<Area> sort = new ArrayList<>();
         List<Area> list = destoonService.findAreaList();
         for (Area area1 : list) {
@@ -126,7 +125,7 @@ public class DestoonTest {
             if (i.getParentid() > 0) {
                 parentid = baseid + i.getParentid();
             }
-           // INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name, created_by, date_created, updated_by, date_updated) VALUES (1938000003,116,3,'北京','1',1,0,'1','北京','system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');
+            // INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name, created_by, date_created, updated_by, date_updated) VALUES (1938000003,116,3,'北京','1',1,0,'1','北京','system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');
 
             String content = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
                     " created_by, date_created, updated_by, date_updated)  VALUES (" + id + "," + site_id + ",'" + i.getAreaid() + "','" + i.getAreaname() +
@@ -134,6 +133,45 @@ public class DestoonTest {
             contents.add(content);
         });
 
-        FilePrintUtil.getInstance().write("D:\\tuiguangti\\source\\tuiguangti\\db\\drag\\inc\\1.1.2/一呼万应地区.sql", contents,"utf-8");
+        FilePrintUtil.getInstance().write("D:\\tuiguangti\\source\\tuiguangti\\db\\drag\\inc\\1.1.2/一呼万应地区.sql", contents, "utf-8");
     }
+
+
+    @Test
+    public void deReg() {
+        try {
+            String time = String.valueOf(System.currentTimeMillis());
+            String auth = DigestUtils.md5Hex(time+"tuiguangjia");
+             //String url = "https://www.yhwy.net/tuiguangjia/reg.php";
+            String url = "http://localhost:8088/destoon/hq/reg.php";
+            HttpClient httpClient = new HttpClient();
+            PostMethod postMethod = new PostMethod(url);
+            NameValuePair[] orderInfo = {
+                    new NameValuePair("time", time),
+                    new NameValuePair("auth", auth),
+                    new NameValuePair("company", "安徽格力"),
+                    new NameValuePair("email", "ss1d1@tuiguangjia.com"),
+                    new NameValuePair("mobile", "139055145691"),
+                    new NameValuePair("telephone", "021-56457781"),
+                    new NameValuePair("gender", "0"),
+                    new NameValuePair("truename", "彭查查"),
+                    new NameValuePair("qq", "94554798"),
+                    new NameValuePair("areaid", "284"),
+                    new NameValuePair("catid", "4"),
+                    new NameValuePair("regyear", "2008"),
+                    new NameValuePair("business", "游戏软件"),
+                    new NameValuePair("address", "上海市虹口区多禄路120弄"),
+                    new NameValuePair("content", "这是公司简介这是公司简介这是公司简介这是公司简介"),
+            };
+            postMethod.setRequestBody(orderInfo);
+            postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+            httpClient.executeMethod(postMethod);
+            String result = new String(postMethod.getResponseBodyAsString().getBytes("utf-8"));
+            System.out.println(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

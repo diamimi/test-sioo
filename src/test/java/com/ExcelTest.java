@@ -22,11 +22,6 @@ public class ExcelTest {
 
     private static Logger log = LoggerFactory.getLogger(ExcelTest.class);
 
-    @Test
-    public void ss() {
-        String content = "【广汇东本泓宇】亲爱的车主：敲黑板，划重点。轮胎打折销售了！！！6.19-6.30日前凭短信进店更换轮胎1条可赠精美指甲套装一份及免费赠送价值80元四轮加氮气一次；更换两条轮胎享9.5折优惠、更换3条及以上立享9折优惠，并赠价值280元四轮定位一次及价值80元四轮加氮气一次.活动仅限15名客户。由于名额有限，先到先得，错过再等一年！详询：028-68613999！申蓉泓宇地址：成都市武侯区武青南路43号！！！回T退订";
-        System.out.println(content.length());
-    }
 
     @Test
     public void single() {

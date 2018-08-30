@@ -6,7 +6,7 @@ import com.service.GhService;
 import com.service.RptService;
 import com.service.Store21Service;
 import com.service.StoreGhService;
-import com.util.ExcelReadUtil;
+import com.util.ExcelUtil;
 import com.util.FilePrintUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -220,16 +220,16 @@ public class GhTest {
     public void countByDay() {
         String title = "号码,批次,时间,内容,条数";
         SendingVo vo = new SendingVo();
-        int uid = 10359;
-        String filename = "GZ215";
-        vo.setUid(uid);
-        for (int i = 20180411; i <= 20180414; i++) {
+        String filename = "广汇";
+        // vo.setUsername(filename);
+        for (int i = 20180401; i <= 20180419; i++) {
             List<String> outs = new ArrayList<>();
             outs.add(title);
             long start = i;
             long end = start + 1;
             vo.setStarttime(start * 1000000l);
             vo.setEndtime(end * 1000000l);
+            vo.setContent("【广汇汽车】");
             List<SendingVo> list = ghService.getHistorySucc(vo);
             list.stream().forEach(v -> {
                 String c = StringUtils.remove(v.getContent(), "\r");
@@ -246,36 +246,135 @@ public class GhTest {
 
 
     @Test
-    public void excel() throws Exception {
-        File xlsFile = new File("D:/hq/files/1.xlsx");
-        InputStream is = new FileInputStream(xlsFile);
-        Workbook workbook = WorkbookFactory.create(is);
-        Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
-        List<String> outs=new ArrayList<>();
-        String title="username,gh_total,gh_succ,gh_fail,sioo_total,sioo_succ,sioo_fail";
+    public void countByDay2() {
+        String title = "号码,批次,时间,内容,条数";
+        SendingVo vo = new SendingVo();
+        String filename = "广汇";
+        List<String> outs = new ArrayList<>();
         outs.add(title);
-        for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
-            Row row = sheet.getRow(rowNum);
-            if (row != null) {
-                String username = ExcelReadUtil.getInstance().getCellValue(row, 0);
-                String gh_total = ExcelReadUtil.getInstance().getCellValue(row, 2);
-                String gh_success = ExcelReadUtil.getInstance().getCellValue(row, 3);
-                String gh_fail = ExcelReadUtil.getInstance().getCellValue(row, 4);
-                UserDayCount userDayCount=new UserDayCount();
-                userDayCount.setUsername(username);
-                userDayCount.setStarttime(20180401);
-                userDayCount.setEndtime(20180630);
-                UserDayCount dayCount=ghService.findUserDayCount(userDayCount);
-                if(dayCount!=null){
-                    String out=username+","+gh_total+","+gh_success+","+gh_fail+","+dayCount.getTotal()+","+dayCount.getAsucc()+","+dayCount.getAf();
-                    outs.add(out);
-                }else {
-                    System.out.println(username);
-                }
+        long start = 20180625140000l;
+        long end = 20180625160000l;
+        vo.setStarttime(start );
+        vo.setEndtime(end);
+        vo.setContent("【广汇汽车】");
+        List<SendingVo> list = ghService.getHistorySucc(vo);
+        list.stream().forEach(v -> {
+            String c = StringUtils.remove(v.getContent(), "\r");
+            c = StringUtils.remove(c, "\n");
+            c = StringUtils.remove(c, "\t");
+            c = StringUtils.replace(c, ",", ".");
+            String content = v.getMobile() + "," + v.getPid() + "," + v.getSenddate() + "," + c + "," + v.getContentNum();
+            outs.add(content);
+        });
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
 
+    }
+
+
+    @Test
+    public void countByDay1() {
+        String title = "时间,条数";
+        String filename = "广汇";
+        List<String> outs = new ArrayList<>();
+        outs.add(title);
+        for (int i = 20180401; i <= 20180430; i++) {
+            SendingVo vo = new SendingVo();
+            long start = i;
+            long end ;
+            if (start == 20180430) {
+                end = 20180501;
+            } else {
+                end = start + 1;
+            }
+            vo.setStarttime(start * 1000000l);
+            vo.setEndtime(end * 1000000l);
+            vo.setContent("【广汇汽车】");
+            Integer succ = ghService.getSucc(vo);
+            String content = i + "," + succ;
+            outs.add(content);
+        }
+        for (int i = 20180501; i <= 20180531; i++) {
+            SendingVo vo = new SendingVo();
+            long start = i;
+            long end ;
+            if (start == 20180531) {
+                end = 20180601;
+            } else {
+                end = start + 1;
+            }
+            vo.setStarttime(start * 1000000l);
+            vo.setEndtime(end * 1000000l);
+            vo.setContent("【广汇汽车】");
+            Integer succ = ghService.getSucc(vo);
+            String content = i + "," + succ;
+            outs.add(content);
+        }
+        for (int i = 20180601; i <= 20180630; i++) {
+            SendingVo vo = new SendingVo();
+            long start = i;
+            long end;
+            if (start == 20180630) {
+                end = 20180701;
+            } else {
+                end = start + 1;
+            }
+            vo.setStarttime(start * 1000000l);
+            vo.setEndtime(end * 1000000l);
+            vo.setContent("【广汇汽车】");
+            Integer succ = ghService.getSucc(vo);
+            String content = i + "," + succ;
+            outs.add(content);
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + ".csv", outs, "GBK");
+    }
+
+
+    @Test
+    public void excel() throws Exception {
+        List<String> outs = new ArrayList<>();
+        String title = "用户,总数,成功,失败";
+        outs.add(title);
+        Map<String,UserDayCount> map=new HashMap<>();
+        String[] array={
+                "D:\\hq\\files/4月汇总-.xlsx",
+                "D:\\hq\\files/5月汇总-.xlsx",
+                "D:\\hq\\files/6月汇总-.xlsx",
+        };
+        for (String s : array) {
+            File xlsFile = new File(s);
+            InputStream is = new FileInputStream(xlsFile);
+            Workbook workbook = WorkbookFactory.create(is);
+            Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
+            for (int rowNum = 2; rowNum <= sheet.getLastRowNum(); rowNum++) {
+                Row row = sheet.getRow(rowNum);
+                if (row != null) {
+                    String username = ExcelUtil.getInstance().getCellValue(row, 0);
+                    String gh_total = ExcelUtil.getInstance().getCellValue(row, 1);
+                    String gh_success = ExcelUtil.getInstance().getCellValue(row, 2);
+                    String gh_fail = ExcelUtil.getInstance().getCellValue(row, 3);
+                    if(!map.containsKey(username)){
+                        UserDayCount userDayCount=new UserDayCount();
+                        userDayCount.setTotal(Integer.valueOf(gh_total));
+                        userDayCount.setAsucc(Integer.valueOf(gh_success));
+                        userDayCount.setAf(Integer.valueOf(gh_fail));
+                        map.put(username,userDayCount);
+                    }else {
+                        UserDayCount userDayCount=map.get(username);
+                        userDayCount.setTotal(userDayCount.getTotal()+Integer.valueOf(gh_total));
+                        userDayCount.setAsucc(userDayCount.getAsucc()+Integer.valueOf(gh_success));
+                        userDayCount.setAf(userDayCount.getAf()+Integer.valueOf(gh_fail));
+                        map.put(username,userDayCount);
+                    }
+                }
             }
         }
-        FilePrintUtil.getInstance().write("D:\\hq\\files/广汇.csv", outs, "GBK");
+        List<Map.Entry<String,UserDayCount>> list = new ArrayList<>(map.entrySet());
+        Collections.sort(list, (o1, o2) -> o2.getValue().getTotal().compareTo(o1.getValue().getTotal()));
+        for(Map.Entry<String,UserDayCount> entry:list){
+            String content=entry.getKey()+","+entry.getValue().getTotal()+","+entry.getValue().getAsucc()+","+entry.getValue().getAf();
+            outs.add(content);
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\files/广汇_汇总.csv", outs, "GBK");
     }
 
 
