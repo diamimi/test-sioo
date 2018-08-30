@@ -98,7 +98,7 @@ public class HistoryTo114 {
     @Test
     public void singHistory() throws Exception {
         List<String> contents = new ArrayList<>();
-        String title = "号码#@#内容#@#时间#@#状态";
+        String title = "号码#庚柴喻@内容#庚柴喻@时间#庚柴喻@状态";
         contents.add(title);
         int uid=90525;
         SendingVo vo = new SendingVo();
@@ -109,7 +109,7 @@ public class HistoryTo114 {
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
             list.stream().forEach(v -> {
-                String content = v.getMobile() + "#@#" + v.getContent() + "#@#" + v.getSenddate1() + "#@#" + v.getRptcode();
+                String content = v.getMobile() + "#庚柴喻@" + v.getContent() + "#庚柴喻@" + v.getSenddate1() + "#庚柴喻@" + v.getRptcode();
                 contents.add(content);
 
             });
@@ -119,7 +119,7 @@ public class HistoryTo114 {
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
             list.stream().forEach(v -> {
-                String content = v.getMobile() + "#@#" + v.getContent() + "#@#" + v.getSenddate1() + "#@#" + v.getRptcode();
+                String content = v.getMobile() + "#庚柴喻@" + v.getContent() + "#庚柴喻@" + v.getSenddate1() + "#庚柴喻@" + v.getRptcode();
                 contents.add(content);
 
             });
@@ -129,7 +129,7 @@ public class HistoryTo114 {
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
             list.stream().forEach(v -> {
-                String content = v.getMobile() + "#@#" + v.getContent() + "#@#" + v.getSenddate1() + "#@#" + v.getRptcode();
+                String content = v.getMobile() + "#庚柴喻@" + v.getContent() + "#庚柴喻@" + v.getSenddate1() + "#庚柴喻@" + v.getRptcode();
                 contents.add(content);
             });
         }
