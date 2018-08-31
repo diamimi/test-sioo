@@ -1,6 +1,7 @@
 package com.service;
 
 import com.mapper.mapper21.Store21Mapper;
+import com.pojo.SendingVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,4 +20,9 @@ public class Store21Service {
     public List<String> findList() {
         return store21Mapper.findList();
     }
+
+    public List<SendingVo> singHistoryGroupByContent(SendingVo vo) {
+       return store21Mapper.singHistoryGroupByContent(vo);
+    }
+
 }

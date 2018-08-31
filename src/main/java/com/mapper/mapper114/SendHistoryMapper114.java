@@ -27,4 +27,6 @@ public interface SendHistoryMapper114 extends Mapper114{
     Integer getWz(SendingVo vo);
 
     Integer getSingleTotal(SendingVo vo);
+
+    List<SendingVo> findSingleHistoryGroupByContent(SendingVo vo);
 }

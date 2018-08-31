@@ -149,10 +149,10 @@ public class DestoonTest {
             NameValuePair[] orderInfo = {
                     new NameValuePair("time", time),
                     new NameValuePair("auth", auth),
-                    new NameValuePair("company", "安徽格力"),
-                    new NameValuePair("email", "ss1d1@tuiguangjia.com"),
-                    new NameValuePair("mobile", "139055145691"),
-                    new NameValuePair("telephone", "021-56457781"),
+                    new NameValuePair("company", "安徽格力2"),
+                    new NameValuePair("email", "ss1d22@tuiguangjia.com"),
+                    new NameValuePair("mobile", "13905546652"),
+                    new NameValuePair("telephone", "021-58657868-211"),
                     new NameValuePair("gender", "0"),
                     new NameValuePair("truename", "彭查查"),
                     new NameValuePair("qq", "94554798"),
@@ -174,4 +174,36 @@ public class DestoonTest {
         }
     }
 
+    @Test
+    public void auth(){
+        String password="lmiAdjes";
+        String passsalt="jC4QT8CF";
+        String auth = DigestUtils.md5Hex(DigestUtils.md5Hex(DigestUtils.md5Hex(password)) + passsalt);
+        System.out.println(auth);
+    }
+
+
+    @Test
+    public void delogin() {
+        try {
+            String url = "http://localhost:8088/destoon/hq/hqlogin.php";
+            HttpClient httpClient = new HttpClient();
+            PostMethod postMethod = new PostMethod(url);
+            NameValuePair[] orderInfo = {
+                    new NameValuePair("username", "eetdg3pb12tk"),
+                    new NameValuePair("password", "lmiAdjes"),
+                    new NameValuePair("forward", "http://localhost:8088/destoon/member"),
+                    new NameValuePair("action", "login"),
+                    new NameValuePair("auth", "6b91f39dd30855b383ce50d6a5a4b87e"),
+            };
+            postMethod.setRequestBody(orderInfo);
+            postMethod.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            postMethod.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36");
+            httpClient.executeMethod(postMethod);
+            String result = new String(postMethod.getResponseBodyAsString().getBytes("utf-8"));
+            System.out.println(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

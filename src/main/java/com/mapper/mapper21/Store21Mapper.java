@@ -1,6 +1,7 @@
 package com.mapper.mapper21;
 
 import com.mapper.Mapper21;
+import com.pojo.SendingVo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -12,4 +13,6 @@ import java.util.List;
 @Mapper
 public interface Store21Mapper extends Mapper21{
     List<String> findList();
+
+    List<SendingVo> singHistoryGroupByContent(SendingVo vo);
 }

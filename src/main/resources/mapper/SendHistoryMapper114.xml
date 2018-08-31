@@ -16,6 +16,9 @@
             <if test="rptcode!=null ">
                 AND r.rptcode=#{rptcode}
             </if>
+            <if test="content!=null ">
+                AND b.content like "%"#{content}"%"
+            </if>
             <if test="level!=null ">
                 AND r.rptcode!='DELIVRD' AND r.rptcode!='-1' and r.rptcode!='XA:2006'
             </if>
@@ -35,12 +38,36 @@
             <if test="rptcode!=null ">
                 AND rptcode=#{rptcode}
             </if>
+            <if test="content!=null ">
+                AND content like "%"#{content}"%"
+            </if>
             <if test="level!=null ">
                 AND rptcode!='DELIVRD' AND rptcode!='-1' and rptcode!='XA:2006'
             </if>
         </where>
     </select>
 
+    <select id="findSingleHistoryGroupByContent" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT mobile,content,senddate,rptcode from sms_user_history_18${tableName}
+        <where>
+            <if test="uid!=null ">
+                AND (uid=#{uid} )
+            </if>
+            <if test="mobile!=null ">
+                AND mobile=#{mobile}
+            </if>
+            <if test="rptcode!=null ">
+                AND rptcode=#{rptcode}
+            </if>
+            <if test="content!=null ">
+                AND content like "%"#{content}"%"
+            </if>
+            <if test="level!=null ">
+                AND rptcode!='DELIVRD' AND rptcode!='-1' and rptcode!='XA:2006'
+            </if>
+        </where>
+        GROUP BY content
+    </select>
 
     <select id="getContentList" parameterType="com.pojo.SendingVo" resultType="String">
         SELECT content from sms_user_batch_18${tableName} where uid=#{uid} GROUP BY content

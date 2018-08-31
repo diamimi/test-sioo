@@ -6,4 +6,20 @@
         SELECT DISTINCT  store from sms_user_signstore where uid=40058
     </select>
 
+    <select id="singHistoryGroupByContent" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT
+        h.content content
+        FROM
+        sms_rpt_for5 r
+        INNER JOIN sms_history_content_for5 h ON r.pid = h.pid
+        WHERE
+        r.uid = #{uid}
+        AND r.userday = #{tableName}
+        AND r.rptcode =#{rptcode}
+        GROUP BY
+        h.content
+
+
+    </select>
+
 </mapper>

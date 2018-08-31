@@ -3,6 +3,7 @@ package com;
 import com.pojo.SendingVo;
 import com.service.RptService;
 import com.service.SendHistoryService114;
+import com.service.Store21Service;
 import com.util.ExcelUtil;
 import com.util.FilePrintUtil;
 import com.util.StoreUtil;
@@ -38,6 +39,9 @@ public class HistoryTo114 {
 
     @Autowired
     private StoreUtil storeUtil;
+
+    @Autowired
+    private Store21Service store21Service;
 
     /**
      * 按天导数据
@@ -100,7 +104,7 @@ public class HistoryTo114 {
         List<String> contents = new ArrayList<>();
         String title = "号码#庚柴喻@内容#庚柴喻@时间#庚柴喻@状态";
         contents.add(title);
-        int uid=90525;
+        int uid=70;
         SendingVo vo = new SendingVo();
         vo.setUid(uid);
         vo.setLevel(0);
@@ -109,7 +113,7 @@ public class HistoryTo114 {
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
             list.stream().forEach(v -> {
-                String content = v.getMobile() + "#庚柴喻@" + v.getContent() + "#庚柴喻@" + v.getSenddate1() + "#庚柴喻@" + v.getRptcode();
+                String  content = v.getMobile() + "#庚柴喻@" + v.getContent() + "#庚柴喻@" + v.getSenddate1() + "#庚柴喻@" + v.getRptcode();
                 contents.add(content);
 
             });
@@ -136,6 +140,35 @@ public class HistoryTo114 {
         ExcelUtil.getInstance().export(contents,"D:\\hq\\files/"+uid+".xls");
 
     }
+
+    /**
+     * 导出single history 签名和内容
+     *
+     * @throws Exception
+     */
+    @Test
+    public void singHistoryGroupByContent() throws Exception {
+        List<String> contents = new ArrayList<>();
+        String title = "内容#庚柴喻@签名";
+        contents.add(title);
+        int uid=70;
+        SendingVo vo = new SendingVo();
+        vo.setUid(uid);
+        vo.setRptcode("ID:1241");
+        for (int i = 20180831; i <= 20180831; i++) {
+            String tableName = String.valueOf(i);
+            vo.setTableName(tableName);
+            List<SendingVo> list = store21Service.singHistoryGroupByContent(vo);
+            list.stream().forEach(v -> {
+                String  content = v.getContent() + "#庚柴喻@" +storeUtil.getSign(v.getContent());
+                contents.add(content);
+
+            });
+        }
+        ExcelUtil.getInstance().export(contents,"D:\\hq\\files/"+uid+".xls");
+
+    }
+
 
 
     /**
@@ -203,24 +236,22 @@ public class HistoryTo114 {
     @Test
     public void exportBatch1() throws Exception {
         List<String> contents = new ArrayList<>();
-        String title = "号码,内容,发送时间";
+        String title = "号码#庚柴喻@内容#庚柴喻@发送时间";
         contents.add(title);
-        int uid=90336;
-        for (int i = 20180719; i <= 20180719; i++) {
+        int uid=506551;
+        SendingVo vo = new SendingVo();
+        vo.setContent("我们还有积分翻倍兑好礼，购物送现金卷等活动。我们的门店地址在建兰路步行街");
+        vo.setUid(uid);
+        for (int i = 20180830; i <= 20180830; i++) {
             String tableName = String.valueOf(i).substring(4);
-            SendingVo vo = new SendingVo();
-            vo.setUid(uid);
             vo.setTableName(tableName);
-            vo.setRptcode("XA:0100");
             List<SendingVo> list = sendHistoryService114.findHistory(vo);
             list.stream().forEach(v -> {
-                String c= StringUtils.replace(v.getContent(),",",".");
-                String content = v.getMobile() + "," + c + "," + v.getSenddate() ;
+                String content = v.getMobile() + "#庚柴喻@" + v.getContent()+ "#庚柴喻@" + v.getSenddate1() ;
                 contents.add(content);
-
             });
         }
-        FilePrintUtil.getInstance().write("D:\\hq\\files/"+uid+".csv", contents, "GBK");
+        ExcelUtil.getInstance().export(contents,"D:\\hq\\files/"+uid+".xls");
     }
 
 

@@ -22,4 +22,5 @@
         SELECT  max(expend2) FROM smshy.sms_user_signstore where type = 2
     </select>
 
+
 </mapper>

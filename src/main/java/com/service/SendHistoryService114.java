@@ -47,4 +47,8 @@ public class SendHistoryService114 {
     public Integer getSingleTotal(SendingVo vo) {
         return sendHistoryMapper114.getSingleTotal(vo);
     }
+
+    public List<SendingVo> findSingleHistoryGroupByContent(SendingVo vo) {
+        return sendHistoryMapper114.findSingleHistoryGroupByContent(vo);
+    }
 }
