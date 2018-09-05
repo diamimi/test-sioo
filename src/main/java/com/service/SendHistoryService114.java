@@ -51,4 +51,8 @@ public class SendHistoryService114 {
     public List<SendingVo> findSingleHistoryGroupByContent(SendingVo vo) {
         return sendHistoryMapper114.findSingleHistoryGroupByContent(vo);
     }
+
+    public List<SendingVo> getFailReason(SendingVo vo) {
+        return sendHistoryMapper114.getFailReason(vo);
+    }
 }

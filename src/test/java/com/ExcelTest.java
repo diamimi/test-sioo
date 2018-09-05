@@ -1,6 +1,7 @@
 package com;
 
 import com.util.FilePrintUtil;
+import com.util.FileRead;
 import com.util.RangeRandom;
 import com.util.SequoiaDBUtil;
 import org.apache.poi.ss.usermodel.*;
@@ -11,8 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.*;
 
 /**
@@ -71,8 +70,12 @@ public class ExcelTest {
 
     @Test
     public void aa() throws Exception {
-        String encode = URLEncoder.encode("感谢您 L’Étape nced", "utf-8");
-        System.out.println(URLDecoder.decode(encode, "utf-8"));
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/80741.txt", "utf-8");
+        String content="";
+        for (String s : read) {
+            content=content+s+",";
+        }
+        System.out.println(content.substring(0,content.length()-1));
     }
 
 

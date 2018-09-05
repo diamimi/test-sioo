@@ -4,7 +4,8 @@
 
 
     <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum,r.rpttime rpttime,r.pid pid
+        SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum,r.rpttime
+        rpttime,r.pid pid
         FROM sms_user_batch_18${tableName} b INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
         <where>
             <if test="uid!=null ">
@@ -117,7 +118,7 @@
         sms_user_batch_18${tableName} b
         INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
         <where>
-            r.rptcode!='-1' and r.rptcode!='DELIVRD' and  r.rptcode!='XA:2006'
+            r.rptcode!='-1' and r.rptcode!='DELIVRD' and r.rptcode!='XA:2006'
             <if test="content!=null ">
                 AND b.content like "%"#{content}"%"
             </if>
@@ -161,5 +162,9 @@
                 AND rptcode=#{rptcode}
             </if>
         </where>
+    </select>
+
+    <select id="getFailReason" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+    SELECT rptcode,depict content,number uid,senddate  from rpt_analysis where uid=#{uid} and rptcode like 'XA:%' and senddate=#{tableName}
     </select>
 </mapper>

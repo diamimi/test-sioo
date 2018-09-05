@@ -29,4 +29,6 @@ public interface SendHistoryMapper114 extends Mapper114{
     Integer getSingleTotal(SendingVo vo);
 
     List<SendingVo> findSingleHistoryGroupByContent(SendingVo vo);
+
+    List<SendingVo> getFailReason(SendingVo vo);
 }
