@@ -51,20 +51,20 @@ public class HistoryTo114 {
      */
     @Test
     public void sss() throws Exception {
-     //   List<String> BWcontents = new ArrayList<>();
+        //   List<String> BWcontents = new ArrayList<>();
         List<String> SMcontents = new ArrayList<>();
         String title = "号码,内容,时间,公司";
-       // BWcontents.add(title);
+        // BWcontents.add(title);
         SMcontents.add(title);
         SendingVo vo = new SendingVo();
-        int uid=807891;
+        int uid = 506551;
         vo.setUid(uid);
-        addSingleContent(20180417,20180430,SMcontents,vo);
-        addSingleContent(20180501,20180531,SMcontents,vo);
-        addSingleContent(20180601,20180630,SMcontents,vo);
-        addSingleContent(20180701,20180731,SMcontents,vo);
-        addSingleContent(20180801,20180831,SMcontents,vo);
-        addSingleContent(20180901,20180901,SMcontents,vo);
+        addSingleContent(20180701, 20180731, SMcontents, vo);
+        addSingleContent(20180501, 20180531, SMcontents, vo);
+        addSingleContent(20180601, 20180630, SMcontents, vo);
+        addSingleContent(20180701, 20180731, SMcontents, vo);
+        addSingleContent(20180801, 20180831, SMcontents, vo);
+        addSingleContent(20180901, 20180901, SMcontents, vo);
         List<String> collect = SMcontents.stream().filter(s -> s.contains("苏秘")).collect(Collectors.toList());
         FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + ".csv", collect, "gbk");
     }
@@ -76,15 +76,29 @@ public class HistoryTo114 {
      * @throws Exception
      */
     @Test
-    public void singHistory() throws Exception {
+    public void exportSingHistory() throws Exception {
         List<String> contents = new ArrayList<>();
-        String title = "号码#庚柴喻@内容#庚柴喻@时间#庚柴喻@状态";
+        String title = "号码,内容,时间,状态";
         contents.add(title);
-        int uid = 80171;
+        int uid = 506551;
         SendingVo vo = new SendingVo();
         vo.setUid(uid);
         // vo.setLevel(0);
-        addSingleContent(20180801, 20180831, contents, vo);
+        addBatchContent(20180701, 20180731, contents, vo);
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + ".csv", contents, "gbk");
+    }
+
+    @Test
+    public void exportBatchHistory() throws Exception {
+        List<String> contents = new ArrayList<>();
+        String title = "号码,内容,时间,状态";
+        contents.add(title);
+        int uid = 506551;
+        SendingVo vo = new SendingVo();
+        vo.setUid(uid);
+        // vo.setLevel(0);
+        addBatchContent(20180817, 20180831, contents, vo);
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + "_8月_3.csv", contents, "gbk");
     }
 
     public void addSingleContent(int start, int end, List<String> contents, SendingVo vo) {
@@ -93,7 +107,7 @@ public class HistoryTo114 {
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
             list.stream().forEach(v -> {
-                String c=v.getContent().replace(",",".");
+                String c = v.getContent().replace(",", ".");
                 String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode();
                 contents.add(content);
 
@@ -108,10 +122,24 @@ public class HistoryTo114 {
             List<SendingVo> list = sendHistoryService114.findSingleHistory(vo);
             list.stream().forEach(v -> {
                 if (v.getContent().contains("苏秘")) {
-                    String c=v.getContent().replace(",",".");
+                    String c = v.getContent().replace(",", ".");
                     String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode();
                     contents.add(content);
                 }
+
+            });
+        }
+    }
+
+    public void addBatchContent(int start, int end, List<String> contents, SendingVo vo) {
+        for (int i = start; i <= end; i++) {
+            String tableName = String.valueOf(i).substring(4);
+            vo.setTableName(tableName);
+            List<SendingVo> list = sendHistoryService114.findHistory(vo);
+            list.stream().forEach(v -> {
+                String c = StringUtils.replace(v.getContent(), ",", ".");
+                String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode();
+                contents.add(content);
 
             });
         }
@@ -181,7 +209,7 @@ public class HistoryTo114 {
         String title = "号码,内容,发送时间,状态";
         contents.add(title);
         int uid = 90141;
-        for (int i = 20180831; i <= 20180831; i++) {
+        for (int i = 20180903; i <= 20180903; i++) {
             String tableName = String.valueOf(i).substring(4);
             SendingVo vo = new SendingVo();
             vo.setUid(uid);

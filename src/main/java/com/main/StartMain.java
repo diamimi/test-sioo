@@ -33,57 +33,37 @@ public class StartMain implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-      /*  int maxid = 7819495;
-        int minid = 11522;
-        List<Integer> beginIndex = new ArrayList<>();
-        while (minid <= maxid) {
-            beginIndex.add(minid);
-            minid = minid + 1000;
-        }
-        System.out.println("=========start=========");
-        ForkJoinPool myPool = new ForkJoinPool(8);
-       // OutputStream os = new FileOutputStream("d:/hq/files/mobile_35.txt");
-        OutputStream os = new FileOutputStream("/home/sioowork/114/userblack.txt");
-        final PrintWriter out = new PrintWriter(new OutputStreamWriter(os, "utf-8"));
-        myPool.submit(() -> beginIndex.stream().parallel().forEach(i -> {
-                    List<String> mobiles = blackMobileService.getBlackMobile(i, i + 1000);
-                    if(mobiles!=null&&mobiles.size()>0){
-                        for (String t : mobiles) {
-                            out.write(t.toString() + "\r\n");
-                        }
-                    }
-                }
-        )).get();
-        out.flush();
-        out.close();
-        System.out.println("=========end=========");*/
+      /*  LOGGER.info("start");
+        exportBatchHistory();
+        LOGGER.info("end");*/
+
     }
 
-    public void exportBatch() throws Exception {
+    public void exportBatchHistory() throws Exception {
         List<String> contents = new ArrayList<>();
-        String title = "号码,内容,发送时间,状态";
+        String title = "号码,内容,时间,状态";
         contents.add(title);
-        int uid = 90370;
-        for (int i = 20180512; i <= 20180512; i++) {
+        int uid = 506551;
+        SendingVo vo = new SendingVo();
+        vo.setUid(uid);
+        // vo.setLevel(0);
+        addBatchContent(20180801, 20180831, contents, vo);
+        FilePrintUtil.getInstance().write("/home/sioowork/114/" + uid + "_8.csv", contents, "gbk");
+    }
+
+
+    public void addBatchContent(int start, int end, List<String> contents, SendingVo vo) {
+        for (int i = start; i <= end; i++) {
             String tableName = String.valueOf(i).substring(4);
-            SendingVo vo = new SendingVo();
-            vo.setUid(uid);
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findHistory(vo);
             list.stream().forEach(v -> {
                 String c = StringUtils.replace(v.getContent(), ",", ".");
-                String content = v.getMobile() + "," + c + "," + v.getSenddate() + "," + v.getRptcode();
+                String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode();
                 contents.add(content);
+
             });
         }
-
-        FilePrintUtil.getInstance().write("d:/hq/files/" + uid + ".csv", contents, "GBK");
-
-
-    }
-
-    public void bigBlackMobile() throws Exception {
-
     }
 
 }

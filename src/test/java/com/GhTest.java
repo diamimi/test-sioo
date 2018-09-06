@@ -202,16 +202,14 @@ public class GhTest {
             HSSFCell fail = row.createCell(4);
             fail.setCellValue(u.getFail());
             HSSFCell asucc = row.createCell(5);
-            asucc.setCellValue(u.getAsucc());
+            asucc.setCellValue(u.getAsucc()+u.getWz());
             HSSFCell af = row.createCell(6);
             af.setCellValue(u.getAf());
-            HSSFCell wz = row.createCell(7);
-            wz.setCellValue(u.getWz());
-            HSSFCell city = row.createCell(8);
+            HSSFCell city = row.createCell(7);
             city.setCellValue(u.getCity());
             i++;
         }
-        FileOutputStream output = new FileOutputStream("d:/广汇2季度.xls");
+        FileOutputStream output = new FileOutputStream("d:/广汇-1,17,18,19.20.xls");
         workbook.write(output);
         output.flush();
     }
@@ -277,8 +275,9 @@ public class GhTest {
         String filename = "广汇";
         List<String> outs = new ArrayList<>();
         outs.add(title);
+        SendingVo vo = new SendingVo();
+        vo.setUid(1);
         for (int i = 20180401; i <= 20180430; i++) {
-            SendingVo vo = new SendingVo();
             long start = i;
             long end ;
             if (start == 20180430) {
@@ -294,7 +293,6 @@ public class GhTest {
             outs.add(content);
         }
         for (int i = 20180501; i <= 20180531; i++) {
-            SendingVo vo = new SendingVo();
             long start = i;
             long end ;
             if (start == 20180531) {
@@ -310,7 +308,6 @@ public class GhTest {
             outs.add(content);
         }
         for (int i = 20180601; i <= 20180630; i++) {
-            SendingVo vo = new SendingVo();
             long start = i;
             long end;
             if (start == 20180630) {
@@ -375,6 +372,35 @@ public class GhTest {
             outs.add(content);
         }
         FilePrintUtil.getInstance().write("D:\\hq\\files/广汇_汇总.csv", outs, "GBK");
+    }
+
+    @Test
+    public void exportMxByUid(){
+        Integer[] ids={1,17,18,19,20};
+        SendingVo vo=new SendingVo();
+        vo.setStarttime(20180801000000l);
+        vo.setEndtime(20180901000000l);
+        Arrays.stream(ids).forEach(i->{
+            vo.setUid(i);
+            mxByUid(vo,"8月");
+        });
+
+    }
+
+    public void mxByUid(SendingVo vo,String fileName){
+        String title = "账号,号码,批次,时间,内容,条数";
+        List<String> outs=new ArrayList<>();
+        outs.add(title);
+        List<SendingVo> sendingVos=ghService.getHistorySucc(vo);
+        sendingVos.stream().forEach((v->{
+            String c = StringUtils.remove(v.getContent(), "\r");
+            c = StringUtils.remove(c, "\n");
+            c = StringUtils.remove(c, "\t");
+            c = StringUtils.replace(c, ",", ".");
+            String content =v.getUsername()+","+ v.getMobile() + "," + v.getPid() + "," + v.getSenddate1() + "," + c + "," + v.getContentNum();
+            outs.add(content);
+        }));
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + vo.getUid() + "_" + fileName + ".csv", outs, "GBK");
     }
 
 

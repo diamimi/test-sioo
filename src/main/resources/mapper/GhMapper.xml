@@ -51,7 +51,7 @@
 
     <select id="getGhUserDayCount" resultType="com.pojo.UserDayCount">
         SELECT c.uid uid,c.total total,c.fail fail,c.arrive_succ asucc,c.arrive_fail af,c.time time,u.username username,u.company company,u.city city from
-        sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180701
+        sms_user_day_count c INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=20180401 and c.time &lt;20180901 and u.id in (1,17,18,19,20)
     </select>
 
 
@@ -93,15 +93,24 @@
 
 
     <select id="getHistorySucc" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT h.mobile mobile,h.pid pid,h.content content,h.senddate senddate,h. contentNum contentNum from
+        SELECT h.mobile mobile,h.pid pid,h.content content,h.senddate senddate,h. contentNum contentNum,u.username username from
         sms_send_history_backups h INNER join sms_user u on h.uid=u.id
         <where>
             h.arrive_succ=h.contentNum and h.arrive_fail=0 and h.senddate&gt;=#{starttime} and h.senddate&lt;#{endtime}
             <if test="username!=null">
                 and u.username=#{username}
             </if>
+            <if test="uid!=null and uid>0">
+                and h.uid=#{uid}
+            </if>
             <if test="content!=null">
-                and content not like "%"#{content}"%"
+                and h.content not like "%"#{content}"%"
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and h.senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and h.senddate&lt;#{endtime}
             </if>
         </where>
         ORDER BY senddate
