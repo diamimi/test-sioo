@@ -140,7 +140,6 @@ public class HistoryTo114 {
                 String c = StringUtils.replace(v.getContent(), ",", ".");
                 String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode();
                 contents.add(content);
-
             });
         }
     }
