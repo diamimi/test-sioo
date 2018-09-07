@@ -31,4 +31,6 @@ public interface SendHistoryMapper114 extends Mapper114{
     List<SendingVo> findSingleHistoryGroupByContent(SendingVo vo);
 
     List<SendingVo> getFailReason(SendingVo vo);
+
+    List<SendingVo> getPiCi(SendingVo vo);
 }

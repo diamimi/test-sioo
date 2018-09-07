@@ -167,4 +167,8 @@
     <select id="getFailReason" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
        SELECT rptcode,depict content,number uid,senddate  from rpt_analysis where uid=#{uid} and rptcode like 'XA:%' and senddate=#{tableName}
     </select>
+    
+    <select id="getPiCi" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT content,sum(contentNum*mobiles) contentNum from sms_user_batch_18${tableName} where uid=#{uid} GROUP BY content
+    </select>
 </mapper>

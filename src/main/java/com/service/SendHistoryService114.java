@@ -55,4 +55,8 @@ public class SendHistoryService114 {
     public List<SendingVo> getFailReason(SendingVo vo) {
         return sendHistoryMapper114.getFailReason(vo);
     }
+
+    public List<SendingVo> getPiCi(SendingVo vo) {
+       return sendHistoryMapper114.getPiCi(vo);
+    }
 }
