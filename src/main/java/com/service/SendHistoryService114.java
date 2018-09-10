@@ -59,4 +59,8 @@ public class SendHistoryService114 {
     public List<SendingVo> getPiCi(SendingVo vo) {
        return sendHistoryMapper114.getPiCi(vo);
     }
+
+    public void insertSendHistoryAjx(SendingVo vo) {
+        sendHistoryMapper114.insertSendHistoryAjx(vo);
+    }
 }

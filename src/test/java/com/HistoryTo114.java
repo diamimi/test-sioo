@@ -280,13 +280,13 @@ public class HistoryTo114 {
      */
     @Test
     public void countByDayContent() {
-        for (int i = 20180808; i <= 20180808; i++) {
+        for (int i = 20180907; i <= 20180907; i++) {
             String tableName = String.valueOf(i).substring(4);
             SendingVo vo = new SendingVo();
             vo.setTableName(tableName);
-            vo.setUid(20066);
+            vo.setUid(90337);
             String[] contents = {
-                    "超现实！预约车险续保，就能免费获得预约福利。安吉星用户专享，再也不用担心错过最优的福利活动了。活动详情戳：http://dwz.cn/J7eqoKKQ",
+                    "亲爱的钻石用户，您的6周年专属奖励来啦！请于9月7日12点整到，我的T码兑换66元代金券，",
             };
             String title = "内容,总数,成功,失败,未知";
             List<String> outs = new ArrayList<>();

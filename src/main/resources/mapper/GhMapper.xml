@@ -57,7 +57,7 @@
 
     <select id="getTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
          SELECT sum(contentNum)  from sms_send_history_backups where
-        senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+        senddate&gt;=#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
 
     </select>
 
@@ -69,7 +69,7 @@
                 and uid=#{uid}
             </if>
             <if test="starttime!=null and starttime>0">
-                and senddate&gt;#{starttime}
+                and senddate&gt;=#{starttime}
             </if>
             <if test="endtime!=null and endtime>0">
                 and senddate&lt;=#{endtime}

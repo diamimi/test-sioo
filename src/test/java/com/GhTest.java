@@ -375,6 +375,30 @@ public class GhTest {
     }
 
     @Test
+    public void sss11(){
+        Integer[] ids={1,17,18,19,20};
+        List<String> outs=new ArrayList<>();
+        Arrays.stream(ids).forEach(i->{
+            for (int j = 4; j <= 8; j++) {
+                SendingVo vo=new SendingVo();
+                vo.setUid(i);
+                long start=Long.parseLong("20180"+j+"01000000");
+                long end=Long.parseLong("20180"+(j+i)+"01000000");
+                vo.setStarttime(start);
+                vo.setEndtime(end);
+                Integer total=ghService.getTotal(vo)==null?0:ghService.getTotal(vo);
+                Integer succ=ghService.getSucc(vo)==null?0:ghService.getSucc(vo);
+                Integer fail=ghService.getFail(vo)==null?0:ghService.getFail(vo);
+                Integer wz=total-succ-fail;
+                String content=i+","+String.valueOf(start).substring(0,6)+","+total+","+succ+","+fail+","+wz;
+                outs.add(content);
+
+            }
+        });
+        FilePrintUtil.getInstance().write("D:\\hq\\files/广汇.csv", outs, "GBK");
+    }
+
+    @Test
     public void exportMxByUid(){
         Integer[] ids={1,17,18,19,20};
         SendingVo vo=new SendingVo();
