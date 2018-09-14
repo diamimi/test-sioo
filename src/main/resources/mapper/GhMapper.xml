@@ -18,6 +18,24 @@
             </if>
         </where>
     </select>
+    
+    <update id="updateToSucc" parameterType="com.pojo.SendingVo">
+        UPDATE sms_send_history_backups SET arrive_succ=#{arrive_succ},arrive_fail=#{arrive_fail} where id=#{id}
+    </update>
+
+    <select id="findFailList" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT id,mobile,senddate,arrive_succ,arrive_fail from sms_send_history_backups
+        <where>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;#{endtime}
+            </if>
+          /* and  arrive_succ&lt;contentNum*/
+        </where>
+    </select>
+
 
     <select id="findUserList" parameterType="com.pojo.SmsUser" resultType="com.pojo.SmsUser">
         SELECT id,username from sms_user
@@ -121,4 +139,27 @@
         SELECT  sum(c.total) total,sum(c.arrive_succ) asucc,sum(c.arrive_fail) af,c.uid uid,u.username username from sms_user_day_count c
         INNER JOIN sms_user u on c.uid=u.id where c.time&gt;=#{starttime} and c.time&lt;=#{endtime} and u.username=#{username}
     </select>
+
+
+
+
+
+    <update id="updateSmsSendHistory" parameterType="com.pojo.SendingVo">
+      update sms_send_history_backups set arrive_fail=0,arrive_succ=contentNum
+        <where>
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="mobile!=null and mobile>0">
+                and mobile=#{mobile}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;#{endtime}
+            </if>
+            and arrive_succ=0 and arrive_fail=contentNum
+        </where>
+    </update>
 </mapper>

@@ -25,8 +25,17 @@ public class SendingVo implements Serializable {
 
     private long endtime;
 
+    private String excludeContent;
 
-    private int uid; // 用户id
+    public String getExcludeContent() {
+        return excludeContent;
+    }
+
+    public void setExcludeContent(String excludeContent) {
+        this.excludeContent = excludeContent;
+    }
+
+    private Integer uid; // 用户id
     private Long mobile; // 接收号码
     private int channel; // 发送通道
     private String content; // 发送内容
@@ -270,11 +279,11 @@ public class SendingVo implements Serializable {
         this.senddate = senddate;
     }
 
-    public int getUid() {
+    public Integer getUid() {
         return uid;
     }
 
-    public void setUid(int uid) {
+    public void setUid(Integer uid) {
         this.uid = uid;
     }
 

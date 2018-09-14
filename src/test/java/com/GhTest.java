@@ -1,14 +1,12 @@
 package com;
 
 import com.pojo.SendingVo;
-import com.pojo.UserDayCount;
 import com.service.GhService;
 import com.service.RptService;
-import com.service.Store21Service;
-import com.service.StoreGhService;
-import com.util.ExcelUtil;
+import com.service.SendHistoryService;
+import com.service.SendHistoryService114;
+import com.util.DayUtil;
 import com.util.FilePrintUtil;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -26,8 +24,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.*;
-import java.util.concurrent.ForkJoinPool;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @Author: HeQi
@@ -47,57 +45,29 @@ public class GhTest {
     private RptService rptService;
 
     @Autowired
-    private StoreGhService storeGhService;
+    private SendHistoryService sendHistoryService;
 
     @Autowired
-    private Store21Service store21Service;
+    private SendHistoryService114 sendHistoryService114;
 
 
+    /**
+     * 根据114的记录更新21记录
+     */
     @Test
-    public void ss() {
-        List<String> ghList = storeGhService.findList();
-
-        List<String> List21 = store21Service.findList();
-        int expend = 4006921;
-        for (String s : ghList) {
-            if (!List21.contains(s)) {
-                System.out.println("INSERT INTO `smshy`.`sms_user_signstore` ( `uid`, `store`, `expend`, `status`, `userstat`, " +
-                        "`signtime`, `addtime`, `type`, `channel`, `expendqd`, `expend2`, `userexpend`) VALUES" +
-                        " ( '40058', '" + s + "', '" + expend + "', '0', '1', NULL, '2018-06-30 17:08:48', '2', '0', NULL, '" + expend + "', '40058" + expend + "');");
-                expend++;
-            }
-        }
-    }
-
-
-    @Test
-    public void sss1() throws Exception {
-        List<SendingVo> list = rptService.findFail();
-        ForkJoinPool myPool = new ForkJoinPool(8);
-        myPool.submit(() -> list.stream().parallel().forEach(vo -> {
-                    SendingVo v = rptService.findWz21(vo);
-                    if (v != null) {
-                        if (v.getArrive_succ() > 0 && v.getArrive_fail() == 0) {
-                            log.info("mobile:{},id:{},senddate:{}", vo.getMobile(), vo.getId(), vo.getSenddate());
-                        }
-                    }
-                }
-        )).get();
-    }
-
-
-    @Test
-    public void sss() {
-        List<SendingVo> list = rptService.findWz();
-        for (SendingVo vo : list) {
-            SendingVo v = rptService.findWz21(vo);
-            if (v != null) {
-                if (v.getArrive_fail() > 0 || v.getArrive_succ() > 0) {
-                    vo.setArrive_succ(v.getArrive_succ());
-                    vo.setArrive_fail(v.getArrive_fail());
-                    rptService.updateGhHistory(vo);
-                }
-            }
+    public void ss1s() {
+        List<String> days = DayUtil.getDayList(20180701, 20180831);
+        for (String day : days) {
+            SendingVo vo = new SendingVo();
+            vo.setUid(40058);
+            vo.setRptcode("DELIVRD");
+            vo.setTableName(day.substring(2));
+            List<SendingVo> history = sendHistoryService114.findHistorySucc(vo);
+            history.stream().parallel().forEach(h -> {
+                h.setUid(40058);
+                sendHistoryService.updateToSuccess(h);
+            });
+            System.out.println(day);
         }
     }
 
@@ -166,265 +136,106 @@ public class GhTest {
     }
 
 
-    @Test
-    public void exportExcel() throws Exception {
-        List<UserDayCount> list = ghService.getGhUserDayCount();
-        Map<Integer, UserDayCount> map = new HashMap<>();
-        for (UserDayCount userDayCount : list) {
-            if (map.containsKey(userDayCount.getUid())) {
-                UserDayCount dayCount = map.get(userDayCount.getUid());
-                dayCount.setTotal(userDayCount.getTotal() + dayCount.getTotal());
-                dayCount.setFail(userDayCount.getFail() + dayCount.getFail());
-                dayCount.setAsucc(userDayCount.getAsucc() + dayCount.getAsucc());
-                dayCount.setAf(userDayCount.getAf() + dayCount.getAf());
-                map.put(userDayCount.getUid(), dayCount);
-            } else {
-                map.put(userDayCount.getUid(), userDayCount);
-            }
-        }
-        List<Map.Entry<Integer, UserDayCount>> list1 = new ArrayList<>(map.entrySet());
-        Collections.sort(list1, (o1, o2) -> o2.getValue().getTotal().compareTo(o1.getValue().getTotal()));
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("对象报表");
-        int i = 0;
-        for (Map.Entry<Integer, UserDayCount> mapping : list1) {
-            UserDayCount u = mapping.getValue();
-            u.setWz(u.getTotal() - u.getAf() - u.getAsucc() - u.getFail());
-            HSSFRow row = sheet.createRow(i);
-            HSSFCell uid = row.createCell(0);
-            uid.setCellValue(u.getUid());
-            HSSFCell username = row.createCell(1);
-            username.setCellValue(u.getUsername());
-            HSSFCell company = row.createCell(2);
-            company.setCellValue(u.getCompany());
-            HSSFCell total = row.createCell(3);
-            total.setCellValue(u.getTotal());
-            HSSFCell fail = row.createCell(4);
-            fail.setCellValue(u.getFail());
-            HSSFCell asucc = row.createCell(5);
-            asucc.setCellValue(u.getAsucc()+u.getWz());
-            HSSFCell af = row.createCell(6);
-            af.setCellValue(u.getAf());
-            HSSFCell city = row.createCell(7);
-            city.setCellValue(u.getCity());
-            i++;
-        }
-        FileOutputStream output = new FileOutputStream("d:/广汇-1,17,18,19.20.xls");
-        workbook.write(output);
-        output.flush();
-    }
 
+
+    /**
+     * 增加分区
+     */
     @Test
-    public void countByDay() {
-        String title = "号码,批次,时间,内容,条数";
-        SendingVo vo = new SendingVo();
-        String filename = "广汇";
-        // vo.setUsername(filename);
-        for (int i = 20180401; i <= 20180419; i++) {
-            List<String> outs = new ArrayList<>();
-            outs.add(title);
-            long start = i;
-            long end = start + 1;
-            vo.setStarttime(start * 1000000l);
-            vo.setEndtime(end * 1000000l);
-            vo.setContent("【广汇汽车】");
-            List<SendingVo> list = ghService.getHistorySucc(vo);
-            list.stream().forEach(v -> {
-                String c = StringUtils.remove(v.getContent(), "\r");
-                c = StringUtils.remove(c, "\n");
-                c = StringUtils.remove(c, "\t");
-                c = StringUtils.replace(c, ",", ".");
-                String content = v.getMobile() + "," + v.getPid() + "," + v.getSenddate() + "," + c + "," + v.getContentNum();
-                outs.add(content);
-            });
-            FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
+    public void addParion() {
+        List<String> dayListOfMonth = DayUtil.getDayList(2018, 10, 12);
+        for (String date : dayListOfMonth) {
+            String d = date.substring(0, 4) + "-" + date.substring(4, 6) + "-" + date.substring(6, 8);
+            String dayAfter = DayUtil.getDayAfter(d);
+            String content = "ALTER TABLE smshy_new.sms_send_history_unknown ADD PARTITION (PARTITION phisotry_" + date + " VALUES LESS THAN (" + dayAfter + "000000));";
+            System.out.println(content);
         }
 
     }
 
-
+    /**
+     * 查询21 广汇每天成功和失败
+     */
     @Test
-    public void countByDay2() {
-        String title = "号码,批次,时间,内容,条数";
-        SendingVo vo = new SendingVo();
-        String filename = "广汇";
+    public void siooGhCount() {
+        List<String> dayListOfMonth = DayUtil.getDayListOfMonth(2018, 7, 8);
+        String title="日期,总数,成功,失败,未知";
         List<String> outs = new ArrayList<>();
         outs.add(title);
-        long start = 20180625140000l;
-        long end = 20180625160000l;
-        vo.setStarttime(start );
-        vo.setEndtime(end);
-        vo.setContent("【广汇汽车】");
-        List<SendingVo> list = ghService.getHistorySucc(vo);
-        list.stream().forEach(v -> {
-            String c = StringUtils.remove(v.getContent(), "\r");
-            c = StringUtils.remove(c, "\n");
-            c = StringUtils.remove(c, "\t");
-            c = StringUtils.replace(c, ",", ".");
-            String content = v.getMobile() + "," + v.getPid() + "," + v.getSenddate() + "," + c + "," + v.getContentNum();
+        for (String d : dayListOfMonth) {
+            SendingVo vo = new SendingVo();
+            vo.setStarttime(Long.valueOf(d + "000000"));
+            vo.setEndtime(Long.valueOf(DayUtil.getDayAfter(d) + "000000"));
+            vo.setUid(40058);
+            vo.setExcludeContent("【广汇汽车】");
+            Integer total = sendHistoryService.countTotal(vo);
+            Integer succ = sendHistoryService.countSucc(vo);
+            Integer fail = sendHistoryService.countFail(vo);
+            int wz=total-succ-fail;
+            String content =d+","+ total + "," + succ + "," + fail+","+wz;
             outs.add(content);
-        });
-        FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + "_" + start + ".csv", outs, "GBK");
-
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\files/sioo.csv", outs, "GBK");
     }
 
 
+    /**
+     * 查询114广汇每天数量统计
+     */
     @Test
-    public void countByDay1() {
-        String title = "时间,条数";
-        String filename = "广汇";
+    public void ghCount114(){
+        List<String> dayListOfMonth = DayUtil.getDayListOfMonth(2018, 7, 8);
+        String title="日期,总数,成功,失败,未知";
         List<String> outs = new ArrayList<>();
         outs.add(title);
-        SendingVo vo = new SendingVo();
-        vo.setUid(1);
-        for (int i = 20180401; i <= 20180430; i++) {
-            long start = i;
-            long end ;
-            if (start == 20180430) {
-                end = 20180501;
-            } else {
-                end = start + 1;
-            }
-            vo.setStarttime(start * 1000000l);
-            vo.setEndtime(end * 1000000l);
-            vo.setContent("【广汇汽车】");
-            Integer succ = ghService.getSucc(vo);
-            String content = i + "," + succ;
+        for (String s : dayListOfMonth) {
+            SendingVo vo=new SendingVo();
+            vo.setUid(40058);
+          //  vo.setContent("【广汇汽车】");
+            vo.setExcludeContent("【广汇汽车】");
+            vo.setTableName(s.substring(2));
+            Integer succ = sendHistoryService114.getSucc(vo);
+            Integer total = sendHistoryService114.getTotal(vo);
+            Integer fail = sendHistoryService114.getFail(vo);
+            Integer wz = sendHistoryService114.getWz(vo);
+            String content =s+","+ total + "," + succ + "," + fail+","+wz;
             outs.add(content);
         }
-        for (int i = 20180501; i <= 20180531; i++) {
-            long start = i;
-            long end ;
-            if (start == 20180531) {
-                end = 20180601;
-            } else {
-                end = start + 1;
-            }
-            vo.setStarttime(start * 1000000l);
-            vo.setEndtime(end * 1000000l);
-            vo.setContent("【广汇汽车】");
-            Integer succ = ghService.getSucc(vo);
-            String content = i + "," + succ;
-            outs.add(content);
-        }
-        for (int i = 20180601; i <= 20180630; i++) {
-            long start = i;
-            long end;
-            if (start == 20180630) {
-                end = 20180701;
-            } else {
-                end = start + 1;
-            }
-            vo.setStarttime(start * 1000000l);
-            vo.setEndtime(end * 1000000l);
-            vo.setContent("【广汇汽车】");
-            Integer succ = ghService.getSucc(vo);
-            String content = i + "," + succ;
-            outs.add(content);
-        }
-        FilePrintUtil.getInstance().write("D:\\hq\\files/" + filename + ".csv", outs, "GBK");
+        FilePrintUtil.getInstance().write("D:\\hq\\files/114-gh-exclude.csv", outs, "GBK");
     }
 
 
+
+
+    /**
+     * 根据21的发送状态更新记录
+     */
     @Test
-    public void excel() throws Exception {
-        List<String> outs = new ArrayList<>();
-        String title = "用户,总数,成功,失败";
-        outs.add(title);
-        Map<String,UserDayCount> map=new HashMap<>();
-        String[] array={
-                "D:\\hq\\files/4月汇总-.xlsx",
-                "D:\\hq\\files/5月汇总-.xlsx",
-                "D:\\hq\\files/6月汇总-.xlsx",
-        };
-        for (String s : array) {
-            File xlsFile = new File(s);
-            InputStream is = new FileInputStream(xlsFile);
-            Workbook workbook = WorkbookFactory.create(is);
-            Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
-            for (int rowNum = 2; rowNum <= sheet.getLastRowNum(); rowNum++) {
-                Row row = sheet.getRow(rowNum);
-                if (row != null) {
-                    String username = ExcelUtil.getInstance().getCellValue(row, 0);
-                    String gh_total = ExcelUtil.getInstance().getCellValue(row, 1);
-                    String gh_success = ExcelUtil.getInstance().getCellValue(row, 2);
-                    String gh_fail = ExcelUtil.getInstance().getCellValue(row, 3);
-                    if(!map.containsKey(username)){
-                        UserDayCount userDayCount=new UserDayCount();
-                        userDayCount.setTotal(Integer.valueOf(gh_total));
-                        userDayCount.setAsucc(Integer.valueOf(gh_success));
-                        userDayCount.setAf(Integer.valueOf(gh_fail));
-                        map.put(username,userDayCount);
-                    }else {
-                        UserDayCount userDayCount=map.get(username);
-                        userDayCount.setTotal(userDayCount.getTotal()+Integer.valueOf(gh_total));
-                        userDayCount.setAsucc(userDayCount.getAsucc()+Integer.valueOf(gh_success));
-                        userDayCount.setAf(userDayCount.getAf()+Integer.valueOf(gh_fail));
-                        map.put(username,userDayCount);
-                    }
+    public void updateFrom21() {
+        List<String> dayList = DayUtil.getDayList(20180719, 20180831);
+        for (String s : dayList) {
+            SendingVo vo = new SendingVo();
+            String start = s + "000000";
+            String end = DayUtil.getDayAfter(s) + "000000";
+            vo.setStarttime(Long.valueOf(start));
+            vo.setEndtime(Long.valueOf(end));
+            List<SendingVo> failList = ghService.findFailList(vo);
+            failList.stream().forEach(sendingVo -> {
+                String time = sendingVo.getSenddate1();
+                sendingVo.setStarttime(sendingVo.getSenddate());
+                sendingVo.setEndtime(Long.valueOf(DayUtil.getDaySec(time, 15)));
+                sendingVo.setUid(40058);
+                SendingVo sendingVo1 = sendHistoryService.findSucc21(sendingVo);
+                if (sendingVo1 != null) {
+                    if (sendingVo.getArrive_succ() != sendingVo1.getArrive_succ() || sendingVo.getArrive_fail() != sendingVo1.getArrive_fail())
+                        sendingVo.setArrive_succ(sendingVo1.getArrive_succ());
+                    sendingVo.setArrive_fail(sendingVo1.getArrive_fail());
+                    ghService.updateToSucc(sendingVo);
                 }
-            }
+            });
+            System.out.println(s);
         }
-        List<Map.Entry<String,UserDayCount>> list = new ArrayList<>(map.entrySet());
-        Collections.sort(list, (o1, o2) -> o2.getValue().getTotal().compareTo(o1.getValue().getTotal()));
-        for(Map.Entry<String,UserDayCount> entry:list){
-            String content=entry.getKey()+","+entry.getValue().getTotal()+","+entry.getValue().getAsucc()+","+entry.getValue().getAf();
-            outs.add(content);
-        }
-        FilePrintUtil.getInstance().write("D:\\hq\\files/广汇_汇总.csv", outs, "GBK");
-    }
 
-    @Test
-    public void sss11(){
-        Integer[] ids={1,17,18,19,20};
-        List<String> outs=new ArrayList<>();
-        Arrays.stream(ids).forEach(i->{
-            for (int j = 4; j <= 8; j++) {
-                SendingVo vo=new SendingVo();
-                vo.setUid(i);
-                long start=Long.parseLong("20180"+j+"01000000");
-                long end=Long.parseLong("20180"+(j+i)+"01000000");
-                vo.setStarttime(start);
-                vo.setEndtime(end);
-                Integer total=ghService.getTotal(vo)==null?0:ghService.getTotal(vo);
-                Integer succ=ghService.getSucc(vo)==null?0:ghService.getSucc(vo);
-                Integer fail=ghService.getFail(vo)==null?0:ghService.getFail(vo);
-                Integer wz=total-succ-fail;
-                String content=i+","+String.valueOf(start).substring(0,6)+","+total+","+succ+","+fail+","+wz;
-                outs.add(content);
-
-            }
-        });
-        FilePrintUtil.getInstance().write("D:\\hq\\files/广汇.csv", outs, "GBK");
-    }
-
-    @Test
-    public void exportMxByUid(){
-        Integer[] ids={1,17,18,19,20};
-        SendingVo vo=new SendingVo();
-        vo.setStarttime(20180801000000l);
-        vo.setEndtime(20180901000000l);
-        Arrays.stream(ids).forEach(i->{
-            vo.setUid(i);
-            mxByUid(vo,"8月");
-        });
-
-    }
-
-    public void mxByUid(SendingVo vo,String fileName){
-        String title = "账号,号码,批次,时间,内容,条数";
-        List<String> outs=new ArrayList<>();
-        outs.add(title);
-        List<SendingVo> sendingVos=ghService.getHistorySucc(vo);
-        sendingVos.stream().forEach((v->{
-            String c = StringUtils.remove(v.getContent(), "\r");
-            c = StringUtils.remove(c, "\n");
-            c = StringUtils.remove(c, "\t");
-            c = StringUtils.replace(c, ",", ".");
-            String content =v.getUsername()+","+ v.getMobile() + "," + v.getPid() + "," + v.getSenddate1() + "," + c + "," + v.getContentNum();
-            outs.add(content);
-        }));
-        FilePrintUtil.getInstance().write("D:\\hq\\files/" + vo.getUid() + "_" + fileName + ".csv", outs, "GBK");
     }
 
 

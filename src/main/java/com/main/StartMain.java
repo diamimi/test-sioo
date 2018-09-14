@@ -41,25 +41,25 @@ public class StartMain implements ApplicationRunner {
 
     public void exportBatchHistory() throws Exception {
         List<String> contents = new ArrayList<>();
-        String title = "号码,内容,时间,状态";
+        String title = "号码,内容,时间,状态,回执时间";
         contents.add(title);
-        int uid = 506551;
+        int uid = 50660;
         SendingVo vo = new SendingVo();
         vo.setUid(uid);
         // vo.setLevel(0);
-        addBatchContent(20180801, 20180831, contents, vo);
-        FilePrintUtil.getInstance().write("/home/sioowork/114/" + uid + "_8.csv", contents, "gbk");
+        addBatchContent(20180804, 20180805, contents, vo);
+        FilePrintUtil.getInstance().write("/home/sioowork/114/" + uid + "_.csv", contents, "gbk");
     }
 
 
     public void addBatchContent(int start, int end, List<String> contents, SendingVo vo) {
         for (int i = start; i <= end; i++) {
-            String tableName = String.valueOf(i).substring(4);
+            String tableName = String.valueOf(i).substring(2);
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findHistory(vo);
             list.stream().forEach(v -> {
                 String c = StringUtils.replace(v.getContent(), ",", ".");
-                String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode();
+                String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode()+","+v.getRpttime();
                 contents.add(content);
 
             });

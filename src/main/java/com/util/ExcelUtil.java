@@ -5,10 +5,13 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 
 /**
@@ -32,6 +35,21 @@ public class ExcelUtil {
         }
         return cell_value;
 
+    }
+
+    public Sheet getSheet(String filename,int index){
+        File xlsFile = new File(filename);
+        Workbook workbook = null;
+        try {
+            InputStream is = new FileInputStream(xlsFile);
+            workbook = WorkbookFactory.create(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (InvalidFormatException e) {
+            e.printStackTrace();
+        }
+        Sheet sheet = workbook.getSheetAt(index);  //示意访问sheet
+        return sheet;
     }
 
     public void export(Collection<String> c, String filename) {

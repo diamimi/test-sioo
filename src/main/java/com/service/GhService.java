@@ -62,4 +62,16 @@ public class GhService {
     public UserDayCount findUserDayCount(UserDayCount userDayCount) {
         return ghMapper.findUserDayCount(userDayCount);
     }
+
+    public void updateSmsSendHistory(SendingVo vo) {
+        ghMapper.updateSmsSendHistory(vo);
+    }
+
+    public List<SendingVo> findFailList(SendingVo vo) {
+        return ghMapper.findFailList(vo);
+    }
+
+    public void updateToSucc(SendingVo sendingVo) {
+        ghMapper.updateToSucc(sendingVo);
+    }
 }

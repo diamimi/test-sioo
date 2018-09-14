@@ -5,8 +5,31 @@
 
     <select id="findHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
         SELECT r.mobile mobile,b.content content,b.senddate senddate,r.rptcode rptcode,b.contentNum contentNum,r.rpttime
-        rpttime,r.pid pid
-        FROM sms_user_batch_18${tableName} b INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        rpttime,r.pid pid,r.hisid id
+        FROM sms_user_batch_${tableName} b INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
+        <where>
+            <if test="uid!=null ">
+                AND b.uid=#{uid}
+            </if>
+            <if test="mobile!=null ">
+                AND r.mobile=#{mobile}
+            </if>
+            <if test="rptcode!=null ">
+                AND r.rptcode=#{rptcode}
+            </if>
+            <if test="content!=null ">
+                AND b.content like "%"#{content}"%"
+            </if>
+            <if test="level!=null ">
+                AND r.rptcode!='DELIVRD' AND r.rptcode!='-1' and r.rptcode!='XA:2006'
+            </if>
+        </where>
+    </select>
+
+
+    <select id="findHistorySucc" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT r.hisid id
+        FROM sms_user_batch_${tableName} b INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
         <where>
             <if test="uid!=null ">
                 AND b.uid=#{uid}
@@ -28,7 +51,7 @@
 
 
     <select id="findSingleHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT mobile,content,senddate,rptcode from sms_user_history_18${tableName}
+        SELECT mobile,content,senddate,rptcode from sms_user_history_${tableName}
         <where>
             <if test="uid!=null ">
                 AND (uid=#{uid} )
@@ -76,14 +99,20 @@
 
     <select id="getTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
         SELECT
-        sum(b.contentNum)
+        IFNULL(sum(b.contentNum),0)
         FROM
-        sms_user_batch_18${tableName} b
-        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        sms_user_batch_${tableName} b
+        INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
         <where>
             r.rptcode!='XA:2006'
             <if test="content!=null ">
                 AND b.content like "%"#{content}"%"
+            </if>
+            <if test="excludeContent!=null ">
+                AND b.content not like "%"#{excludeContent}"%"
+            </if>
+            <if test="content!=null ">
+                AND b.content  like "%"#{content}"%"
             </if>
             <if test="uid!=null ">
                 AND b.uid=#{uid}
@@ -96,14 +125,20 @@
 
     <select id="getSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
         SELECT
-        sum(b.contentNum)
+        IFNULL(sum(b.contentNum),0)
         FROM
-        sms_user_batch_18${tableName} b
-        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        sms_user_batch_${tableName} b
+        INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
         <where>
             r.rptcode='DELIVRD'
             <if test="content!=null ">
                 AND b.content like "%"#{content}"%"
+            </if>
+            <if test="excludeContent!=null ">
+                AND b.content not like "%"#{excludeContent}"%"
+            </if>
+            <if test="content!=null ">
+                AND b.content  like "%"#{content}"%"
             </if>
             <if test="uid!=null ">
                 AND b.uid=#{uid}
@@ -113,14 +148,20 @@
 
     <select id="getFail" parameterType="com.pojo.SendingVo" resultType="Integer">
         SELECT
-        sum(b.contentNum)
+        IFNULL(sum(b.contentNum),0)
         FROM
-        sms_user_batch_18${tableName} b
-        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        sms_user_batch_${tableName} b
+        INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
         <where>
             r.rptcode!='-1' and r.rptcode!='DELIVRD' and r.rptcode!='XA:2006'
             <if test="content!=null ">
                 AND b.content like "%"#{content}"%"
+            </if>
+            <if test="excludeContent!=null ">
+                AND b.content not like "%"#{excludeContent}"%"
+            </if>
+            <if test="content!=null ">
+                AND b.content  like "%"#{content}"%"
             </if>
             <if test="uid!=null ">
                 AND b.uid=#{uid}
@@ -130,10 +171,10 @@
 
     <select id="getWz" parameterType="com.pojo.SendingVo" resultType="Integer">
         SELECT
-        sum(b.contentNum)
+        IFNULL(sum(b.contentNum),0)
         FROM
-        sms_user_batch_18${tableName} b
-        INNER JOIN sms_user_rpt_18${tableName} r ON b.pid = r.pid
+        sms_user_batch_${tableName} b
+        INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
         <where>
             r.rptcode='-1'
             <if test="content!=null ">
@@ -141,6 +182,12 @@
             </if>
             <if test="uid!=null ">
                 AND b.uid=#{uid}
+            </if>
+            <if test="excludeContent!=null ">
+                AND b.content not like "%"#{excludeContent}"%"
+            </if>
+            <if test="content!=null ">
+                AND b.content  like "%"#{content}"%"
             </if>
         </where>
     </select>
@@ -189,4 +236,20 @@
        0
         )
     </insert>
+    
+    <select id="getSuccList" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+      SELECT senddate,rpttime,contentNum from sms_user_history_${tableName} where uid=#{uid} and rptcode='DELIVRD'
+    </select>
+
+
+    <select id="getSuccBatchList" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+       SELECT
+        b.contentNum contentNum,b.senddate senddate,r.rpttime rpttime
+        FROM
+            sms_user_batch_${tableName} b
+        INNER JOIN sms_user_rpt_${tableName} r ON b.pid = r.pid
+        WHERE
+        b.uid = #{uid} and r.rptcode='DELIVRD'
+
+    </select>
 </mapper>

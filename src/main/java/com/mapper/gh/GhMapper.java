@@ -35,4 +35,10 @@ public interface GhMapper extends Mapper114 {
     List<SmsUser> findUserList(SmsUser smsUser);
 
     UserDayCount findUserDayCount(UserDayCount userDayCount);
+
+    void updateSmsSendHistory(SendingVo vo);
+
+    List<SendingVo> findFailList(SendingVo vo);
+
+    void updateToSucc(SendingVo sendingVo);
 }

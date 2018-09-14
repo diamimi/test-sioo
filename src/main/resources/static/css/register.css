@@ -1,0 +1,53 @@
+body{
+    min-width: 1200px;
+}
+.info_msg_block{
+    margin-bottom: 20px;
+    padding-left: 90px;
+    padding-top: 10px;
+}
+.info_msg{
+    padding: 5px;
+    background: #FF9900;
+    color: white;
+    border-radius: 10px;
+}
+.reg-form{
+    margin-top:20px;
+}
+.info-message{
+    width: 360px;
+    height: 360px;
+    margin: 80px auto;
+}
+.info-message h2{
+    font-size: 36px;
+    color: #000;
+    margin-bottom: 30px;
+}
+.info-message span{
+    color: #f75730;
+}
+.info-message p{
+    font-size: 14px;
+    line-height: 22px;
+    color: #333;
+    margin-bottom: 25px;
+}
+.info-message li{
+    margin-bottom: 15px;
+    font-size: 14px;
+    padding-left: 24px;
+    text-indent: -24px;
+}
+
+.font16{
+    font-size: 16px;
+}
+
+.star_mes{
+    display: inline-block;width: 10px;height: 40px;padding-top: 10px;float: left
+}
+.star_mes span{
+    color:red;
+}

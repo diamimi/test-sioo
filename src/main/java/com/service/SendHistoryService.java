@@ -44,4 +44,25 @@ public class SendHistoryService {
     public List<SendingVo> export() {
       return   sendHistoryMapper.export();
     }
+
+    public Integer countTotal(SendingVo vo) {
+        return sendHistoryMapper.countTotal(vo)==null?0:sendHistoryMapper.countTotal(vo);
+    }
+
+    public Integer countSucc(SendingVo vo) {
+        return sendHistoryMapper.countSucc(vo)==null?0:sendHistoryMapper.countSucc(vo);
+    }
+
+    public Integer countFail(SendingVo vo) {
+        return sendHistoryMapper.countFail(vo)==null?0:sendHistoryMapper.countFail(vo);
+
+    }
+
+    public void updateToSuccess(SendingVo sendingVo) {
+        sendHistoryMapper.updateToSuccess(sendingVo);
+    }
+
+    public SendingVo findSucc21(SendingVo sendingVo) {
+        return sendHistoryMapper.findSucc21(sendingVo);
+    }
 }

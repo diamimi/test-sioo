@@ -63,4 +63,16 @@ public class SendHistoryService114 {
     public void insertSendHistoryAjx(SendingVo vo) {
         sendHistoryMapper114.insertSendHistoryAjx(vo);
     }
+
+    public List<SendingVo> findHistorySucc(SendingVo vo) {
+        return sendHistoryMapper114.findHistorySucc(vo);
+    }
+
+    public List<SendingVo> getSuccList(SendingVo vo) {
+        return sendHistoryMapper114.getSuccList(vo);
+    }
+
+    public List<SendingVo> getSuccBatchList(SendingVo vo) {
+        return sendHistoryMapper114.getSuccBatchList(vo);
+    }
 }

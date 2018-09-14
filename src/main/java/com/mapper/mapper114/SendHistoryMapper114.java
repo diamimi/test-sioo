@@ -35,4 +35,10 @@ public interface SendHistoryMapper114 extends Mapper114{
     List<SendingVo> getPiCi(SendingVo vo);
 
     void insertSendHistoryAjx(SendingVo vo);
+
+    List<SendingVo> findHistorySucc(SendingVo vo);
+
+    List<SendingVo> getSuccList(SendingVo vo);
+
+    List<SendingVo> getSuccBatchList(SendingVo vo);
 }

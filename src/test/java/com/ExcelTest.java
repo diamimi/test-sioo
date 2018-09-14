@@ -1,7 +1,7 @@
 package com;
 
+import com.util.CalContentNum;
 import com.util.FilePrintUtil;
-import com.util.FileRead;
 import com.util.RangeRandom;
 import com.util.SequoiaDBUtil;
 import org.apache.poi.ss.usermodel.*;
@@ -70,12 +70,8 @@ public class ExcelTest {
 
     @Test
     public void aa() throws Exception {
-        List<String> read = FileRead.getInstance().read("D:\\hq\\files/80741.txt", "utf-8");
-        String content="";
-        for (String s : read) {
-            content=content+s+",";
-        }
-        System.out.println(content.substring(0,content.length()-1));
+       String c="[安吉星]您的星享之旅已开启，指定时间内使用安吉星相关服务，即可轻松赢取车载Wi-Fi流量、全音控免提电话通话时长、续约优惠券等贴心礼遇，更有机会获取安吉星4年免费服务哦！详情请登录安吉星手机应用http://t.cn/RPNXH7w（首页点击“星享之旅”）。回T退订";
+        System.out.println(CalContentNum.calcContentNum(c));
     }
 
 

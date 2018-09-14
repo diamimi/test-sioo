@@ -26,4 +26,14 @@ public interface SendHistoryMapper extends Mapper21 {
     void insertHistory(SendingVo vo);
 
     List<SendingVo> export();
+
+    Integer countTotal(SendingVo vo);
+
+    Integer countSucc(SendingVo vo);
+
+    Integer countFail(SendingVo vo);
+
+    void updateToSuccess(SendingVo sendingVo);
+
+    SendingVo findSucc21(SendingVo sendingVo);
 }
