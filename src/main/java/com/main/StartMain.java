@@ -1,10 +1,8 @@
 package com.main;
 
 import com.pojo.SendingVo;
-import com.service.BlackMobileService;
-import com.service.SendHistoryService114;
-import com.util.FilePrintUtil;
-import org.apache.commons.lang.StringUtils;
+import com.service.AnjxService;
+import com.service.SendHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,45 +23,43 @@ public class StartMain implements ApplicationRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(StartMain.class);
 
     @Autowired
-    private SendHistoryService114 sendHistoryService114;
+    private AnjxService anjxService;
 
     @Autowired
-    private BlackMobileService blackMobileService;
-
+    private SendHistoryService sendHistoryService;
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
       /*  LOGGER.info("start");
-        exportBatchHistory();
+        ss();
         LOGGER.info("end");*/
 
     }
 
-    public void exportBatchHistory() throws Exception {
-        List<String> contents = new ArrayList<>();
-        String title = "号码,内容,时间,状态,回执时间";
-        contents.add(title);
-        int uid = 50660;
-        SendingVo vo = new SendingVo();
-        vo.setUid(uid);
-        // vo.setLevel(0);
-        addBatchContent(20180804, 20180805, contents, vo);
-        FilePrintUtil.getInstance().write("/home/sioowork/114/" + uid + "_.csv", contents, "gbk");
-    }
-
-
-    public void addBatchContent(int start, int end, List<String> contents, SendingVo vo) {
-        for (int i = start; i <= end; i++) {
-            String tableName = String.valueOf(i).substring(2);
-            vo.setTableName(tableName);
-            List<SendingVo> list = sendHistoryService114.findHistory(vo);
-            list.stream().forEach(v -> {
-                String c = StringUtils.replace(v.getContent(), ",", ".");
-                String content = v.getMobile() + "," + c + "," + v.getSenddate1() + "," + v.getRptcode()+","+v.getRpttime();
-                contents.add(content);
-
-            });
+    public void ss(){
+        List<Integer> ids=new ArrayList<>();
+        for(int id=270685;id<=8432543;id++){
+            ids.add(id);
         }
+        ids.stream().parallel().forEach(id->{
+            SendingVo vo=new SendingVo();
+            vo.setSenddate(0L);
+            vo.setId(id);
+            SendingVo v=anjxService.findOneHistory(vo);
+            if(v!=null){
+                v.setUid(20066);
+                v.setEndtime(v.getRpttime());
+                List<SendingVo> byConditon = sendHistoryService.findByConditon(v);
+                if(byConditon!=null&&byConditon.size()>0){
+                    vo.setSenddate(byConditon.get(0).getSenddate());
+                    anjxService.updateHistory(vo);
+                }else {
+                    vo.setSenddate(1l);
+                    anjxService.updateHistory(vo);
+                }
+            }
+        });
     }
+
 
 }

@@ -2,6 +2,8 @@ package com.config;
 
 import com.mapper.Mapper114;
 import com.mapper.Mapper21;
+import com.mapper.MapperAnjx;
+import com.mapper.MapperGh;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -15,12 +17,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataSourceAspect {
     @Before("execution(* com.mapper..*.*(..))")
-    public void setDataSourceKey(JoinPoint point){
+    public void setDataSourceKey(JoinPoint point) {
         //连接点所属的类实例是ShopDao
-        if(point.getTarget() instanceof Mapper21){
+        if (point.getTarget() instanceof Mapper21) {
             DatabaseContextHolder.setDatabaseType(DatabaseType.database21);
-        }else if(point.getTarget() instanceof Mapper114){//连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
+        } else if (point.getTarget() instanceof Mapper114) {//连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
             DatabaseContextHolder.setDatabaseType(DatabaseType.database114);
+        } else if (point.getTarget() instanceof MapperGh) {//连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
+            DatabaseContextHolder.setDatabaseType(DatabaseType.databaseGh);
+        } else if (point.getTarget() instanceof MapperAnjx) {//连接点所属的类实例是UserDao（当然，这一步也可以不写，因为defaultTargertDataSource就是该类所用的mytestdb）
+            DatabaseContextHolder.setDatabaseType(DatabaseType.databaseAnjx);
         }
     }
 }

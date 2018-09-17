@@ -7,6 +7,8 @@ import com.service.SendHistoryService;
 import com.service.SendHistoryService114;
 import com.util.DayUtil;
 import com.util.FilePrintUtil;
+import com.util.FileRead;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -136,8 +138,6 @@ public class GhTest {
     }
 
 
-
-
     /**
      * 增加分区
      */
@@ -159,7 +159,7 @@ public class GhTest {
     @Test
     public void siooGhCount() {
         List<String> dayListOfMonth = DayUtil.getDayListOfMonth(2018, 7, 8);
-        String title="日期,总数,成功,失败,未知";
+        String title = "日期,总数,成功,失败,未知";
         List<String> outs = new ArrayList<>();
         outs.add(title);
         for (String d : dayListOfMonth) {
@@ -171,8 +171,8 @@ public class GhTest {
             Integer total = sendHistoryService.countTotal(vo);
             Integer succ = sendHistoryService.countSucc(vo);
             Integer fail = sendHistoryService.countFail(vo);
-            int wz=total-succ-fail;
-            String content =d+","+ total + "," + succ + "," + fail+","+wz;
+            int wz = total - succ - fail;
+            String content = d + "," + total + "," + succ + "," + fail + "," + wz;
             outs.add(content);
         }
         FilePrintUtil.getInstance().write("D:\\hq\\files/sioo.csv", outs, "GBK");
@@ -183,28 +183,26 @@ public class GhTest {
      * 查询114广汇每天数量统计
      */
     @Test
-    public void ghCount114(){
+    public void ghCount114() {
         List<String> dayListOfMonth = DayUtil.getDayListOfMonth(2018, 7, 8);
-        String title="日期,总数,成功,失败,未知";
+        String title = "日期,总数,成功,失败,未知";
         List<String> outs = new ArrayList<>();
         outs.add(title);
         for (String s : dayListOfMonth) {
-            SendingVo vo=new SendingVo();
+            SendingVo vo = new SendingVo();
             vo.setUid(40058);
-          //  vo.setContent("【广汇汽车】");
+            //  vo.setContent("【广汇汽车】");
             vo.setExcludeContent("【广汇汽车】");
             vo.setTableName(s.substring(2));
             Integer succ = sendHistoryService114.getSucc(vo);
             Integer total = sendHistoryService114.getTotal(vo);
             Integer fail = sendHistoryService114.getFail(vo);
             Integer wz = sendHistoryService114.getWz(vo);
-            String content =s+","+ total + "," + succ + "," + fail+","+wz;
+            String content = s + "," + total + "," + succ + "," + fail + "," + wz;
             outs.add(content);
         }
         FilePrintUtil.getInstance().write("D:\\hq\\files/114-gh-exclude.csv", outs, "GBK");
     }
-
-
 
 
     /**
@@ -235,8 +233,68 @@ public class GhTest {
             });
             System.out.println(s);
         }
+    }
+
+
+    /**
+     * 导出广汇每天的数据统计
+     */
+    @Test
+    public void exportGhDayCount() {
+        List<String> dayList = DayUtil.getDayList(20180701, 20180831);
+        List<String> outs = new ArrayList<>();
+        String title = "日期,总数,成功,失败,未知";
+        outs.add(title);
+        for (String s : dayList) {
+            SendingVo vo = new SendingVo();
+            vo.setExcludeContent("【广汇汽车】");
+            vo.setStarttime(Long.parseLong(s + "000000"));
+            String endtime = DayUtil.getDayAfter(s);
+            vo.setEndtime(Long.valueOf(endtime + "000000"));
+            Integer total = ghService.getTotal(vo);
+            Integer succ = ghService.getSucc(vo);
+            Integer fail = ghService.getFail(vo);
+            int wz = total - succ - fail;
+            String content = s + "," + total + "," + succ + "," + fail + "," + wz;
+            outs.add(content);
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\广汇/gh_dayc_count.csv", outs, "GBK");
+    }
+
+    /**
+     * 删除重复数据
+     */
+    @Test
+    public void deletRepeatData() {
+        List<String> ids = FileRead.getInstance().read("D:\\hq\\广汇/sql.txt", "utf-8");
+        for (String id : ids) {
+            String replace = StringUtils.replace(id, "INSERT INTO ``.``", "INSERT INTO sms_send_history_backups");
+            System.out.println(replace);
+        }
 
     }
 
 
+    /**
+     * 按天导出明细
+     */
+    @Test
+    public void exportByDay(){
+        List<String> days=DayUtil.getDayList(20180804,20180804);
+        List<String> outs = new ArrayList<>();
+        String title = "mobile,pid,contentNum,time";
+        outs.add(title);
+        for (String day : days) {
+            SendingVo vo=new SendingVo();
+            vo.setStarttime(Long.parseLong(day+"000000"));
+            String afterDay=DayUtil.getDayAfter(day);
+            vo.setEndtime(Long.parseLong(afterDay+"000000"));
+            vo.setExcludeContent("【广汇汽车】");
+            List<SendingVo> historySucc = ghService.getHistorySucc(vo);
+            for (SendingVo sendingVo : historySucc) {
+                outs.add(sendingVo.getMobile()+","+sendingVo.getPid()+","+sendingVo.getContentNum()+","+sendingVo.getSenddate1());
+            }
+        }
+        FilePrintUtil.getInstance().write("D:\\hq\\广汇/0808",outs,"GBK");
+    }
 }

@@ -112,13 +112,13 @@
 
 
     <select id="countTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
-        SELECT sum(contentNum)  from sms_send_history_unknown where
+        SELECT IFNULL(sum(contentNum),0)   from sms_send_history_unknown where
         senddate&gt;=#{starttime} and senddate&lt;#{endtime}  and uid=#{uid} and content not like "%"#{excludeContent}"%"
 
     </select>
 
     <select id="countSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
-        SELECT sum(contentNum) from sms_send_history_unknown
+        SELECT IFNULL(sum(contentNum),0)  from sms_send_history_unknown
         <where>
             arrive_succ=contentNum and arrive_fail=0
             <if test="uid!=null and uid>0">
@@ -137,7 +137,7 @@
     </select>
 
     <select id="countFail" parameterType="com.pojo.SendingVo" resultType="Integer">
-        SELECT sum(contentNum)  from sms_send_history_unknown where
+        SELECT IFNULL(sum(contentNum),0)   from sms_send_history_unknown where
         arrive_succ=0 and arrive_fail=contentNum  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid} and content not like "%"#{excludeContent}"%"
 
     </select>

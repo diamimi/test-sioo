@@ -51,6 +51,21 @@ public class MybatisConfig {
     }
 
 
+    @Bean(name = "databaseGh")
+    @Qualifier("databaseGh")
+    @ConfigurationProperties(prefix = "springGh.datasource")
+    public DataSource databaseGh() {
+        return DataSourceBuilder.create().build();
+    }
+
+
+    @Bean(name = "databaseAnjx")
+    @Qualifier("databaseAnjx")
+    @ConfigurationProperties(prefix = "springAnjx.datasource")
+    public DataSource databaseAnjx() {
+        return DataSourceBuilder.create().build();
+    }
+
     /**
      * @Primary 该注解表示在同一个接口有多个实现类可以注入的时候，默认选择哪一个，而不是让@autowire注解报错
      * @Qualifier 根据名称进行注入，通常是在具有相同的多个类型的实例的一个注入（例如有多个DataSource类型的实例）
@@ -58,11 +73,14 @@ public class MybatisConfig {
     @Bean
     @Primary
     public DynamicDataSource dataSource(@Qualifier("database21") DataSource database21,
-                                        @Qualifier("database114") DataSource database114) {
+                                        @Qualifier("database114") DataSource database114,
+                                        @Qualifier("databaseGh") DataSource databaseGh,
+                                        @Qualifier("databaseAnjx") DataSource databaseAnjx) {
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put(DatabaseType.database21, database21);
         targetDataSources.put(DatabaseType.database114, database114);
-
+        targetDataSources.put(DatabaseType.databaseGh, databaseGh);
+        targetDataSources.put(DatabaseType.databaseAnjx, databaseAnjx);
         DynamicDataSource dataSource = new DynamicDataSource();
         dataSource.setTargetDataSources(targetDataSources);// 该方法是AbstractRoutingDataSource的方法
         dataSource.setDefaultTargetDataSource(database21);// 默认的datasource设置为myTestDbDataSource
@@ -71,12 +89,15 @@ public class MybatisConfig {
     }
 
     @Bean
-    public SqlSessionFactory sqlSessionFactory(@Qualifier("database21") DataSource myTestDbDataSource,
-                                               @Qualifier("database114") DataSource myTestDb2DataSource) throws Exception{
+    public SqlSessionFactory sqlSessionFactory(@Qualifier("database21") DataSource database21,
+                                               @Qualifier("database114") DataSource database114,
+                                               @Qualifier("databaseGh") DataSource databaseGh,
+                                               @Qualifier("databaseAnjx") DataSource databaseAnjx) throws Exception{
+
 
         VFS.addImplClass(SpringBootVFS.class);
         SqlSessionFactoryBean fb = new SqlSessionFactoryBean();
-        fb.setDataSource(this.dataSource(myTestDbDataSource, myTestDb2DataSource));
+        fb.setDataSource(this.dataSource(database21, database114,databaseGh,databaseAnjx));
         fb.setTypeAliasesPackage(env.getProperty("mybatis.typeAliasesPackage"));
         fb.setMapperLocations(new PathMatchingResourcePatternResolver().getResources(env.getProperty("mybatis.mapper-locations")));
         return fb.getObject();

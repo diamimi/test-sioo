@@ -74,4 +74,8 @@ public class GhService {
     public void updateToSucc(SendingVo sendingVo) {
         ghMapper.updateToSucc(sendingVo);
     }
+
+    public SendingVo gethistory(SendingVo vo) {
+        return ghMapper.gethistory(vo);
+    }
 }

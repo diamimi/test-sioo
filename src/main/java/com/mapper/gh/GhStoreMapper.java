@@ -1,6 +1,6 @@
 package com.mapper.gh;
 
-import com.mapper.Mapper114;
+import com.mapper.MapperGh;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -10,6 +10,6 @@ import java.util.List;
  * @Date:Create in 18:19 2018/7/30
  */
 @Mapper
-public interface GhStoreMapper extends Mapper114 {
+public interface GhStoreMapper extends MapperGh {
     List<String> findList();
 }

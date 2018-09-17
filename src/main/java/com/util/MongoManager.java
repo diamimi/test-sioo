@@ -37,7 +37,7 @@ public class MongoManager {
 	private static void init() {
 		try {
 			if (mongo == null)
-				mongo = new MongoClient("10.10.137.105", 27017);
+				mongo = new MongoClient("210.5.158.31", 27017);
 		} catch (Exception e) {
 			log.error("初始化mongodb异常。\r\n", e);
 		}

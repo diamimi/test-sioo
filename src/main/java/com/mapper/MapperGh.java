@@ -12,7 +12,7 @@ import java.util.List;
  * @Date:Create in 15:23 2018/7/5
  */
 @Mapper
-public interface Mapper21  {
+public interface MapperGh{
     SendingVo findOne(@Param("id") String hisid);
 
     int findHistory(long id);

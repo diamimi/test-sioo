@@ -74,13 +74,26 @@
 
 
     <select id="getTotal" parameterType="com.pojo.SendingVo" resultType="Integer">
-         SELECT sum(contentNum)  from sms_send_history_backups where
-        senddate&gt;=#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+         SELECT IFNULL(sum(contentNum),0)  from sms_send_history_backups
+        <where>
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;=#{endtime}
+            </if>
+            <if test="excludeContent!=null">
+                and content not like "%"#{excludeContent}"%"
+            </if>
+      </where>
 
     </select>
 
     <select id="getSucc" parameterType="com.pojo.SendingVo" resultType="Integer">
-        SELECT sum(contentNum) from sms_send_history_backups
+        SELECT IFNULL(sum(contentNum),0) from sms_send_history_backups
         <where>
             arrive_succ=contentNum and arrive_fail=0
             <if test="uid!=null and uid>0">
@@ -92,21 +105,48 @@
             <if test="endtime!=null and endtime>0">
                 and senddate&lt;=#{endtime}
             </if>
-            <if test="content!=null">
-                and content not like "%"#{content}"%"
+            <if test="excludeContent!=null">
+                and content not like "%"#{excludeContent}"%"
             </if>
         </where>
     </select>
 
     <select id="getFail" parameterType="com.pojo.SendingVo" resultType="Integer">
-       SELECT sum(contentNum)  from sms_send_history_backups where
-         arrive_succ=0 and arrive_fail=contentNum  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
-
+       SELECT IFNULL(sum(contentNum),0)  from sms_send_history_backups
+        <where>
+            arrive_succ=0 and arrive_fail=contentNum
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;=#{endtime}
+            </if>
+            <if test="excludeContent!=null">
+                and content not like "%"#{excludeContent}"%"
+            </if>
+        </where>
     </select>
 
     <select id="getWz" parameterType="com.pojo.SendingVo" resultType="Integer">
-       SELECT sum(contentNum)  from sms_send_history_backups where
-         arrive_succ=contentNum and arrive_fail=0  and senddate&gt;#{starttime} and senddate&lt;#{endtime}  and uid=#{uid}
+       SELECT IFNULL(sum(contentNum),0) from sms_send_history_backups
+        <where>
+            arrive_succ=contentNum and arrive_fail=0
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;=#{endtime}
+            </if>
+            <if test="excludeContent!=null">
+                and content not like "%"#{excludeContent}"%"
+            </if>
+        </where>
     </select>
 
 

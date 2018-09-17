@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mapper.anjx.AnjxMapper">
+
+
+
+
+    <select id="findOneHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+       SELECT content,mobile ,rpttime from sms_send_history where hisid=#{id} and sendtime=#{senddate}  limit 1
+    </select>
+
+
+    <insert id="insertSendHistoryAjx" parameterType="com.pojo.SendingVo">
+        insert INTO sms_send_history (hisid,sendtime,senddate,uid,mobile,content,contentNum,stat,rptcode,rpttime,mdstr,department)
+        VALUES (
+        #{hisid},
+        #{senddate},
+        #{day},
+        #{uid},
+        #{mobile},
+        #{content},
+        #{contentNum},
+        #{stat},
+        #{rptcode},
+        #{rpttime},
+        #{mdstr},
+        0
+        )
+    </insert>
+
+
+
+    <update id="updateHistory" parameterType="com.pojo.SendingVo">
+      update sms_send_history set sendtime=#{senddate}
+        <where>
+            <if test="mobile!=null and mobile>0">
+                and mobile=#{mobile}
+            </if>
+            <if test="id!=null and id>0">
+                and hisid=#{id}
+            </if>
+        </where>
+    </update>
+</mapper>

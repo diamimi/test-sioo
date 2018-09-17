@@ -305,97 +305,34 @@ public class HistoryTo114 {
 
 
     /**
-     * 按天,内容统计
+     * 麻烦统计一下50872账号15号发的【魔龙之怒】【紫府苍穹】这两个签名的成功失败未知
      */
-    @Test
-    public void countByDayContent() {
-        for (int i = 20180907; i <= 20180907; i++) {
-            String tableName = String.valueOf(i).substring(4);
-            SendingVo vo = new SendingVo();
-            vo.setTableName(tableName);
-            vo.setUid(90337);
-            String[] contents = {
-                    "亲爱的钻石用户，您的6周年专属奖励来啦！请于9月7日12点整到，我的T码兑换66元代金券，",
-            };
-            String title = "内容,总数,成功,失败,未知";
-            List<String> outs = new ArrayList<>();
-            outs.add(title);
-            for (String content : contents) {
-                vo.setContent(content);
-                Integer total = sendHistoryService114.getTotal(vo) == null ? 0 : sendHistoryService114.getTotal(vo);
-                if (total == 0) {
-                    continue;
-                }
-                Integer succ = sendHistoryService114.getSucc(vo) == null ? 0 : sendHistoryService114.getSucc(vo);
-                Integer fail = sendHistoryService114.getFail(vo) == null ? 0 : sendHistoryService114.getFail(vo);
-                Integer wz = sendHistoryService114.getWz(vo) == null ? 0 : sendHistoryService114.getWz(vo);
-                //  outs.add(content + "," + total + "," + succ + "," + fail + "," + wz);
-                System.out.println(total + "," + succ + "," + fail + "," + wz);
-            }
-           /* if (outs.size() > 1) {
-                FilePrintUtil.getInstance().write("D:\\hq\\files/" + vo.getUid() + "_2018" + tableName + ".csv", outs, "GBK");
-            }*/
-        }
-    }
-
-
-    /**
-     * 按照内容统计
-     */
-    @Test
-    public void countByDayContentGroup() {
-        for (int i = 20180816; i <= 20180816; i++) {
-            String tableName = String.valueOf(i).substring(4);
-            SendingVo vo = new SendingVo();
-            vo.setTableName(tableName);
-            vo.setUid(90568);
-            List<String> contentList = sendHistoryService114.getContentList(vo);
-            String title = "内容,总数,成功,失败,未知";
-            List<String> outs = new ArrayList<>();
-            outs.add(title);
-            for (String content : contentList) {
-                vo.setContent(content);
-                Integer total = sendHistoryService114.getTotal(vo) == null ? 0 : sendHistoryService114.getTotal(vo);
-                if (total == 0) {
-                    continue;
-                }
-                Integer succ = sendHistoryService114.getSucc(vo) == null ? 0 : sendHistoryService114.getSucc(vo);
-                Integer fail = sendHistoryService114.getFail(vo) == null ? 0 : sendHistoryService114.getFail(vo);
-                Integer wz = sendHistoryService114.getWz(vo) == null ? 0 : sendHistoryService114.getWz(vo);
-                outs.add(StringUtils.replace(content, ",", ".") + "," + total + "," + succ + "," + fail + "," + wz);
-            }
-            if (outs.size() > 1) {
-                FilePrintUtil.getInstance().write("D:\\hq\\files/" + vo.getUid() + "_2018" + tableName + ".csv", outs, "GBK");
-            }
-        }
-    }
-
     @Test
     public void countByDay() {
-        int uid = 40058;
-        List<String> dayList = DayUtil.getDayList(20180701, 20180831);
-        int t = 0;
-        int s = 0;
-        int f = 0;
-        int w = 0;
-        String title = "日期,总数,成功,失败,未知";
+        int uid = 50872;
+        List<String> dayList = DayUtil.getDayList(20180915, 20180915);
+        String title = "日期,内容,总数,成功,失败,未知";
         List<String> outs = new ArrayList<>();
         outs.add(title);
         for (String table : dayList) {
-            String tableName = table.substring(4);
-            SendingVo vo = new SendingVo();
-            vo.setTableName(tableName);
-            vo.setUid(uid);
-            vo.setExcludeContent("【广汇汽车】");
-            Integer total = sendHistoryService114.getTotal(vo) == null ? 0 : sendHistoryService114.getTotal(vo);
-            if (total == 0) {
-                continue;
+            String[] contents={"【魔龙之怒】","【紫府苍穹】"};
+            for (String c : contents) {
+                String tableName = table.substring(2);
+                SendingVo vo = new SendingVo();
+                vo.setTableName(tableName);
+                vo.setUid(uid);
+                vo.setContent(c);
+                Integer total = sendHistoryService114.getTotal(vo) == null ? 0 : sendHistoryService114.getTotal(vo);
+                if (total == 0) {
+                    continue;
+                }
+                Integer succ = sendHistoryService114.getSucc(vo) == null ? 0 : sendHistoryService114.getSucc(vo);
+                Integer fail = sendHistoryService114.getFail(vo) == null ? 0 : sendHistoryService114.getFail(vo);
+                Integer wz = sendHistoryService114.getWz(vo) == null ? 0 : sendHistoryService114.getWz(vo);
+                String content = table + ","+c+"," + total + "," + succ + "," + fail + "," + wz;
+                outs.add(content);
             }
-            Integer succ = sendHistoryService114.getSucc(vo) == null ? 0 : sendHistoryService114.getSucc(vo);
-            Integer fail = sendHistoryService114.getFail(vo) == null ? 0 : sendHistoryService114.getFail(vo);
-            Integer wz = sendHistoryService114.getWz(vo) == null ? 0 : sendHistoryService114.getWz(vo);
-            String content = table + "," + total + "," + succ + "," + fail + "," + wz;
-            outs.add(content);
+
         }
         if (outs.size() > 1) {
             FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + ".csv", outs, "GBK");

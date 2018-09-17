@@ -1,6 +1,8 @@
 package com;
 
 import com.pojo.SendingVo;
+import com.service.AnjxService;
+import com.service.SendHistoryService;
 import com.service.SendHistoryService114;
 import com.util.*;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -29,7 +31,13 @@ import java.util.*;
 @SpringBootTest
 public class Anjxing {
     @Autowired
+    private AnjxService anjxService;
+
+    @Autowired
     private SendHistoryService114 sendHistoryService114;
+
+    @Autowired
+    private SendHistoryService sendHistoryService;
 
     @Test
     public void sss() throws Exception {
@@ -102,7 +110,7 @@ public class Anjxing {
         } else {
             secstr = sec + "";
         }
-        String date = "2018091110" + minstr + secstr;
+        String date = "2018091409" + minstr + secstr;
         return date;
     }
 
@@ -112,8 +120,8 @@ public class Anjxing {
     @Test
     public void length() throws Exception {
         Map<String, String> map = new HashMap<>();
-        List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\bf\\20180912bf\\补发", "", false);
-        Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\bf/content.xlsx", 0);
+        List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\bf\\20180912bf\\补发/buchong", "", false);
+        Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\bf\\20180912bf\\补发/content.xlsx", 0);
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
             if (row != null) {
@@ -123,7 +131,9 @@ public class Anjxing {
             }
         }
         for (String listFile : listFiles) {
-            String key=StringUtils.substringBetween(listFile,"补发\\",".txt");
+            System.out.println(listFile);
+            String key=StringUtils.substringBetween(listFile,"buchong\\",".txt");
+            System.out.println(key);
             String content=map.get(key);
             int contentNum = CalContentNum.calcContentNum(content);
             List<String> mobiles = FileRead.getInstance().read(listFile, "utf-8");
@@ -140,8 +150,37 @@ public class Anjxing {
                 vo.setDay(201808);
                 vo.setRpttime(vo.getSenddate());
                 vo.setMdstr("20180914");
-                sendHistoryService114.insertSendHistoryAjx(vo);
+                anjxService.insertSendHistoryAjx(vo);
             });
         }
+    }
+
+    /**
+     * 更新sendtime=0的数据
+     */
+    @Test
+    public void ss(){
+        List<Integer> ids=new ArrayList<>();
+        for(int id=270685;id<=8432543;id++){
+            ids.add(id);
+        }
+        ids.stream().parallel().forEach(id->{
+            SendingVo vo=new SendingVo();
+            vo.setSenddate(0l);
+            vo.setId(id);
+            SendingVo v=anjxService.findOneHistory(vo);
+            if(v!=null){
+                v.setUid(20066);
+                v.setEndtime(v.getRpttime());
+                List<SendingVo> byConditon = sendHistoryService.findByConditon(v);
+                if(byConditon!=null&&byConditon.size()>0){
+                    vo.setSenddate(byConditon.get(0).getSenddate());
+                    anjxService.updateHistory(vo);
+                }else {
+                    vo.setSenddate(1l);
+                    anjxService.updateHistory(vo);
+                }
+            }
+        });
     }
 }
