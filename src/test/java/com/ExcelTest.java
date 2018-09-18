@@ -1,9 +1,7 @@
 package com;
 
-import com.util.CalContentNum;
-import com.util.FilePrintUtil;
-import com.util.RangeRandom;
-import com.util.SequoiaDBUtil;
+import com.pojo.SendingVo;
+import com.util.*;
 import org.apache.poi.ss.usermodel.*;
 import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
@@ -70,8 +68,33 @@ public class ExcelTest {
 
     @Test
     public void aa() throws Exception {
-       String c="[安吉星]您的星享之旅已开启，指定时间内使用安吉星相关服务，即可轻松赢取车载Wi-Fi流量、全音控免提电话通话时长、续约优惠券等贴心礼遇，更有机会获取安吉星4年免费服务哦！详情请登录安吉星手机应用http://t.cn/RPNXH7w（首页点击“星享之旅”）。回T退订";
-        System.out.println(CalContentNum.calcContentNum(c));
+        int index=1939000000;
+        Set<Integer> set=new HashSet<>();
+        Sheet sheet = ExcelUtil.getInstance().getSheet("C:\\Users\\goliath\\Documents\\Tencent Files\\94554798\\FileRecv/go021类别.xlsx", 1);
+        Map<String,SendingVo> provice=new HashMap<>();
+        Map<String,SendingVo> city=new HashMap<>();
+        for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
+            Row row = sheet.getRow(rowNum);
+            String id = ExcelUtil.getInstance().getCellValue(row, 0);
+            String areaName=ExcelUtil.getInstance().getCellValue(row, 1);
+            String code=ExcelUtil.getInstance().getCellValue(row, 2);
+            SendingVo vo=new SendingVo();
+            vo.setContent(id);
+            vo.setTableName(areaName);
+            if(code.length()==8){
+                provice.put(code,vo);
+                String sql = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
+                        " created_by, date_created, updated_by, date_updated) VALUES (" + index + "," + 118 + "," + code + ",'" + areaName + "','" + 0 + "',1," + "0" + ",'1','" + areaName + "'," +
+                        "'system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');";
+                System.out.println(sql);
+            }else if(code.length()==12){
+                city.put(code,vo);
+                String sql = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
+                        " created_by, date_created, updated_by, date_updated) VALUES (" + index + "," + 118 + "," + code + ",'" + areaName + "','" + 1 + "',1," + provice.get(code.substring(0,8)).getContent() + ",'1','" + provice.get(code.substring(0,8)).getTableName()+"/"+areaName  + "'," +
+                        "'system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');";
+                System.out.println(sql);
+            }
+        }
     }
 
 
