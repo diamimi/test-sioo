@@ -280,11 +280,11 @@ public class GhTest {
      */
     @Test
     public void exportByDay(){
-        List<String> days=DayUtil.getDayList(20180804,20180804);
-        List<String> outs = new ArrayList<>();
-        String title = "mobile,pid,contentNum,time";
-        outs.add(title);
+        List<String> days=DayUtil.getDayList(20180730,20180731);
         for (String day : days) {
+            List<String> outs = new ArrayList<>();
+            String title = "mobile,pid,contentNum,time";
+            outs.add(title);
             SendingVo vo=new SendingVo();
             vo.setStarttime(Long.parseLong(day+"000000"));
             String afterDay=DayUtil.getDayAfter(day);
@@ -294,7 +294,8 @@ public class GhTest {
             for (SendingVo sendingVo : historySucc) {
                 outs.add(sendingVo.getMobile()+","+sendingVo.getPid()+","+sendingVo.getContentNum()+","+sendingVo.getSenddate1());
             }
+            FilePrintUtil.getInstance().write("D:\\hq\\广汇/mx/"+day+".csv",outs,"GBK");
         }
-        FilePrintUtil.getInstance().write("D:\\hq\\广汇/0808",outs,"GBK");
+
     }
 }

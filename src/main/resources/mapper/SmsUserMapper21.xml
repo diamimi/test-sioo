@@ -11,6 +11,8 @@
         LEFT JOIN smshy.sms_user_control ON smshy.sms_user.id = smshy.sms_user_control.uid
     </select>
 
-
+<select id="findControl" parameterType="com.pojo.SmsUser" resultType="Integer">
+SELECT count(0) from sms_user_strategy_relation where uid=#{id} and group_id=2 and type=3
+</select>
 
 </mapper>

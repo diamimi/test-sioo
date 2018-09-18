@@ -20,4 +20,8 @@ public class SmsUserService {
     public List<SmsUser> loadUser() {
         return smsUserMapper.loadUser();
     }
+
+    public int findControl(int id) {
+       return smsUserMapper.findControl(id);
+    }
 }

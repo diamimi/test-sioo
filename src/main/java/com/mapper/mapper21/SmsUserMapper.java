@@ -12,4 +12,6 @@ import java.util.List;
 @Mapper
 public interface SmsUserMapper {
     List<SmsUser> loadUser();
+
+    int findControl(int id);
 }

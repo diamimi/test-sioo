@@ -77,7 +77,7 @@ public class ExcelTest {
 
     @Test
     public void excelToArea() throws Exception {
-        File xlsFile = new File("D:\\tuiguangti\\doc\\03_设计开发\\第三方网站对接\\天助网行业和地域信息匹配\\zone");
+        File xlsFile = new File("C:\\Users\\morrigan\\Documents\\Tencent Files\\94554798\\FileRecv\\go021类别.xlsx");
         InputStream is = new FileInputStream(xlsFile);
         Workbook workbook = WorkbookFactory.create(is);
         Sheet sheet = workbook.getSheetAt(0);  //示意访问sheet
