@@ -2,6 +2,7 @@ package com;
 
 import com.pojo.SendingVo;
 import com.util.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
@@ -68,33 +69,42 @@ public class ExcelTest {
 
     @Test
     public void aa() throws Exception {
-        int index=1939000000;
-        Set<Integer> set=new HashSet<>();
-        Sheet sheet = ExcelUtil.getInstance().getSheet("C:\\Users\\goliath\\Documents\\Tencent Files\\94554798\\FileRecv/go021类别.xlsx", 1);
-        Map<String,SendingVo> provice=new HashMap<>();
-        Map<String,SendingVo> city=new HashMap<>();
+        int index = 1026000000;
+        Set<Integer> set = new HashSet<>();
+        Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\tg/go021类别.xlsx", 0);
+        Map<String, SendingVo> provice = new HashMap<>();
+        Map<String, SendingVo> city = new HashMap<>();
+        List<String> outs=new ArrayList<>();
         for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
             String id = ExcelUtil.getInstance().getCellValue(row, 0);
-            String areaName=ExcelUtil.getInstance().getCellValue(row, 1);
-            String code=ExcelUtil.getInstance().getCellValue(row, 2);
-            SendingVo vo=new SendingVo();
+            String areaName = ExcelUtil.getInstance().getCellValue(row, 1);
+            String code = ExcelUtil.getInstance().getCellValue(row, 2);
+            SendingVo vo = new SendingVo();
             vo.setContent(id);
             vo.setTableName(areaName);
-            if(code.length()==8){
-                provice.put(code,vo);
-                String sql = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
-                        " created_by, date_created, updated_by, date_updated) VALUES (" + index + "," + 118 + "," + code + ",'" + areaName + "','" + 0 + "',1," + "0" + ",'1','" + areaName + "'," +
+            String level = "1";
+            if (code.length() == 8) {
+                provice.put(code, vo);
+                String sql = "INSERT INTO public.cust_industry_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
+                        " created_by, date_created, updated_by, date_updated) VALUES (" + index + "," + 118 + "," + id + ",'" + areaName +
+                        "','" + level + "',1," + "0" + ",'1','" + areaName + "'," +
                         "'system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');";
-                System.out.println(sql);
-            }else if(code.length()==12){
-                city.put(code,vo);
-                String sql = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
-                        " created_by, date_created, updated_by, date_updated) VALUES (" + index + "," + 118 + "," + code + ",'" + areaName + "','" + 1 + "',1," + provice.get(code.substring(0,8)).getContent() + ",'1','" + provice.get(code.substring(0,8)).getTableName()+"/"+areaName  + "'," +
+                outs.add(sql);
+                index++;
+            } else if (code.length() == 12) {
+                level = "2";
+                city.put(code, vo);
+                String sql = "INSERT INTO public.cust_industry_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
+                        " created_by, date_created, updated_by, date_updated) VALUES (" + index + "," + 118 + "," + id + ",'" + areaName +
+                        "','" + level + "',1," + provice.get(code.substring(0, 8)).getContent() + ",'1','" +
+                        provice.get(code.substring(0, 8)).getTableName() + "/" + areaName + "'," +
                         "'system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');";
-                System.out.println(sql);
+                outs.add(sql);
+                index++;
             }
         }
+        FilePrintUtil.getInstance().write("D:\\hq\\tg/go021_industry.txt",outs,"utf-8");
     }
 
 
@@ -137,7 +147,7 @@ public class ExcelTest {
                     int pid = 1937000000 + Integer.parseInt(provinceId);
                     int id = 1937000000 + Integer.parseInt(cityId);
                     String fullname = province + "/" + city;
-                    String sql = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
+                    String sql = "INSERT INTO public.cust_industry_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
                             " created_by, date_created, updated_by, date_updated) VALUES (" + id + "," + 115 + "," + code + ",'" + area + "','" + level + "',1," + pid + ",'1','" + fullname + "'," +
                             "'system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');";
                     System.out.println(sql);
@@ -150,7 +160,7 @@ public class ExcelTest {
                     int pid = 0;
                     int id = 1937000000 + Integer.parseInt(provinceId);
                     String fullname = province;
-                    String sql = "INSERT INTO public.cust_zone_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
+                    String sql = "INSERT INTO public.cust_industry_info (id,site_id, code, name, level, sort_no, parent_id, is_valid, full_name," +
                             " created_by, date_created, updated_by, date_updated) VALUES (" + id + "," + 115 + "," + code + ",'" + area + "','" + level + "',1," + pid + ",'1','" + fullname + "'," +
                             "'system','2018-06-30 16:36:20','system','2018-06-30 16:36:20');";
                     System.out.println(sql);
@@ -431,9 +441,18 @@ public class ExcelTest {
         System.out.println(count);
     }
 
+    /**
+     * 统计50552推送记录条数
+     */
     @Test
     public void sa() {
-        String con = "【互贷网】五周年狂欢，百万京东卡8月送不停，8/10-8/12连享三天会员日，感恩回馈全场最高加息3%+京东卡返利1%，错过再等一年！回T退订";
-        System.out.println(con.length());
+      List<String> contents=FileRead.getInstance().read("D:\\hq\\files/50552_0923.txt","utf-8");
+      int total=0;
+        for (String content : contents) {
+            content= StringUtils.substringAfter(content,"UID:50552,NUM:0,rptBuilder:");
+            String[] split = content.split(";");
+            total+=split.length;
+        }
+        System.out.println(total);
     }
 }

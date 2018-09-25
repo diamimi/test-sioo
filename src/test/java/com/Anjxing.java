@@ -110,7 +110,7 @@ public class Anjxing {
         } else {
             secstr = sec + "";
         }
-        String date = "2018091409" + minstr + secstr;
+        String date = "2018092109" + minstr + secstr;
         return date;
     }
 
@@ -120,8 +120,9 @@ public class Anjxing {
     @Test
     public void length() throws Exception {
         Map<String, String> map = new HashMap<>();
-        List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\bf\\20180912bf\\补发/buchong", "", false);
-        Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\bf\\20180912bf\\补发/content.xlsx", 0);
+        String fileName="20180921补发";
+        List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\安吉星数据\\"+fileName, "", false);
+        Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\安吉星数据/content.xlsx", 0);
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
             if (row != null) {
@@ -132,7 +133,7 @@ public class Anjxing {
         }
         for (String listFile : listFiles) {
             System.out.println(listFile);
-            String key=StringUtils.substringBetween(listFile,"buchong\\",".txt");
+            String key=StringUtils.substringBetween(listFile,fileName+"\\",".txt");
             System.out.println(key);
             String content=map.get(key);
             int contentNum = CalContentNum.calcContentNum(content);
@@ -149,7 +150,7 @@ public class Anjxing {
                 vo.setSenddate(Long.valueOf(senddate()));
                 vo.setDay(201808);
                 vo.setRpttime(vo.getSenddate());
-                vo.setMdstr("20180914");
+                vo.setMdstr("20180921");
                 anjxService.insertSendHistoryAjx(vo);
             });
         }
@@ -160,27 +161,28 @@ public class Anjxing {
      */
     @Test
     public void ss(){
-        List<Integer> ids=new ArrayList<>();
-        for(int id=270685;id<=8432543;id++){
-            ids.add(id);
-        }
-        ids.stream().parallel().forEach(id->{
             SendingVo vo=new SendingVo();
             vo.setSenddate(0l);
-            vo.setId(id);
-            SendingVo v=anjxService.findOneHistory(vo);
-            if(v!=null){
-                v.setUid(20066);
-                v.setEndtime(v.getRpttime());
-                List<SendingVo> byConditon = sendHistoryService.findByConditon(v);
-                if(byConditon!=null&&byConditon.size()>0){
-                    vo.setSenddate(byConditon.get(0).getSenddate());
-                    anjxService.updateHistory(vo);
+            while (true){
+                List<SendingVo> list=anjxService.findOneHistory(vo);
+                if(list!=null&&list.size()>0){
+                    list.stream().parallel().forEach(v->{
+                            v.setUid(20066);
+                            v.setEndtime(v.getRpttime());
+                            List<SendingVo> byConditon = sendHistoryService.findByConditon(v);
+                            if(byConditon!=null&&byConditon.size()>0){
+                                v.setSenddate(byConditon.get(0).getSenddate());
+                                anjxService.updateHistory(v);
+                            }else {
+                                v.setSenddate(2l);
+                                anjxService.updateHistory(v);
+                            }
+                    });
                 }else {
-                    vo.setSenddate(1l);
-                    anjxService.updateHistory(vo);
+                    break;
                 }
             }
-        });
+
+        System.out.println("==========end============");
     }
 }

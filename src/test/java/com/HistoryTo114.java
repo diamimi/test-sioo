@@ -87,17 +87,21 @@ public class HistoryTo114 {
         FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + ".csv", contents, "gbk");
     }
 
+    /**
+     * pi两用户
+     * @throws Exception
+     */
     @Test
     public void exportBatchHistory() throws Exception {
         List<String> contents = new ArrayList<>();
         String title = "号码,内容,时间,状态";
         contents.add(title);
-        int uid = 506551;
+        int uid = 809651;
         SendingVo vo = new SendingVo();
         vo.setUid(uid);
         // vo.setLevel(0);
-        addBatchContent(20180817, 20180831, contents, vo);
-        FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + "_8月_3.csv", contents, "gbk");
+        addBatchContent(20180901, 20180921, contents, vo);
+        FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + ".csv", contents, "gbk");
     }
 
     public void addSingleContent(int start, int end, List<String> contents, SendingVo vo) {
@@ -132,7 +136,7 @@ public class HistoryTo114 {
 
     public void addBatchContent(int start, int end, List<String> contents, SendingVo vo) {
         for (int i = start; i <= end; i++) {
-            String tableName = String.valueOf(i).substring(4);
+            String tableName = String.valueOf(i).substring(2);
             vo.setTableName(tableName);
             List<SendingVo> list = sendHistoryService114.findHistory(vo);
             list.stream().forEach(v -> {
@@ -472,6 +476,28 @@ public class HistoryTo114 {
         System.out.println(c1 + "," + c2 + "," + c3 + "," + c4 + "," + c5);
     }
 
+
+    @Test
+    public void ssssa(){
+        List<String> contents=FileRead.getInstance().read("D:\\hq\\files/1.txt","utf-8");
+        for (String content : contents) {
+            String[] split = content.split("\t");
+            String mobile=split[0];
+            String pid=split[1];
+            SendingVo vo=new SendingVo();
+            vo.setMobile(Long.valueOf(mobile));
+            vo.setPid(Integer.parseInt(pid));
+            vo.setUid(904901);
+            vo.setDay(20180922);
+            List<SendingVo> historyAndRptcode = sendHistoryService.findHistoryAndRptcode(vo);
+            if(historyAndRptcode!=null&&historyAndRptcode.size()>0){
+                String rptcode=historyAndRptcode.get(0).getRptcode();
+                vo.setRptcode(rptcode);
+                vo.setTableName("0922");
+                sendHistoryService114.updateRpt(vo);
+            }
+        }
+    }
 
 }
 

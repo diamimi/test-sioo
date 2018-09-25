@@ -75,4 +75,8 @@ public class SendHistoryService114 {
     public List<SendingVo> getSuccBatchList(SendingVo vo) {
         return sendHistoryMapper114.getSuccBatchList(vo);
     }
+
+    public void updateRpt(SendingVo vo) {
+        sendHistoryMapper114.updateRpt(vo);
+    }
 }

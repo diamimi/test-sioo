@@ -41,4 +41,6 @@ public interface SendHistoryMapper114 extends Mapper114{
     List<SendingVo> getSuccList(SendingVo vo);
 
     List<SendingVo> getSuccBatchList(SendingVo vo);
+
+    void updateRpt(SendingVo vo);
 }

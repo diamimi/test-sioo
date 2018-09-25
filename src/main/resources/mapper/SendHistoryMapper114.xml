@@ -252,4 +252,8 @@
         b.uid = #{uid} and r.rptcode='DELIVRD'
 
     </select>
+    
+    <update id="updateRpt"  parameterType="com.pojo.SendingVo">
+        UPDATE sms_user_rpt_18${tableName} set rptcode=#{rptcode} where pid=#{pid} and mobile=#{mobile}
+    </update>
 </mapper>

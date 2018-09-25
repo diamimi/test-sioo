@@ -5,6 +5,8 @@ import com.pojo.SendingVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @Author: HeQi
  * @Date:Create in 14:02 2018/9/17
@@ -15,7 +17,7 @@ public class AnjxService {
     @Autowired
     private AnjxMapper anjxMapper;
 
-    public SendingVo findOneHistory(SendingVo vo) {
+    public List<SendingVo> findOneHistory(SendingVo vo) {
         return anjxMapper.findOneHistory(vo);
     }
 

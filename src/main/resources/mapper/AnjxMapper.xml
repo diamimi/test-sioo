@@ -6,7 +6,7 @@
 
 
     <select id="findOneHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-       SELECT content,mobile ,rpttime from sms_send_history where hisid=#{id} and sendtime=#{senddate}  limit 1
+       SELECT content,mobile ,rpttime,hisid id from sms_send_history where  sendtime=1 and hisid>100  and rpttime>20180914000000 limit 1000
     </select>
 
 

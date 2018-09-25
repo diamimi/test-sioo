@@ -151,22 +151,12 @@ public class Test21 {
 
     @Test
     public void sla() {
-        SendingVo sendingVo = new SendingVo();
-        sendingVo.setUid(51089);
-        sendingVo.setStarttime(20180725000000L);
-        sendingVo.setEndtime(20180803000000L);
-        List<SendingVo> list = sendHistoryService.findByConditon(sendingVo);
-        int bwContentNum = 0;
-        int smContentNum = 0;
-        for (SendingVo vo : list) {
-            if (vo.getContent().contains("【百威】")) {
-                bwContentNum = bwContentNum + vo.getContentNum();
-            } else if (vo.getContent().contains("【苏秘37°】")) {
-                smContentNum = smContentNum + vo.getContentNum();
-            }
+        List<String> days=DayUtil.getDayList(20180701,20180919);
+        for (String day : days) {
+          /*  int total=userDayCountService.totalByDay(day);
+            int succ=userDayCountService.succByDay(day);
+            int fail=userDayCountService.failByDay(day);*/
         }
-        System.out.println(bwContentNum + "," + smContentNum);
-        //806+122+964,66007+27572
     }
 
     @Test
