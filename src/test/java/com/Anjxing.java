@@ -5,7 +5,6 @@ import com.service.AnjxService;
 import com.service.SendHistoryService;
 import com.service.SendHistoryService114;
 import com.util.*;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -69,31 +68,9 @@ public class Anjxing {
         FilePrintUtil.getInstance().write("D:\\hq\\files/" + uid + ".csv", outs, "gbk");
     }
 
-    @Test
-    public void insertSendHistory() {
-        String c = "您的星享之旅已开启，指定时间内使用安吉星相关服务，即可轻松赢取车载Wi-Fi流量、全音控免提电话通话时长、续约优惠券等贴心礼遇，更有机会获取安吉星4年免费服务哦！详情请登录安吉星手机应用http://t.cn/RPNXH7w（首页点击“星享之旅”）。";
-        String content = "【安吉星】" + c + "回T退订";
-        int contentNum = CalContentNum.calcContentNum(content);
-        List<String> mobiles = FileRead.getInstance().read("D:\\hq\\files\\bf/星享之旅.txt", "utf-8");
-        mobiles.stream().parallel().forEach(m -> {
-            SendingVo vo = new SendingVo();
-            vo.setHisid(10);
-            vo.setContent(content);
-            vo.setContentNum(contentNum);
-            vo.setMobile(Long.parseLong(m));
-            vo.setStat(0);
-            vo.setRptcode("DELIVRD");
-            vo.setUid(1);
-            vo.setSenddate(Long.valueOf(senddate()));
-            vo.setDay(201808);
-            vo.setRpttime(vo.getSenddate());
-            vo.setMdstr(DigestUtils.md5Hex(content));
-            sendHistoryService114.insertSendHistoryAjx(vo);
-        });
-
-    }
-
-    public String senddate() {
+    public String senddate(String d) {
+        String[] ds = d.split("\\.");
+        String day = ds[1];
         Random random = new Random();
         int min = random.nextInt(60);
         String minstr = "";
@@ -110,7 +87,7 @@ public class Anjxing {
         } else {
             secstr = sec + "";
         }
-        String date = "2018092109" + minstr + secstr;
+        String date = "201809" + day + "09" + minstr + secstr;
         return date;
     }
 
@@ -118,10 +95,10 @@ public class Anjxing {
      * 造假数据
      */
     @Test
-    public void length() throws Exception {
+    public void createData() throws Exception {
         Map<String, String> map = new HashMap<>();
-        String fileName="20180921补发";
-        List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\安吉星数据\\"+fileName, "", false);
+        String fileName = "20180928补发";
+        List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\安吉星数据\\" + fileName, "", false);
         Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\安吉星数据/content.xlsx", 0);
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
@@ -132,13 +109,13 @@ public class Anjxing {
             }
         }
         for (String listFile : listFiles) {
-            System.out.println(listFile);
-            String key=StringUtils.substringBetween(listFile,fileName+"\\",".txt");
-            System.out.println(key);
-            String content=map.get(key);
+            String name = StringUtils.substringBetween(listFile, fileName + "\\", ".txt");
+            String key = StringUtils.substringBefore(name, "_9.");
+            String date = StringUtils.substringAfter(name, key + "_");
+            String content = map.get(key);
             int contentNum = CalContentNum.calcContentNum(content);
             List<String> mobiles = FileRead.getInstance().read(listFile, "utf-8");
-            mobiles.stream().parallel().forEach(mobile->{
+            mobiles.stream().parallel().forEach(mobile -> {
                 SendingVo vo = new SendingVo();
                 vo.setHisid(10);
                 vo.setContent(content);
@@ -147,12 +124,41 @@ public class Anjxing {
                 vo.setStat(99);
                 vo.setRptcode("DELIVRD");
                 vo.setUid(1);
-                vo.setSenddate(Long.valueOf(senddate()));
+                vo.setSenddate(Long.valueOf(senddate(date)));
                 vo.setDay(201808);
                 vo.setRpttime(vo.getSenddate());
-                vo.setMdstr("20180921");
+                vo.setMdstr("20180928");
                 anjxService.insertSendHistoryAjx(vo);
             });
+        }
+    }
+
+    @Test
+    public void dongtai(){
+        List<String> read = FileRead.getInstance().read("D:\\hq\\安吉星数据/HFC.txt", "utf-8");
+        for (String s : read) {
+            try {
+                String mobile=StringUtils.substringBefore(s,",");
+                String id=StringUtils.substringAfter(s,",");
+                SendingVo vo = new SendingVo();
+                vo.setHisid(10);
+                String content="【安吉星】重要通知：根据国家工信部《电话用户真实身份信息登记规定》等文件要求，请尽快对车辆的全音控免提电话（设备编号["+id+"]）进行实名制认证，获取免提电话号码可在按下车内安吉星白键后说“本车号码”，或通过车机屏“安吉星”图标查看；认证完成后，您的全音控免提电话服务将重新开启。开始认证请点击http://t.cn/RES4Efc 。回T退订";
+                //  System.out.println(content);
+                int contentNum=CalContentNum.calcContentNum(content);
+                vo.setContent(content);
+                vo.setContentNum(contentNum);
+                vo.setMobile(Long.parseLong(mobile));
+                vo.setStat(99);
+                vo.setRptcode("DELIVRD");
+                vo.setUid(1);
+                vo.setSenddate(Long.valueOf(senddate("9.30")));
+                vo.setDay(201808);
+                vo.setRpttime(vo.getSenddate());
+                vo.setMdstr("20180928");
+                anjxService.insertSendHistoryAjx(vo);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -160,28 +166,28 @@ public class Anjxing {
      * 更新sendtime=0的数据
      */
     @Test
-    public void ss(){
-            SendingVo vo=new SendingVo();
-            vo.setSenddate(0l);
-            while (true){
-                List<SendingVo> list=anjxService.findOneHistory(vo);
-                if(list!=null&&list.size()>0){
-                    list.stream().parallel().forEach(v->{
-                            v.setUid(20066);
-                            v.setEndtime(v.getRpttime());
-                            List<SendingVo> byConditon = sendHistoryService.findByConditon(v);
-                            if(byConditon!=null&&byConditon.size()>0){
-                                v.setSenddate(byConditon.get(0).getSenddate());
-                                anjxService.updateHistory(v);
-                            }else {
-                                v.setSenddate(2l);
-                                anjxService.updateHistory(v);
-                            }
-                    });
-                }else {
-                    break;
-                }
+    public void ss() {
+        SendingVo vo = new SendingVo();
+        vo.setSenddate(0l);
+        while (true) {
+            List<SendingVo> list = anjxService.findOneHistory(vo);
+            if (list != null && list.size() > 0) {
+                list.stream().parallel().forEach(v -> {
+                    v.setUid(20066);
+                    v.setEndtime(v.getRpttime());
+                    List<SendingVo> byConditon = sendHistoryService.findByConditon(v);
+                    if (byConditon != null && byConditon.size() > 0) {
+                        v.setSenddate(byConditon.get(0).getSenddate());
+                        anjxService.updateHistory(v);
+                    } else {
+                        v.setSenddate(2l);
+                        anjxService.updateHistory(v);
+                    }
+                });
+            } else {
+                break;
             }
+        }
 
         System.out.println("==========end============");
     }

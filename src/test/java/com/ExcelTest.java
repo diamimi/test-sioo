@@ -455,4 +455,11 @@ public class ExcelTest {
         }
         System.out.println(total);
     }
+
+    @Test
+    public void aaa(){
+        String c1="河南绿之荫文化传媒有限公司";
+        String c2="河南绿之荫文化传媒有限公司";
+        System.out.println(StringUtils.equals(c1,c2));
+    }
 }

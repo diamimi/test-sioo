@@ -1,7 +1,10 @@
 package com;
 
 import com.pojo.SendingVo;
-import com.service.*;
+import com.service.RptService;
+import com.service.SendHistoryService;
+import com.service.SendHistoryService114;
+import com.service.Store21Service;
 import com.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
@@ -497,6 +500,32 @@ public class HistoryTo114 {
                 sendHistoryService114.updateRpt(vo);
             }
         }
+    }
+
+
+    /**
+     * 根据后台记录更新前台数据
+     */
+    @Test
+    public void lsa(){
+        List<String> contents=FileRead.getInstance().read("D:\\hq\\files/111.txt","utf-8");
+        contents.stream().forEach(content->{
+            String[] split = content.split("\t");
+            String mobile=split[0];
+            String pid=split[1];
+            SendingVo vo=new SendingVo();
+            vo.setMobile(Long.valueOf(mobile));
+            vo.setPid(Integer.parseInt(pid));
+            vo.setDay(20180921);
+            List<SendingVo> rptPush = sendHistoryService.findHistoryAndRptcode(vo);
+            if(rptPush!=null&&rptPush.size()>0){
+                String rptcode=rptPush.get(0).getRptcode();
+                vo.setRptcode(rptcode);
+                vo.setRpttime(rptPush.get(0).getRpttime());
+                vo.setTableName("0921");
+                sendHistoryService114.updateRpt(vo);
+            }
+        });
     }
 
 }

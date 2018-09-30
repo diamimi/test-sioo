@@ -2,6 +2,7 @@ package com.mapper.mapper21;
 
 import com.mapper.Mapper21;
 import com.pojo.SendingVo;
+import com.sioo.client.cmpp.vo.DeliverVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -36,4 +37,6 @@ public interface SendHistoryMapper extends Mapper21 {
     void updateToSuccess(SendingVo sendingVo);
 
     SendingVo findSucc21(SendingVo sendingVo);
+
+    List<DeliverVo> findRptPush(SendingVo vo);
 }

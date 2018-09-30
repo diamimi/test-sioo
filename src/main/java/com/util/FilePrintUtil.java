@@ -29,7 +29,9 @@ public class FilePrintUtil {
                 e.printStackTrace();
             }
             for (String t : list) {
-                out.write(t.toString() + "\r\n");
+                if(t!=null){
+                    out.write(t.toString() + "\r\n");
+                }
             }
             out.flush();
             out.close();

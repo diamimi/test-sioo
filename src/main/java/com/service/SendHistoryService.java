@@ -2,6 +2,7 @@ package com.service;
 
 import com.mapper.mapper21.SendHistoryMapper;
 import com.pojo.SendingVo;
+import com.sioo.client.cmpp.vo.DeliverVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +65,9 @@ public class SendHistoryService {
 
     public SendingVo findSucc21(SendingVo sendingVo) {
         return sendHistoryMapper.findSucc21(sendingVo);
+    }
+
+    public List<DeliverVo> findRptPush(SendingVo vo) {
+        return sendHistoryMapper.findRptPush(vo);
     }
 }

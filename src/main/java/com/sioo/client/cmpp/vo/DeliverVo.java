@@ -150,6 +150,23 @@ public class DeliverVo implements Serializable{
 		return rpt_time;
 	}
 
+
+	public String getRpttime1() {
+		String date = String.valueOf(rpt_time);
+		if (date.length() == 14) {
+			String year = date.substring(0, 4);
+			String mon = date.substring(4, 6);
+			String day = date.substring(6, 8);
+			String hour = date.substring(8, 10);
+			String min = date.substring(10, 12);
+			String sec = date.substring(12, 14);
+			return year + "-" + mon + "-" + day + " " + hour + ":" + min + ":" + sec;
+		} else {
+			return "";
+		}
+
+	}
+
 	/**
 	 * 历史记录编号  
 	 * @return hisId 历史记录编号  

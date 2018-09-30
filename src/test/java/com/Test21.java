@@ -359,50 +359,7 @@ public class Test21 {
         }
         ForkJoinPool myPool = new ForkJoinPool(8);
         myPool.submit(() -> mobiles.stream().parallel().forEach(i -> {
-                    SendingVo vo = new SendingVo();
-                    vo.setMobile(Long.parseLong(i));
-                    List<SendingVo> list = new ArrayList<>();
-                    List<SendingVo> historyAndRptcode21 = sendHistoryService.findHistoryAndRptcode(vo);
-                    for (SendingVo sendingVo : historyAndRptcode21) {
-                        list.add(sendingVo);
-                    }
-                    List<SendingVo> historyAndRptcode35 = sendHistory35Service.findHistoryAndRptcode(vo);
-                    for (SendingVo sendingVo : historyAndRptcode35) {
-                        list.add(sendingVo);
-                    }
-                    HSSFWorkbook workbook = new HSSFWorkbook();
-                    HSSFSheet sheet = workbook.createSheet("统计");
-                    HSSFRow r = sheet.createRow(0);
-                    HSSFCell uid0 = r.createCell(0);
-                    uid0.setCellValue("手机号");
-                    HSSFCell username0 = r.createCell(1);
-                    username0.setCellValue("内容");
-                    HSSFCell company0 = r.createCell(2);
-                    company0.setCellValue("发送时间");
-                    HSSFCell total0 = r.createCell(3);
-                    total0.setCellValue("回执状态");
-                    int k = 1;
-                    Collections.sort(list, (v1, v2) -> v1.getSenddate().compareTo(v2.getSenddate()));
-                    for (SendingVo sendingVo : list) {
-                        HSSFRow row = sheet.createRow(k);
-                        HSSFCell phone = row.createCell(0);
-                        phone.setCellValue(sendingVo.getMobile());
-                        HSSFCell content = row.createCell(1);
-                        content.setCellValue(sendingVo.getContent());
-                        HSSFCell senddate = row.createCell(2);
-                        senddate.setCellValue(sendingVo.getSenddate());
-                        HSSFCell rptcode = row.createCell(3);
-                        rptcode.setCellValue(sendingVo.getRptcode());
-                        k++;
-                    }
-                    try {
-                        FileOutputStream output = new FileOutputStream("/home/sioowork/114/mobile/" + i + ".xls");
-                        workbook.write(output);
-                        output.flush();
-                        output.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
                 }
         )).get();
         log.info("===============END====================");

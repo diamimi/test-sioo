@@ -76,7 +76,22 @@
 
 
     <select id="findHistoryAndRptcode" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT   mobile,rptcode from sms_rpt_for5
+        SELECT   mobile,rptcode,rpttime from sms_rpt_for5
+        <where>
+            <if test="uid!=null and uid>0">
+                AND  uid=#{uid}
+            </if>
+            <if test="mobile!=null and mobile>0">
+                AND  mobile=#{mobile}
+            </if>
+            <if test="pid!=null and pid>0">
+                AND  pid=#{pid}
+            </if>
+            <if test="day!=null and day>0">
+                AND  userday=#{day}
+            </if>
+        </where>
+        UNION ALL  SELECT   mobile,rptcode,rpttime from sms_rpt_backups
         <where>
             <if test="uid!=null and uid>0">
                 AND  uid=#{uid}
@@ -172,6 +187,41 @@
             </if>
         </where>
     </update>
+    
+    <select id="findRptPush" parameterType="com.pojo.SendingVo" resultType="com.sioo.client.cmpp.vo.DeliverVo">
+        SELECT mobile,uid,rptcode rpt_code,rpttime rpt_time,channelId channel,hisId hisId,pid,userday userDays
+        from sms_rpt_backups
+        <where>
+            <if test="mobile!=null and mobile>0">
+                and mobile=#{mobile}
+            </if>
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="day!=null and day>0">
+                and userday=#{day}
+            </if>
+            <if test="pid!=null and pid>0">
+                and pid=#{pid}
+            </if>
+        </where> UNION All
+        SELECT mobile,uid,rptcode rpt_code,rpttime rpt_time,channelId channel,hisId hisId,pid,userday userDays
+        from sms_rpt_for5
+        <where>
+            <if test="mobile!=null and mobile>0">
+                and mobile=#{mobile}
+            </if>
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="day!=null and day>0">
+                and userday=#{day}
+            </if>
+            <if test="pid!=null and pid>0">
+                and pid=#{pid}
+            </if>
+        </where>
+    </select>
 
 
 </mapper>
