@@ -26,6 +26,30 @@
         </where>
     </select>
 
+    <select id="findById" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
+        SELECT content from sms_send_history_unknown
+        <where>
+            <if test="content!=null ">
+                AND content LIKE "%"#{content}"%"
+            </if>
+            <if test="starttime!=null and starttime>0">
+                AND senddate &gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                AND senddate &lt;#{endtime}
+            </if>
+            <if test="uid!=null and uid>0">
+                AND uid=#{uid}
+            </if>
+            <if test="mobile!=null and mobile>0">
+                AND mobile=#{mobile}
+            </if>
+            <if test="id!=null and id>0">
+                AND id=#{id}
+            </if>
+        </where>
+    </select>
+
 
     <select id="findSucc21" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
         SELECT  arrive_fail,arrive_succ from smshy.sms_send_history_unknown
@@ -174,7 +198,7 @@
     
     
     <update id="updateToSuccess" parameterType="com.pojo.SendingVo">
-        UPDATE sms_send_history_unknown set arrive_succ=contentNum,arrive_fail=0
+        UPDATE sms_send_history_unknown set arrive_succ=contentNum,arrive_fail=0,succ=contentNum
         <where>
             <if test="mobile!=null and mobile>0">
                 and mobile=#{mobile}
@@ -184,6 +208,33 @@
             </if>
             <if test="uid!=null and uid>0">
                 and uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;=#{endtime}
+            </if>
+        </where>
+    </update>
+
+    <update id="updateToFail" parameterType="com.pojo.SendingVo">
+        UPDATE sms_send_history_unknown set arrive_succ=0,arrive_fail=contentNum
+        <where>
+            <if test="mobile!=null and mobile>0">
+                and mobile=#{mobile}
+            </if>
+            <if test="id!=null and id>0">
+                and id=#{id}
+            </if>
+            <if test="uid!=null and uid>0">
+                and uid=#{uid}
+            </if>
+            <if test="starttime!=null and starttime>0">
+                and senddate&gt;=#{starttime}
+            </if>
+            <if test="endtime!=null and endtime>0">
+                and senddate&lt;=#{endtime}
             </if>
         </where>
     </update>
@@ -223,5 +274,12 @@
         </where>
     </select>
 
+    <select id="getIds" resultType="String" >
+        SELECT  DISTINCT  hisId from smshy.sms_rpt_backups where userday=20180922 and rptcode='DELIVRD' and uid=50872
+    </select>
 
+
+    <select id="getRptBacks" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo" >
+        SELECT  DISTINCT  rptcode from smshy.sms_rpt_backups where userday=#{day} and mobile=#{mobile} and hisId=#{id} and uid=#{uid}
+    </select>
 </mapper>

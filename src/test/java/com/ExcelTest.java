@@ -74,7 +74,7 @@ public class ExcelTest {
         Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\tg/go021类别.xlsx", 0);
         Map<String, SendingVo> provice = new HashMap<>();
         Map<String, SendingVo> city = new HashMap<>();
-        List<String> outs=new ArrayList<>();
+        List<String> outs = new ArrayList<>();
         for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
             Row row = sheet.getRow(rowNum);
             String id = ExcelUtil.getInstance().getCellValue(row, 0);
@@ -104,7 +104,7 @@ public class ExcelTest {
                 index++;
             }
         }
-        FilePrintUtil.getInstance().write("D:\\hq\\tg/go021_industry.txt",outs,"utf-8");
+        FilePrintUtil.getInstance().write("D:\\hq\\tg/go021_industry.txt", outs, "utf-8");
     }
 
 
@@ -433,10 +433,12 @@ public class ExcelTest {
 
     @Test
     public void sss() {
+       // 10655785
         BSONObject where = new BasicBSONObject();
-        where.put("uid", 90253);
-        where.put("senddate", new BasicBSONObject("$gt", 20180805190000l));
-        where.put("senddate", new BasicBSONObject("$lt", 20180805200000l));
+        //where.put("senddate", new BasicBSONObject("$gt", 20181018163700L));
+        where.put("senddate", new BasicBSONObject("$lt", 20181018163700L));
+        //where.put("senddate", 20181018163719l);
+        //where.put("mobile",18361461212L);
         long count = SequoiaDBUtil.getInstance().count("sms_send_history_detail", where);
         System.out.println(count);
     }
@@ -446,20 +448,38 @@ public class ExcelTest {
      */
     @Test
     public void sa() {
-      List<String> contents=FileRead.getInstance().read("D:\\hq\\files/50552_0923.txt","utf-8");
-      int total=0;
+        List<String> contents = FileRead.getInstance().read("D:\\hq\\files/81321.txt", "utf-8");
+        int total = 0;
         for (String content : contents) {
-            content= StringUtils.substringAfter(content,"UID:50552,NUM:0,rptBuilder:");
+            content = StringUtils.substringAfter(content, "[81321]Delived:http://cbs.fsmoses.com/cbs/weixin/sms/return_sioo.php,Params:");
+            System.out.println(content);
             String[] split = content.split(";");
-            total+=split.length;
+            total += split.length;
         }
         System.out.println(total);
     }
 
     @Test
-    public void aaa(){
-        String c1="河南绿之荫文化传媒有限公司";
-        String c2="河南绿之荫文化传媒有限公司";
-        System.out.println(StringUtils.equals(c1,c2));
+    public void aaa() {
+        String content = "[INFO ](DeliverdListener.java:44) - 2018-09-25 23:59:59,756 dir->68,180925,922532666,15148620585,1080064322,DELIVRD,2018-09-25 23:59:59,50872,180925";
+        content = StringUtils.substringAfter(content, "dir->");
+        String[] split = content.split(",");
+        String rptcode = split[5];
+        String id = split[2];
+        String mobile = split[3];
+        String rpttime = split[6];
+        System.out.println(rpttime);
+        rpttime = rpttime.substring(0, 4) + rpttime.substring(5, 7) + rpttime.substring(8, 10) + rpttime.substring(11, 13)
+                + rpttime.substring(14, 16) + rpttime.substring(17, 19);
+        System.out.println(rpttime);
+    }
+
+    @Test
+    public void s11ss() {
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/11.txt", "utf-8");
+        for (String s : read) {
+            String[] split = s.split(",");
+            System.out.println(split.length);
+        }
     }
 }

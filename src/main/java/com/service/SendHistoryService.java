@@ -70,4 +70,20 @@ public class SendHistoryService {
     public List<DeliverVo> findRptPush(SendingVo vo) {
         return sendHistoryMapper.findRptPush(vo);
     }
+
+    public List<String> getIds() {
+        return  sendHistoryMapper.getIds();
+    }
+
+    public SendingVo findById(SendingVo vo) {
+        return sendHistoryMapper.findById(vo);
+    }
+
+    public SendingVo getRptBacks(SendingVo vo) {
+        return sendHistoryMapper.getRptBacks(vo);
+    }
+
+    public void updateToFail(SendingVo vo) {
+        sendHistoryMapper.updateToFail(vo);
+    }
 }

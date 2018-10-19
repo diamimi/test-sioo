@@ -58,7 +58,7 @@ public class GhTest {
      */
     @Test
     public void ss1s() {
-        List<String> days = DayUtil.getDayList(20180701, 20180831);
+        List<String> days = DayUtil.getDayList(20180901, 20180930);
         for (String day : days) {
             SendingVo vo = new SendingVo();
             vo.setUid(40058);
@@ -210,7 +210,7 @@ public class GhTest {
      */
     @Test
     public void updateFrom21() {
-        List<String> dayList = DayUtil.getDayList(20180719, 20180831);
+        List<String> dayList = DayUtil.getDayList(20180910, 20180929);
         for (String s : dayList) {
             SendingVo vo = new SendingVo();
             String start = s + "000000";
@@ -241,7 +241,7 @@ public class GhTest {
      */
     @Test
     public void exportGhDayCount() {
-        List<String> dayList = DayUtil.getDayList(20180701, 20180831);
+        List<String> dayList = DayUtil.getDayList(20180901, 20180930);
         List<String> outs = new ArrayList<>();
         String title = "日期,总数,成功,失败,未知";
         outs.add(title);
@@ -280,7 +280,7 @@ public class GhTest {
      */
     @Test
     public void exportByDay(){
-        List<String> days=DayUtil.getDayList(20180730,20180731);
+        List<String> days=DayUtil.getDayList(20180930,20180930);
         for (String day : days) {
             List<String> outs = new ArrayList<>();
             String title = "mobile,pid,contentNum,time";

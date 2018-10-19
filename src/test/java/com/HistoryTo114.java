@@ -357,7 +357,8 @@ public class HistoryTo114 {
             SendingVo vo = new SendingVo();
             vo.setTableName(tableName);
             vo.setUid(uid);
-            vo.setRptcode("XA:0001");
+           // vo.setRptcode("XA:0001");
+            vo.setContent("你好回T退订");
             int count = sendHistoryService114.getSingleTotal(vo) == null ? 0 : sendHistoryService114.getSingleTotal(vo);
             total = total + count;
         }

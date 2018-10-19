@@ -18,7 +18,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -45,37 +47,120 @@ public class StartMain implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-      /*  LOGGER.info("========================start==================");
-        file();
-        LOGGER.info("=============end==================");*/
-
+       /* LOGGER.info("=========start=========");
+        lss();
+        LOGGER.info("=========end========");*/
     }
 
 
+    public void lls() throws Exception {
+        List<String> read = FileRead.getInstance().read("/home/sioowork/114/925.txt", "utf-8");
+        ForkJoinPool myPool = new ForkJoinPool(8);
+        myPool.submit(() ->
+                read.stream().parallel().forEach(s -> {
+                    String[] split = s.split("\t");
+                    String mobile = split[1];
+                    String id = split[0];
+                    SendingVo vo = new SendingVo();
+                    vo.setUid(50872);
+                    vo.setMobile(Long.valueOf(mobile));
+                    vo.setStarttime(20180926000000L);
+                    vo.setDay(20180926);
+                    vo.setEndtime(20180927000000L);
+                    vo.setId(Long.parseLong(id));
+                    SendingVo v = sendHistoryService.getRptBacks(vo);
+                    if (v != null) {
+                        if (v.getRptcode().equals("DELIVRD")) {
+                            sendHistoryService.updateToSuccess(vo);
+                        } else {
+                            sendHistoryService.updateToFail(vo);
+                        }
+                    }
+                })
+        ).get();
 
-    public void file() throws Exception{
-        List<String> contents=FileRead.getInstance().read("/home/sioowork/114/166814_20180921-2.txt", "UTF-8");
-        List<String> outs=new ArrayList<>();
-        String title="号码,pid,状态,回执时间";
+    }
+
+    public void sss() {
+        LOGGER.info("=========start========");
+        List<String> ids = sendHistoryService.getIds();
+        FilePrintUtil.getInstance().write("/home/sioowork/114/ids.txt", ids, "utf-8");
+        LOGGER.info("=========end========");
+    }
+
+
+    public void file() throws Exception {
+        List<String> contents = FileRead.getInstance().read("/home/sioowork/114/166814_20180921-2.txt", "UTF-8");
+        List<String> outs = new ArrayList<>();
+        String title = "号码,pid,状态,回执时间";
         outs.add(title);
         ForkJoinPool myPool = new ForkJoinPool(8);
-        myPool.submit(() -> contents.stream().parallel().forEach(content -> {
-                    String mobile=StringUtils.substringBefore(content,",");
-                    String pid=StringUtils.substringBetween(content,",","_");
+        myPool.submit(() ->
+                contents.stream().parallel().forEach(content -> {
+                            String mobile = StringUtils.substringBefore(content, ",");
+                            String pid = StringUtils.substringBetween(content, ",", "_");
+                            SendingVo vo = new SendingVo();
+                            vo.setUid(50552);
+                            vo.setDay(20180921);
+                            vo.setMobile(Long.valueOf(mobile));
+                            vo.setPid(Integer.valueOf(pid));
+                            List<DeliverVo> list = sendHistoryService.findRptPush(vo);
+                            if (list != null && list.size() > 0) {
+                                DeliverVo deliverVo = list.get(0);
+                                String out = mobile + "," + pid + "," + deliverVo.getRpt_code() + "," + deliverVo.getRpt_time();
+                                outs.add(out);
+                            }
+                        }
+                )).get();
+        FilePrintUtil.getInstance().write("/home/sioowork/114/50552.csv", outs, "GBK");
+    }
+
+    /**
+     * 根据日志更新前台记录
+     */
+    public void updateHistoryByLog() throws Exception{
+        List<String> contents = FileRead.getInstance().read("/home/data/log/deliverHandle/0925.txt", "utf-8");
+        Map<String,SendingVo> map=new HashMap<>();
+        for (String content : contents) {
+            content=StringUtils.substringAfter(content,"dir->");
+            String[] split = content.split(",");
+            String rptcode=split[5];
+            String id=split[2];
+            String mobile=split[3];
+            String rpttime=split[6];
+            rpttime=rpttime.substring(0,4)+rpttime.substring(5,7)+rpttime.substring(8,10)+rpttime.substring(11,13)
+                    +rpttime.substring(14,16)+rpttime.substring(17,19);
+            SendingVo vo=new SendingVo();
+            vo.setRpttime(Long.valueOf(rpttime));
+            vo.setRptcode(rptcode);
+            vo.setMobile(Long.parseLong(mobile));
+            vo.setId(Long.parseLong(id));
+            map.put(id,vo);
+        }
+        LOGGER.info("==============MAP加载完毕================");
+        List<String> resolves = FileRead.getInstance().read("/home/sioowork/resolve/925.txt", "utf-8");
+        ForkJoinPool myPool = new ForkJoinPool(8);
+        myPool.submit(() ->
+                resolves.stream().parallel().forEach(s -> {
+                    String[] split = s.split("\t");
+                    String mobile = split[1];
+                    String id = split[0];
                     SendingVo vo = new SendingVo();
-                    vo.setUid(50552);
-                    vo.setDay(20180921);
+                    vo.setUid(50872);
                     vo.setMobile(Long.valueOf(mobile));
-                    vo.setPid(Integer.valueOf(pid));
-                    List<DeliverVo> list = sendHistoryService.findRptPush(vo);
-                    if(list!=null&&list.size()>0){
-                        DeliverVo deliverVo=list.get(0);
-                        String out=mobile+","+pid+","+deliverVo.getRpt_code()+","+deliverVo.getRpt_time();
-                        outs.add(out);
+                    vo.setStarttime(20180925000000L);
+                    vo.setEndtime(20180926000000L);
+                    vo.setId(Long.parseLong(id));
+                    SendingVo v = sendHistoryService.getRptBacks(vo);
+                    if (v != null) {
+                        if (v.getRptcode().equals("DELIVRD")) {
+                            sendHistoryService.updateToSuccess(vo);
+                        } else {
+                            sendHistoryService.updateToFail(vo);
+                        }
                     }
-                }
-             )).get();
-        FilePrintUtil.getInstance().write("/home/sioowork/114/50552.csv",outs,"GBK");
+                })
+        ).get();
     }
 
     /**
@@ -108,6 +193,7 @@ public class StartMain implements ApplicationRunner {
 
     /**
      * http推送状态
+     *
      * @throws Exception
      */
     public void httpPush() throws Exception {
@@ -128,8 +214,8 @@ public class StartMain implements ApplicationRunner {
     }
 
     public void lss() throws Exception {
-        String baseName = "/home/sioowork/cmppservice_hy/logs/";
-        String[] files = {baseName + "51133_0922.txt"};
+        String baseName = "/home/data/log/cmpp/";
+        String[] files = {baseName + "50660_10.16.txt"};
         for (String file : files) {
             List<String> contents = FileRead.getInstance().read(file, "utf-8");
             int i = 0;
@@ -151,9 +237,9 @@ public class StartMain implements ApplicationRunner {
                 String rpttime = StringUtils.substringAfter(split[4], "rptTime:");
                 redisUtil.putPidToMsgid(uid + "_" + key, msgid);
                 DeliverVo deliver = new DeliverVo(1, 0L, mobile, rptcode, rpttime);
-                deliver.setChannelDays(180921);
-                deliver.setUserDays(180921);
-                deliver.setUid(51133);
+                deliver.setChannelDays(181016);
+                deliver.setUserDays(181016);
+                deliver.setUid(50660);
                 deliver.setPid(Long.valueOf(key));
                 deliver.setHisId(Long.valueOf(key));
                 deliver.setChannel(1);
@@ -162,6 +248,19 @@ public class StartMain implements ApplicationRunner {
             }
         }
 
+    }
+
+    public static void main(String[] args) {
+        String content="10-16 09:03:36.740 RptPushChildThread:94 - Send Deliver Report:msgid:20181016#210842245;uid:50660;mobile:13578841299;rptCode:XA:2138;rptTime:2018-10-16 09:03:34;pid:636084477;hisid:0";
+        content = StringUtils.substringAfter(content, "Send Deliver Report:");
+        String[] split = content.split(";");
+        String msgid = StringUtils.substringAfter(split[0], "msgid:");
+        String[] split1 = msgid.split("#");
+        String key = split1[1];
+        String uid = StringUtils.substringAfter(split[1], "uid:");
+        String mobile = StringUtils.substringAfter(split[2], "mobile:");
+        String rptcode = StringUtils.substringAfter(split[3], "rptCode:");
+        String rpttime = StringUtils.substringAfter(split[4], "rptTime:");
     }
 
 }

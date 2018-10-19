@@ -70,7 +70,14 @@ public class Anjxing {
 
     public String senddate(String d) {
         String[] ds = d.split("\\.");
+        String month=ds[0];
+        if(Integer.valueOf(month)<10){
+            month="0"+month;
+        }
         String day = ds[1];
+        if(Integer.valueOf(day)<10){
+            day="0"+day;
+        }
         Random random = new Random();
         int min = random.nextInt(60);
         String minstr = "";
@@ -87,7 +94,7 @@ public class Anjxing {
         } else {
             secstr = sec + "";
         }
-        String date = "201809" + day + "09" + minstr + secstr;
+        String date = "2018"+month + day + "09" + minstr + secstr;
         return date;
     }
 
@@ -95,9 +102,9 @@ public class Anjxing {
      * 造假数据
      */
     @Test
-    public void createData() throws Exception {
+    public void createData()  {
         Map<String, String> map = new HashMap<>();
-        String fileName = "20180928补发";
+        String fileName = "20181012补发";
         List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\安吉星数据\\" + fileName, "", false);
         Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\安吉星数据/content.xlsx", 0);
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
@@ -109,27 +116,31 @@ public class Anjxing {
             }
         }
         for (String listFile : listFiles) {
-            String name = StringUtils.substringBetween(listFile, fileName + "\\", ".txt");
-            String key = StringUtils.substringBefore(name, "_9.");
-            String date = StringUtils.substringAfter(name, key + "_");
-            String content = map.get(key);
-            int contentNum = CalContentNum.calcContentNum(content);
-            List<String> mobiles = FileRead.getInstance().read(listFile, "utf-8");
-            mobiles.stream().parallel().forEach(mobile -> {
-                SendingVo vo = new SendingVo();
-                vo.setHisid(10);
-                vo.setContent(content);
-                vo.setContentNum(contentNum);
-                vo.setMobile(Long.parseLong(mobile));
-                vo.setStat(99);
-                vo.setRptcode("DELIVRD");
-                vo.setUid(1);
-                vo.setSenddate(Long.valueOf(senddate(date)));
-                vo.setDay(201808);
-                vo.setRpttime(vo.getSenddate());
-                vo.setMdstr("20180928");
-                anjxService.insertSendHistoryAjx(vo);
-            });
+            try {
+                String name = StringUtils.substringBetween(listFile, fileName + "\\", ".txt");
+                String key = StringUtils.substringBefore(name, "_");
+                String date = StringUtils.substringAfter(name, key + "_");
+                String content = map.get(key);
+                int contentNum = CalContentNum.calcContentNum(content);
+                List<String> mobiles = FileRead.getInstance().read(listFile, "utf-8");
+                mobiles.stream().parallel().forEach(mobile -> {
+                    SendingVo vo = new SendingVo();
+                    vo.setHisid(11);
+                    vo.setContent(content);
+                    vo.setContentNum(contentNum);
+                    vo.setMobile(Long.parseLong(mobile));
+                    vo.setStat(99);
+                    vo.setRptcode("DELIVRD");
+                    vo.setUid(1);
+                    vo.setSenddate(Long.valueOf(senddate(date)));
+                    vo.setDay(201808);
+                    vo.setRpttime(vo.getSenddate());
+                    vo.setMdstr("20181012");
+                 anjxService.insertSendHistoryAjx(vo);
+                });
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
         }
     }
 
@@ -151,10 +162,10 @@ public class Anjxing {
                 vo.setStat(99);
                 vo.setRptcode("DELIVRD");
                 vo.setUid(1);
-                vo.setSenddate(Long.valueOf(senddate("9.30")));
+                vo.setSenddate(Long.valueOf(senddate("10.08")));
                 vo.setDay(201808);
                 vo.setRpttime(vo.getSenddate());
-                vo.setMdstr("20180928");
+                vo.setMdstr("20181008");
                 anjxService.insertSendHistoryAjx(vo);
             } catch (NumberFormatException e) {
                 e.printStackTrace();

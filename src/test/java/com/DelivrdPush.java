@@ -3,12 +3,12 @@ package com;
 import com.alibaba.fastjson.JSONObject;
 import com.pojo.SendingVo;
 import com.service.SendHistoryService;
+import com.service.SendHistoryService114;
 import com.sioo.client.cmpp.vo.DeliverVo;
-import com.util.FilePrintUtil;
-import com.util.FileRead;
-import com.util.RabbitMQProducerUtil;
-import com.util.RedisUtil;
+import com.util.*;
 import org.apache.commons.lang.StringUtils;
+import org.bson.BSONObject;
+import org.bson.BasicBSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +34,10 @@ public class DelivrdPush {
     private SendHistoryService sendHistoryService;
 
 
+    @Autowired
+    private SendHistoryService114 sendHistoryService114;
+
+
     /**
      * http推送
      *
@@ -42,13 +46,45 @@ public class DelivrdPush {
     @Test
     public void sss() throws Exception {
         SendingVo vo = new SendingVo();
-        vo.setUid(90404);
-        vo.setDay(20180927);
+        vo.setUid(81321);
+        vo.setDay(20181017);
        // vo.setMobile(13853134447L);
         List<DeliverVo> list = sendHistoryService.findRptPush(vo);
         for (DeliverVo deliverVo : list) {
             rabbitMQProducerUtil.send("DELIVER_PUSH", deliverVo);
             System.out.println(JSONObject.toJSONString(deliverVo));
+        }
+    }
+
+
+    /**
+     * http推送
+     *
+     * @throws Exception
+     */
+    @Test
+    public void ss11s() throws Exception {
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/111.txt", "GBK");
+        for (String s : read) {
+            String[] split = s.split("\t");
+            String mobile=split[5];
+            DeliverVo vo=new DeliverVo();
+            vo.setMobile(mobile);
+            vo.setRpt_code("UNDELIVRD");
+            vo.setRpt_time("20181017220000");
+            vo.setUid(81321);
+            vo.setUserDays(20181017);
+            vo.setHisId(Long.valueOf(split[0]));
+            BSONObject where = new BasicBSONObject();
+            where.put("mobile", Long.parseLong(mobile));
+            where.put("uid",81321);
+            List<BSONObject> list = SequoiaDBUtil.getInstance().find("sms_send_history_detail", where);
+            if(list!=null&&list.size()>0){
+                String pid=list.get(0).get("pid").toString();
+                vo.setPid(Long.valueOf(pid));
+            }
+            rabbitMQProducerUtil.send("DELIVER_PUSH", vo);
+            System.out.println(JSONObject.toJSONString(vo));
         }
     }
 

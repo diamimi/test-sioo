@@ -60,19 +60,20 @@ public class Test21 {
      * 根据日志回复记录
      */
     @Test
-    public void logToContentFor5(){
-        storeUtil.loadUserSign(null,null);
+    public void logToContentFor5() {
+        storeUtil.loadUserSign(null, null);
         smsUserUtil.loadUser();
-        List<String> read = FileRead.getInstance().read("D:\\hq\\files/data.log","utf-8");
-        read.stream().forEach(s->{
-            s="{"+ StringUtils.substringAfter(s," - {");
-            SendingBigVo vo = JSON.parseObject(s, new TypeReference<SendingBigVo>() {});
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/data.log", "utf-8");
+        read.stream().forEach(s -> {
+            s = "{" + StringUtils.substringAfter(s, " - {");
+            SendingBigVo vo = JSON.parseObject(s, new TypeReference<SendingBigVo>() {
+            });
             SmsUser smsUser = SmsCache.USER.get(vo.getUid());
-            String content=vo.getContent();
-            if(!StoreUtil.hasStore(vo.getContent())){
-                 content=storeUtil.addSign(vo.getContent(),vo.getUid(),smsUser.getSignPosition(),smsUser.getUsertype());
+            String content = vo.getContent();
+            if (!StoreUtil.hasStore(vo.getContent())) {
+                content = storeUtil.addSign(vo.getContent(), vo.getUid(), smsUser.getSignPosition(), smsUser.getUsertype());
             }
-            SendingVo v=new SendingVo();
+            SendingVo v = new SendingVo();
             v.setContent(content);
             v.setUid(vo.getUid());
             v.setSenddate(20180816l);
@@ -151,7 +152,7 @@ public class Test21 {
 
     @Test
     public void sla() {
-        List<String> days=DayUtil.getDayList(20180701,20180919);
+        List<String> days = DayUtil.getDayList(20180701, 20180919);
         for (String day : days) {
           /*  int total=userDayCountService.totalByDay(day);
             int succ=userDayCountService.succByDay(day);
@@ -161,7 +162,7 @@ public class Test21 {
 
     @Test
     public void charuhaoma() {
-        List<String> list = FileRead.getInstance().read("D:\\hq\\1/111.txt","");
+        List<String> list = FileRead.getInstance().read("D:\\hq\\1/111.txt", "");
         List<MobileArea> mobileAreaList = mobileAreaService21.findList();
         Map<String, MobileArea> moMap = new HashMap<>();
         mobileAreaList.stream().parallel().forEach((mo -> {
@@ -363,5 +364,28 @@ public class Test21 {
                 }
         )).get();
         log.info("===============END====================");
+    }
+
+    @Test
+    public void lls() {
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/50872_921.txt", "utf-8");
+        for (String s : read) {
+            String[] split = s.split("\t");
+            String mobile = split[0];
+            String id = split[1];
+            SendingVo vo = new SendingVo();
+            vo.setUid(50872);
+            vo.setMobile(Long.valueOf(mobile));
+            vo.setId(Long.parseLong(id));
+            SendingVo v = sendHistoryService.getRptBacks(vo);
+            if (v != null) {
+                if (v.getRptcode().equals("DELIVRD")) {
+                    sendHistoryService.updateToSuccess(vo);
+                } else {
+                    sendHistoryService.updateToFail(vo);
+                }
+            }
+
+        }
     }
 }

@@ -152,7 +152,7 @@
 
     <select id="getHistorySucc" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
         SELECT h.mobile mobile,h.pid pid,h.content content,h.senddate senddate,h. contentNum contentNum,u.username username from
-        sms_send_history_backups h INNER join sms_user u on h.uid=u.id
+        sms_send_history_unknown h INNER join sms_user u on h.uid=u.id
         <where>
             h.arrive_succ=h.contentNum and h.arrive_fail=0 and h.senddate&gt;=#{starttime} and h.senddate&lt;#{endtime}
             <if test="username!=null">

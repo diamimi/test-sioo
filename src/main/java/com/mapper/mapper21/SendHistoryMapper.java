@@ -39,4 +39,12 @@ public interface SendHistoryMapper extends Mapper21 {
     SendingVo findSucc21(SendingVo sendingVo);
 
     List<DeliverVo> findRptPush(SendingVo vo);
+
+    List<String> getIds();
+
+    SendingVo findById(SendingVo vo);
+
+    SendingVo getRptBacks(SendingVo vo);
+
+    void updateToFail(SendingVo vo);
 }
