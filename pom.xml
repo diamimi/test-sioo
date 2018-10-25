@@ -177,11 +177,39 @@
                     <target>1.8</target>
                     <skip>true</skip>
                     <compilerArguments>
-                        <extdirs>lib</extdirs>
+                        <extdirs>${project.basedir}/lib</extdirs>
                     </compilerArguments>
                 </configuration>
             </plugin>
         </plugins>
+        <resources>
+
+            <resource>
+
+                <directory>lib</directory>
+
+                <targetPath>BOOT-INF/lib/</targetPath>
+
+                <includes>
+
+                    <include>**/*.jar</include>
+
+                </includes>
+
+            </resource>
+
+
+
+            <resource>
+
+                <directory>src/main/resources</directory>
+
+                <targetPath>BOOT-INF/classes/</targetPath>
+
+            </resource>
+
+        </resources>
+
     </build>
 
 
