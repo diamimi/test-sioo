@@ -64,16 +64,16 @@ public class DelivrdPush {
      */
     @Test
     public void ss11s() throws Exception {
-        List<String> read = FileRead.getInstance().read("D:\\hq\\files/111.txt", "GBK");
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/1022.txt", "GBK");
         for (String s : read) {
             String[] split = s.split("\t");
             String mobile=split[5];
             DeliverVo vo=new DeliverVo();
             vo.setMobile(mobile);
             vo.setRpt_code("UNDELIVRD");
-            vo.setRpt_time("20181017220000");
+            vo.setRpt_time("20181022235000");
             vo.setUid(81321);
-            vo.setUserDays(20181017);
+            vo.setUserDays(20181022);
             vo.setHisId(Long.valueOf(split[0]));
             BSONObject where = new BasicBSONObject();
             where.put("mobile", Long.parseLong(mobile));

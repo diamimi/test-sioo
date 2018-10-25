@@ -1,15 +1,15 @@
 package com.main;
 
+import com.mongodb.BasicDBObject;
 import com.pojo.SendingVo;
 import com.service.AnjxService;
 import com.service.SendHistoryService;
 import com.service.SendHistoryService114;
 import com.sioo.client.cmpp.vo.DeliverVo;
-import com.util.FilePrintUtil;
-import com.util.FileRead;
-import com.util.RabbitMQProducerUtil;
-import com.util.RedisUtil;
+import com.util.*;
 import org.apache.commons.lang.StringUtils;
+import org.bson.BSONObject;
+import org.bson.BasicBSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +47,52 @@ public class StartMain implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments var1) throws Exception {
-       /* LOGGER.info("=========start=========");
-        lss();
-        LOGGER.info("=========end========");*/
+        LOGGER.info("=========start=========");
+        ss111s();
+        LOGGER.info("=========end========");
     }
 
+
+
+    public void ss111s() {
+        BSONObject where = new BasicBSONObject();
+        BSONObject dayu = new BasicBSONObject("senddate", new BasicDBObject("$gt", 20181024000000L));
+        BSONObject xiaoyu = new BasicBSONObject("senddate", new BasicDBObject("$lt", 20181025000000L));
+        where.putAll( dayu);
+        where.putAll( xiaoyu);
+        where.put("uid",51134);
+        List<BSONObject> list = SequoiaDBUtil.getInstance().find("sms_send_history_detail", where);
+        for (BSONObject bsonObject : list) {
+            LOGGER.info(bsonObject.toString());
+        }
+    }
+    public void oow(){
+        RedisUtil rUtil = RedisUtil.getInstance();
+        List<String> read = FileRead.getInstance().read("/home/sioowork/114/PlatformBlockNumber.txt", "utf-8");
+        read.stream().forEach(mobile->{
+            if(mobile!=null&&mobile.length()>9){
+                int type=MyUtils.checkMobileType(mobile);
+                if(type>0){
+                    int num= sendHistoryService.checkBlackMobileExsit(mobile);
+                    if(num==0){
+                        SendingVo vo=new SendingVo();
+                        vo.setMobile(Long.parseLong(mobile));
+                        vo.setId(35);
+                        vo.setContent("昱桦黑名单");
+                        vo.setMtype(type);
+                        vo.setLevel(6);
+                        try {
+                            sendHistoryService.inserBlackMobile(vo);
+                            rUtil.setObject("35_"+mobile, "");
+                        } catch (Exception e) {
+
+                        }
+                    }
+
+                }
+            }
+        });
+    }
 
     public void lls() throws Exception {
         List<String> read = FileRead.getInstance().read("/home/sioowork/114/925.txt", "utf-8");
@@ -215,14 +256,14 @@ public class StartMain implements ApplicationRunner {
 
     public void lss() throws Exception {
         String baseName = "/home/data/log/cmpp/";
-        String[] files = {baseName + "50660_10.16.txt"};
+        String[] files = {baseName + "50660_2.txt"};
+        RedisUtil redisUtil = RedisUtil.getInstance();
         for (String file : files) {
             List<String> contents = FileRead.getInstance().read(file, "utf-8");
             int i = 0;
-            RedisUtil redisUtil = RedisUtil.getInstance();
             for (String content : contents) {
                 i++;
-                if (i % 2000 == 0) {//1秒只处理1000,防止发送过快,拥堵其它用户
+                if (i % 1000 == 0) {//1秒只处理1000,防止发送过快,拥堵其它用户
                     Thread.sleep(1000);
                     LOGGER.info("========休息一会===============," + i);
                 }
@@ -244,6 +285,7 @@ public class StartMain implements ApplicationRunner {
                 deliver.setHisId(Long.valueOf(key));
                 deliver.setChannel(1);
                 rabbitMQProducerUtil.send("DELIVER_PUSH", deliver);
+               // System.out.println(JSONObject.toJSONString(deliver));
 
             }
         }

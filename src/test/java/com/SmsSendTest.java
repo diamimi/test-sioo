@@ -1,6 +1,8 @@
 package com;
 
+import com.util.DateUtils;
 import com.util.HttpClientUtil;
+import com.util.Md5Util;
 import com.util.SmsUtil;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -49,6 +51,22 @@ public class SmsSendTest {
         param.put("uid", "90575");
         param.put("auth", "d33c65c7cb48b9a3c4496b16b24be75f");
         String result = HttpClientUtil.doPost("http://sms.10690221.com:9011/hy/m", param);
+        System.out.println(result);
+    }
+
+    @Test
+    public void guoji(){
+        long timestamp= DateUtils.getTime();
+        System.out.println(timestamp);
+        String auth= Md5Util.getMD5("OS#X#9vw"+timestamp);
+        Map<String, String> param = new HashMap<>();
+        param.put("from", "18");
+        param.put("username", "sioo");
+        param.put("timestamp",timestamp+"");
+        param.put("auth", auth);
+        param.put("to", "6282213699896");
+        param.put("text", "sioo test");
+        String result = HttpClientUtil.doPost("http://int.200696.com:3801/sendsms", param);
         System.out.println(result);
     }
 

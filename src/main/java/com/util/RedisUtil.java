@@ -26,11 +26,11 @@ public class RedisUtil {
     }
 
     public static void init() {
-        //String redisHost = "127.0.0.1";
-//		String redisHost = "192.168.8.16";
-        String redisHost = "102.227.68.16";
+//        String redisHost = "127.0.0.1";
+		String redisHost = "192.168.8.16";
+        //String redisHost = "102.227.68.16";
         int redisPort = 6379;
-        String redis_password = "sioo58657686";
+       // String redis_password = "sioo58657686";
         int maxActive = 100;
         int maxIdle = 20;
         JedisPoolConfig config = new JedisPoolConfig();
@@ -39,8 +39,8 @@ public class RedisUtil {
         config.setMaxTotal(maxActive);
         config.setMaxIdle(maxIdle);
         config.setTestOnBorrow(false);
-        jedisPool = new JedisPool(config, redisHost, redisPort, 100000, redis_password);
-//		jedisPool = new JedisPool(config, redisHost, redisPort, 100000);
+//        jedisPool = new JedisPool(config, redisHost, redisPort, 100000, redis_password);
+		jedisPool = new JedisPool(config, redisHost, redisPort, 100000);
         logger.info("Redis: " + redisHost + ":" + redisPort);
     }
 

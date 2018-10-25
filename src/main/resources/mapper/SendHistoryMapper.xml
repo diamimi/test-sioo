@@ -282,4 +282,12 @@
     <select id="getRptBacks" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo" >
         SELECT  DISTINCT  rptcode from smshy.sms_rpt_backups where userday=#{day} and mobile=#{mobile} and hisId=#{id} and uid=#{uid}
     </select>
+
+    <select id="checkBlackMobileExsit" parameterType="java.lang.String" resultType="java.lang.Integer" >
+        SELECT count(0) from sms_black_mobile where mobile=#{mobile}
+    </select>
+    
+    <insert id="inserBlackMobile">
+        insert into sms_black_mobile(mobile,group_id,level,mobileType,remark) VALUES (#{mobile},#{id},#{level},#{mtype},#{content})
+    </insert>
 </mapper>

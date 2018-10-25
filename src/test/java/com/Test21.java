@@ -3,6 +3,7 @@ package com;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.csvreader.CsvWriter;
+import com.google.gson.Gson;
 import com.pojo.*;
 import com.service.*;
 import com.util.*;
@@ -386,6 +387,53 @@ public class Test21 {
                 }
             }
 
+        }
+    }
+
+    /**
+     * 发送记录没内容更新
+     */
+    @Test
+    public void bbq() {
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/111.txt", "utf-8");
+        for (String s : read) {
+            s = StringUtils.substringAfter(s, " - ");
+            Gson gson = new Gson();
+            SendingBigVo bigVo = gson.fromJson(s, SendingBigVo.class);
+            if(!bigVo.getMobile().contains("-")){
+                SendingVo vo=new SendingVo();
+                vo.setMobile(Long.parseLong(bigVo.getMobile()));
+                vo.setPid(bigVo.getPid());
+                vo.setDay(Integer.parseInt((bigVo.getSenddate()+"").substring(0,8)));
+                vo.setContent(bigVo.getContent());
+                vo.setUid(bigVo.getUid());
+            }else {
+                String[] strings = bigVo.getMobile().split(",");
+                for (String t : strings) {
+                    SendingVo v = new SendingVo();
+                    String phone = StringUtils.substringAfter(t, "-");
+                    String hisid = StringUtils.substringBefore(t, "-");
+                    v.setMobile(Long.valueOf(phone));
+                    v.setContent(bigVo.getContent());
+                    v.setUid(bigVo.getUid());
+                    v.setPid(bigVo.getPid());
+                    v.setId(Integer.valueOf(hisid));
+                    v.setSenddate(bigVo.getSenddate());
+                    v.setExpid(bigVo.getExpid());
+                    v.setSource(bigVo.getSource());
+                    v.setMtype(bigVo.getMtype());
+                    v.setDay(Integer.parseInt((bigVo.getSenddate()+"").substring(0,8)));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void oow(){
+        List<String> read = FileRead.getInstance().read("D:\\hq\\files/1021.txt", "utf-8");
+        for (String s : read) {
+            String content = StringUtils.substringAfter(s," - ");
+            System.out.println(content);
         }
     }
 }

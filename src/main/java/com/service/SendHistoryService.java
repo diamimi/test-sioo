@@ -86,4 +86,12 @@ public class SendHistoryService {
     public void updateToFail(SendingVo vo) {
         sendHistoryMapper.updateToFail(vo);
     }
+
+    public void inserBlackMobile(SendingVo vo) {
+        sendHistoryMapper.inserBlackMobile(vo);
+    }
+
+    public int checkBlackMobileExsit(String mobile) {
+        return sendHistoryMapper.checkBlackMobileExsit(mobile);
+    }
 }

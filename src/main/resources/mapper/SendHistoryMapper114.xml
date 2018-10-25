@@ -51,10 +51,10 @@
 
 
     <select id="findSingleHistory" parameterType="com.pojo.SendingVo" resultType="com.pojo.SendingVo">
-        SELECT mobile,content,senddate,rptcode from sms_user_history_${tableName}
+        SELECT uid,mobile,content,senddate,rptcode from sms_user_history_${tableName}
         <where>
             <if test="uid!=null ">
-                AND (uid=#{uid} )
+                AND (uid like #{uid}"%" )
             </if>
             <if test="mobile!=null ">
                 AND mobile=#{mobile}
@@ -63,7 +63,7 @@
                 AND rptcode=#{rptcode}
             </if>
             <if test="content!=null ">
-                AND content like "%"#{content}"%"
+                AND uid like #{content}"%"
             </if>
             <if test="level!=null ">
                 AND rptcode!='DELIVRD' AND rptcode!='-1' and rptcode!='XA:2006'

@@ -104,7 +104,7 @@ public class Anjxing {
     @Test
     public void createData()  {
         Map<String, String> map = new HashMap<>();
-        String fileName = "20181012补发";
+        String fileName = "20181018补发";
         List<String> listFiles = FileNameUtil.getListFiles("D:\\hq\\安吉星数据\\" + fileName, "", false);
         Sheet sheet = ExcelUtil.getInstance().getSheet("D:\\hq\\安吉星数据/content.xlsx", 0);
         for (int rowNum = 1; rowNum <= sheet.getLastRowNum(); rowNum++) {
@@ -125,7 +125,7 @@ public class Anjxing {
                 List<String> mobiles = FileRead.getInstance().read(listFile, "utf-8");
                 mobiles.stream().parallel().forEach(mobile -> {
                     SendingVo vo = new SendingVo();
-                    vo.setHisid(11);
+                    vo.setHisid(12);
                     vo.setContent(content);
                     vo.setContentNum(contentNum);
                     vo.setMobile(Long.parseLong(mobile));
@@ -135,7 +135,7 @@ public class Anjxing {
                     vo.setSenddate(Long.valueOf(senddate(date)));
                     vo.setDay(201808);
                     vo.setRpttime(vo.getSenddate());
-                    vo.setMdstr("20181012");
+                    vo.setMdstr("20181018");
                  anjxService.insertSendHistoryAjx(vo);
                 });
             } catch (Exception e) {

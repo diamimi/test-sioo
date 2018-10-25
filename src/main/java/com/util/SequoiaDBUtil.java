@@ -36,7 +36,7 @@ public class SequoiaDBUtil {
             ConfigOptions nwOpt = new ConfigOptions();
             DatasourceOptions dsOpt = new DatasourceOptions();
             // 提供coord节点地址
-            addrs.add("101.227.68.16:11810");
+            addrs.add("127.0.0.1:11810");
             // 设置网络参数
             nwOpt.setConnectTimeout(500);                // 建连超时时间为500ms。
             nwOpt.setMaxAutoConnectRetryTime(0);    // 建连失败后重试时间为0ms。

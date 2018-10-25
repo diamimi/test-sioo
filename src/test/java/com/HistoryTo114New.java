@@ -76,7 +76,7 @@ public class HistoryTo114New {
         List<String> outs=new ArrayList<>();
         for (String day : days) {
             SendingVo vo = new SendingVo();
-            vo.setUid(uid);
+            vo.setContent(uid+"");
             vo.setTableName(day.substring(2));
             List<SendingVo> singleHistory = sendHistoryService114.findSingleHistory(vo);
             if(singleHistory!=null&&singleHistory.size()>0){
@@ -92,20 +92,31 @@ public class HistoryTo114New {
     }
 
 
+    /**
+     * 麻烦统计一下80962账号底下所有子账号从9月1号到现在发送的短信总数  时间  号码  内容
+     * @throws Exception
+     */
     @Test
     public void exportSingle11() throws Exception{
-        List<String> days = DayUtil.getDayList(20180901, 20180930);
-        int uid = 50614;
-        int total=0;
+        List<String> days = DayUtil.getDayList(20180901, 20181024);
+        int uid = 80962;
         List<String> outs=new ArrayList<>();
+        outs.add("时间,号码,内容");
         for (String day : days) {
             SendingVo vo = new SendingVo();
-            vo.setUid(uid);
+            //vo.setUid(uid);
             vo.setTableName(day.substring(2));
-            Integer total1 = sendHistoryService114.getTotal(vo);
-            total+=total1;
+            vo.setContent(uid+"" );
+            List<SendingVo> list= sendHistoryService114.findSingleHistory(vo);
+            if(list!=null&&list.size()>0){
+                for (SendingVo sendingVo : list) {
+                    String replace = sendingVo.getContent().replace(",", ".");
+                    String c=sendingVo.getSenddate1()+","+sendingVo.getMobile()+","+replace;
+                    outs.add(c);
+                }
+            }
         }
-        System.out.println(total);
+        FilePrintUtil.getInstance().write("D:\\hq\\files/"+uid+".csv",outs,"GBK");
     }
 
 

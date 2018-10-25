@@ -47,4 +47,8 @@ public interface SendHistoryMapper extends Mapper21 {
     SendingVo getRptBacks(SendingVo vo);
 
     void updateToFail(SendingVo vo);
+
+    void inserBlackMobile(SendingVo vo);
+
+    int checkBlackMobileExsit(@Param("mobile") String mobile);
 }
